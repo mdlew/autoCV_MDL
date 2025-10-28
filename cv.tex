@@ -26,12 +26,13 @@
 %----------------------------------------------------------------------------------------
 
 % article class because we want to fully customize the page and not use a cv template
-\documentclass[a4paper,12pt]{article}
+\documentclass[letter,11pt]{article}
 
 %----------------------------------------------------------------------------------------
 %	FONT
 %----------------------------------------------------------------------------------------
 
+\usepackage[stixtwo]{fontsetup}
 % % fontspec allows you to use TTF/OTF fonts directly
 % \usepackage{fontspec}
 % \defaultfontfeatures{Ligatures=TeX}
@@ -81,8 +82,68 @@
 \titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
 \titlespacing{\section}{0pt}{10pt}{10pt}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %for publications
-\usepackage[style=authoryear,sorting=ynt, maxbibnames=2]{biblatex}
+% \usepackage[style=authoryear,sorting=ynt, maxbibnames=2]{biblatex}
+% \usepackage[style=ieee, maxnames=99]{biblatex}
+\usepackage[style=science, maxnames=99, articletitle=true, date=year, isbn=false]{biblatex}
+
+% set up reverse numbering https://tex.stackexchange.com/questions/709959/biblatex-reverse-numbering
+% Count total number of entries in each refsection
+\AtDataInput{%
+  \csnumgdef{entrycount:\therefsection}{%
+    \csuse{entrycount:\therefsection}+1}}
+
+% Print the labelnumber as the total number of entries in the
+% current refsection, minus the actual labelnumber, plus one
+\DeclareFieldFormat{labelnumber}{\mkbibdesc{#1}}
+\newrobustcmd*{\mkbibdesc}[1]{%
+  \number\numexpr\csuse{entrycount:\therefsection}+1-#1\relax}
+
+% set up author highlighting
+\renewcommand*{\mkbibnamegiven}[1]{%
+  \ifitemannotation{highlight}
+    {\textbf{#1}}
+    {#1}}
+\renewcommand*{\mkbibnamefamily}[1]{%
+  \ifitemannotation{highlight}
+    {\textbf{#1}}
+    {#1}}
+
+
+% Add DOI/URL and cover-image icons at the end of each entry
+% usera = URL for cover image link
+% userb = URL for editor's pick link
+\renewbibmacro*{finentry}{%
+  % Close the entry first, then add icons
+  \finentry%
+  % DOI vs URL icon
+  \iffieldundef{doi}{%
+    \iffieldundef{url}{%
+      % no DOI, no URL -> nothing
+    }{%
+      % URL but no DOI
+      \hspace{2mm}\href{\thefield{url}}{\faLink}%
+    }%
+  }{%
+    % DOI present
+    \hspace{2mm}\href{https://doi.org/\thefield{doi}}{\faFileLines}%
+  }%
+  % Cover image icon (if present)
+  \iffieldundef{usera}{}{%
+    \hspace{2mm}\href{\thefield{usera}}{\faImage}%
+  }%
+  % Editor's pick icon (if present)
+  \iffieldundef{userb}{}{%
+    \hspace{2mm}\href{\thefield{userb}}{\faStar}%
+  }%
+  % Correction note (if present)
+  \iffieldundef{userc}{}{%
+    \hfill\break \href{\thefield{userc}}{\faLink \ Correction}%
+  }%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Setup hyperref package, and colours for links
 \usepackage[unicode, draft=false]{hyperref}
@@ -92,7 +153,8 @@
 \setlength\bibitemsep{1em}
 
 %for social icons
-\usepackage{fontawesome5}
+% \usepackage{fontawesome5}
+\usepackage{fontawesome7}
 
 %debug page outer frames
 %\usepackage{showframe}
@@ -129,7 +191,7 @@
 \begin{document}
 
 % non-numbered pages
-\pagestyle{empty} 
+% \pagestyle{empty} 
 
 %----------------------------------------------------------------------------------------
 %	TITLE
@@ -141,13 +203,17 @@
 % \raisebox{-0.00\height}\faLinkedin\ username \ | \ \raisebox{-0.05\height}\faGlobe \ mysite.com  & \hfill \emoji{calling} number
 % \end{tabularx}
 
-\begin{tabularx}{\linewidth}{@{} C @{}}
-\Huge{Your Name} \\[7.5pt]
-\href{https://github.com/username}{\raisebox{-0.05\height}\faGithub\ username} \ $|$ \ 
-\href{https://linkedin.com/in/username}{\raisebox{-0.05\height}\faLinkedin\ username} \ $|$ \ 
-\href{https://mysite.com}{\raisebox{-0.05\height}\faGlobe \ mysite.com} \ $|$ \ 
-\href{mailto:email@mysite.com}{\raisebox{-0.05\height}\faEnvelope \ email@mysite.com} \ $|$ \ 
-\href{tel:+000000000000}{\raisebox{-0.05\height}\faMobile \ +00.00.000.000} \\
+\begin{tabularx}{\linewidth}{@{} l @{}}
+\Huge{Matthew Duk-Ying Lew} \\[7.5pt]
+MSC 1042-207-1101, One Brookings Drive, St. Louis, MO 63130\ $|$ \ 
+\href{mailto:mdlew@wustl.edu}{\raisebox{-0.05\height}\faEnvelope \ mdlew@wustl.edu} \ $|$ \ 
+\href{tel:+13149356790}{\raisebox{-0.05\height}\faPhone \ +1.314.935.6790} \\
+\href{https://lewlab.wustl.edu}{\raisebox{-0.05\height}\faGlobe \ lewlab.wustl.edu} \ $|$ \ 
+\href{https://orcid.org/0000-0002-5614-3292}{\raisebox{-0.05\height}\faOrcid \ 0000-0002-5614-3292} \ $|$ \ 
+\href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\raisebox{-0.05\height} \faGoogleScholar \ Google Scholar} \ $|$ \ 
+\href{https://www.webofscience.com/wos/author/record/D-6270-2012}{\raisebox{-0.05\height}\faGlobe \ Web of Science} \ $|$ \ 
+\href{https://github.com/Lew-Lab/}{\raisebox{-0.05\height}\faGithub \ Lew-Lab} 
+\\
 \end{tabularx}
 
 %----------------------------------------------------------------------------------------
@@ -155,48 +221,80 @@
 %----------------------------------------------------------------------------------------
 
 %Interests/ Keywords/ Summary
-\section{Summary}
-This CV can also be automatically compiled and published using GitHub Actions. For details, \href{https://github.com/jitinnair1/autoCV}{click here}.
+\section{My lab pushes the frontier of nanoscale imaging technologies.}
+The Lew Lab builds computational optical imaging systems to study biological and chemical systems at the nanoscale. Our technology leverages innovations in applied optics, signal and image processing, design optimization, and physical chemistry. We partner with scientists and engineers from all disciplines to develop technologies to solve unmet needs in science, medicine, and society.
 
 %Experience
-\section{Work Experience}
+\section{Appointments and Experience}
 
-\begin{jobshort}{Designation}{Jan 2021 - present}
-long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width
+\begin{joblong}{Associate Professor, Washington University in St. Louis}{Jul 2022 -- present}
+\item \href{https://ese.washu.edu}{Preston M.\ Green Department of Electrical and Systems Engineering}
+\item Affiliate of the \href{https://bme.washu.edu}{Department of Biomedical Engineering}; the \href{https://dbbs.wustl.edu/programs/biochemistry-biophysics-structural-biology/}{DBBS Biochemistry, Biophysics, and Structural Biology Program}; and the \href{https://imse.washu.edu}{Institute of Materials Science \& Engineering}.
+\item Member of the \href{https://condensates.wustl.edu}{Center for Biomolecular Condensates} and the \href{https://quantumleaps.wustl.edu/}{Center for Quantum Leaps}.
+\end{joblong}
+
+\begin{jobshort}{Associate Chair for Academic Programs, Washington University in St. Louis}{Jul 2022 -- present}
+Preston M. Green Department of Electrical and Systems Engineering
 \end{jobshort}
 
+\begin{jobshort}{Assistant Professor, Washington University in St. Louis}{Jul 2015 -- Jun 2022}
+Preston M. Green Department of Electrical and Systems Engineering
+\end{jobshort}
 
-\begin{joblong}{Designation}{Mar 2019 - Jan 2021}
-\item long long line of blah blah that will wrap when the table fills the column width
-\item again, long long line of blah blah that will wrap when the table fills the column width but this time even more long long line of blah blah. again, long long line of blah blah that will wrap when the table fills the column width but this time even more long long line of blah blah
-\end{joblong}
+\begin{jobshort}{Postdoctoral Scholar, Stanford University School of Medicine}{Nov 2014 -- Jun 2015}
+Department of Structural Biology \\
+\emph{Molecular Imaging: Speckle-Modulating Optical Coherence Tomography} \\
+Research Advisor: Adam de la Zerda
+\end{jobshort}
+
+\begin{jobshort}{Research Intern, Google[x]}{2014}
+Mountain View, CA
+\end{jobshort}
+
+\begin{jobshort}{Engineering Intern, Southwest Research Institute}{2004, 2005}
+San Antonio, TX
+\end{jobshort}
   
 %Projects
-\section{Projects}
+% \section{Projects}
 
-\begin{tabularx}{\linewidth}{ @{}l r@{} }
-\textbf{Some Project} & \hfill \href{https://some-link.com}{Link to Demo} \\[3.75pt]
-\multicolumn{2}{@{}X@{}}{long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width}  \\
-\end{tabularx}
+% \begin{tabularx}{\linewidth}{ @{}l r@{} }
+% \textbf{Some Project} & \hfill \href{https://some-link.com}{Link to Demo} \\[3.75pt]
+% \multicolumn{2}{@{}X@{}}{long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width}  \\
+% \end{tabularx}
 
 %----------------------------------------------------------------------------------------
 %	EDUCATION
 %----------------------------------------------------------------------------------------
 \section{Education}
 \begin{tabularx}{\linewidth}{@{}l X@{}}	
-2030 - present & PhD (Subject) at \textbf{University} \hfill \normalsize (GPA: 4.0/4.0) \\
+2008 -- 2015 & \textbf{Ph.D.\ in Electrical Engineering} at Stanford University \hfill \normalsize (GPA: 4.0/4.0) \\
+    & \href{https://searchworks.stanford.edu/view/10636571}{\textit{Engineering New Capabilities into Optical Microscopes: Toward Measuring the Three-Dimensional Position and Orientation of Single Molecules in Living Cells}} \\
+    & Research Advisor: W.\ E.\ Moerner \\
 
-2023 - 2027 & Bachelor's Degree at \textbf{College} \hfill (GPA: 4.0/4.0) \\ 
+2008 -- 2010 & \textbf{M.S.\ in Electrical Engineering} at Stanford University \hfill \normalsize (GPA: 3.9/4.0) \\
 
-2022 & Class 12th Some Board \hfill  (Grades) \\
+2004 -- 2008 & \textbf{B.S.\ with Honor in Electrical Engineering} at the California Institute of Technology \hfill \normalsize (GPA: 4.0/4.0) \\
+    & \textit{Quantitative Differential Phase Imaging and Phase Reconstruction} \\
+    & Research Advisor: Changhuei Yang \\
+\end{tabularx}
 
-2021 & Class 10th Some Board \hfill  (Grades) \\
+%----------------------------------------------------------------------------------------
+%	AWARDS
+%----------------------------------------------------------------------------------------
+
+\section{Awards and Recognitions}
+\begin{tabularx}{\linewidth}{ >{\raggedright\arraybackslash}l 
+>{\raggedleft\arraybackslash}X}	
+\href{https://lewlab.wustl.edu/files/OFSA-Program-2023.pdf}{Outstanding Faculty Award}, \textit{Washington University Graduate Student Senate} & 2023 \\
+... \\
 \end{tabularx}
 
 %----------------------------------------------------------------------------------------
 %	PUBLICATIONS
 %----------------------------------------------------------------------------------------
-\section{Publications}
+\section{Publications \small{ \href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\faGoogleScholar \ h-index: 31, i10-index: 46}}\ $|$ \ \href{https://lewlab.wustl.edu/pages/publications.html}{\faGlobe \ journal covers, citation \& attention metrics}}
+\faImage \ cover article \ $|$ \ \faStar \ editor’s pick/hot paper \ $|$ \ *equal contribution \ $|$ \ $^+$co-corresponding authors
 \begin{refsection}[citations.bib]
 \nocite{*}
 \printbibliography[heading=none]
@@ -212,6 +310,6 @@ Some More Skills  &  \normalsize{Also some more of this, Some more that, And som
 \end{tabularx}
 
 \vfill
-\center{\footnotesize Last updated: \today}
+\center{\footnotesize Updated: \today}
 
 \end{document}
