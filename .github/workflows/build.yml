@@ -17,6 +17,10 @@ jobs:
         with:
           root_file: ${{ env.FILE }}
           working_directory: ${{ env.DIR }}
+          # Install Font Awesome 7 before compilation
+          pre_compile: |
+            tlmgr update --self
+            tlmgr install fontawesome7
           args: -xelatex -latexoption=-file-line-error -latexoption=-interaction=nonstopmode
       - name: move
         run: mkdir -p github_artifacts && mv ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
