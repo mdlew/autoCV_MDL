@@ -17,7 +17,7 @@ jobs:
         with:
            package_file: tl_packages
       - name: cv
-        run: xelatex -shell-escape -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
+        run: latexmk -pdfxe -xelatex="xelatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
       - name: move
         run: mkdir -p github_artifacts && mv ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
       - name: Upload pdf as artifact
