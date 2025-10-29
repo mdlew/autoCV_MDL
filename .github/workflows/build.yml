@@ -12,11 +12,12 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v4
-      - name: cv
-        uses: dante-ev/latex-action@latest
+      - name: Install TeX Live
+        uses: zauguin/install-texlive@v4
         with:
-          root_file: ${{ env.FILE }}
-          working_directory: ${{ env.DIR }}
+           package_file: tl_packages
+      - name: cv
+        run: xelatex -shell-escape -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
       - name: move
         run: mkdir -p github_artifacts && mv ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
       - name: Upload pdf as artifact
