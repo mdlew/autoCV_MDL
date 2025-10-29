@@ -15,7 +15,6 @@ jobs:
       - name: cv
         uses: dante-ev/latex-action@latest
         with:
-          entrypoint: ./release.sh
           root_file: ${{ env.FILE }}
           working_directory: ${{ env.DIR }}
           args: -xelatex -latexoption=-file-line-error -latexoption=-interaction=nonstopmode
