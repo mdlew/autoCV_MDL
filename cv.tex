@@ -82,20 +82,21 @@
 \titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
 \titlespacing{\section}{0pt}{10pt}{10pt}
 
+\titleformat{\subsection}{\bfseries\raggedright}{}{0em}{}
+\titlespacing{\subsection}{0pt}{10pt}{10pt}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %for publications
 % \usepackage[style=authoryear,sorting=ynt, maxbibnames=2]{biblatex}
 % \usepackage[style=ieee, maxnames=99]{biblatex}
 \usepackage[style=science, maxnames=99, articletitle=true, date=year, isbn=false]{biblatex}
 
-% set up reverse numbering https://tex.stackexchange.com/questions/709959/biblatex-reverse-numbering
 % Count total number of entries in each refsection
 \AtDataInput{%
   \csnumgdef{entrycount:\therefsection}{%
     \csuse{entrycount:\therefsection}+1}}
 
-% Print the labelnumber as the total number of entries in the
-% current refsection, minus the actual labelnumber, plus one
+% Print the label number as (total in this refsection) - (actual label) + 1
 \DeclareFieldFormat{labelnumber}{\mkbibdesc{#1}}
 \newrobustcmd*{\mkbibdesc}[1]{%
   \number\numexpr\csuse{entrycount:\therefsection}+1-#1\relax}
@@ -141,6 +142,35 @@
   \iffieldundef{userc}{}{%
     \hfill\break \href{\thefield{userc}}{\faLink \ Correction}%
   }%
+}
+
+% modify patent style to include title
+% Default: plain roman, but in titlecase as Science style expects:
+\DeclareFieldFormat[patent]{title}{#1}
+
+% Redefine the patent driver to include the title
+\DeclareBibliographyDriver{patent}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  % Inventors
+  \printnames{author}%
+  \setunit{\labelnamepunct}\newblock
+  % Assignee
+  \printnames{holder}%
+  \setunit{\labelnamepunct}\newblock
+  % >>> Title (newly added) <<<
+  \printfield[titlecase]{title}%
+  \newunit\newblock
+  % Patent type and number (e.g., US 2018/0299251 A1)
+  \printfield{type}%
+  \setunit*{\space}%
+  \printfield{number}%
+  % Date (respects date=year)
+  \setunit{\addspace}%
+  \printtext[parens]{\usebibmacro{date}}%
+  % Links
+  % \usebibmacro{doi+eprint+url}%
+  \usebibmacro{finentry}%
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,17 +323,54 @@ San Antonio, TX
 %----------------------------------------------------------------------------------------
 %	PUBLICATIONS
 %----------------------------------------------------------------------------------------
-\section{Publications \small{ \href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\faGoogleScholar \ h-index: 31, i10-index: 46}}\ $|$ \ \href{https://lewlab.wustl.edu/pages/publications.html}{\faGlobe \ journal covers, citation \& attention metrics}}
+\section[Publications]{Publications \small{ \href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\faGoogleScholar \ h-index: 31, i10-index: 46}}\ $|$ \ \href{https://lewlab.wustl.edu/pages/publications.html}{\faGlobe \ journal covers, citation \& attention metrics}}
 \faImage \ cover article \ $|$ \ \faStar \ editor’s pick/hot paper \ $|$ \ *equal contribution \ $|$ \ $^+$co-corresponding authors
-\begin{refsection}[citations.bib]
+
+\subsection{Refereed Articles}
+\begin{refsection}[refereed.bib]
 \nocite{*}
-\printbibliography[heading=none]
+\printbibliography[heading=none, locallabelwidth=true]
+\end{refsection}
+
+\subsection{Review Articles, Book Chapters, and Commentaries}
+\begin{refsection}[review.bib]
+\nocite{*}
+\printbibliography[heading=none, locallabelwidth=true]
+\end{refsection}
+
+\subsection{Other Publications}
+\begin{refsection}[other.bib]
+\nocite{*}
+\printbibliography[heading=none, locallabelwidth=true]
 \end{refsection}
 
 %----------------------------------------------------------------------------------------
-%	SKILLS
+%	PATENTS
 %----------------------------------------------------------------------------------------
-\section{Skills}
+\section{Patents}
+\begin{refsection}[patents.bib]
+\nocite{*}
+\printbibliography[heading=none, locallabelwidth=true]
+\end{refsection}
+
+%----------------------------------------------------------------------------------------
+%	Oral Presentations
+%----------------------------------------------------------------------------------------
+\section{Oral Presentations}
+\subsection{Invited}
+
+\subsection{Contributed}
+
+%----------------------------------------------------------------------------------------
+%	Teaching Experience
+%----------------------------------------------------------------------------------------
+\section{Teaching Experience}
+
+
+%----------------------------------------------------------------------------------------
+%	Other professional activities
+%----------------------------------------------------------------------------------------
+\section{Other Professional Activities}
 \begin{tabularx}{\linewidth}{@{}l X@{}}
 Some Skills &  \normalsize{This, That, Some of this and that etc.}\\
 Some More Skills  &  \normalsize{Also some more of this, Some more that, And some of this and that etc.}\\  
