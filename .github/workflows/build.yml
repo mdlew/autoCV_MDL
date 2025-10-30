@@ -17,15 +17,24 @@ jobs:
       - name: Install TeX Live
         uses: zauguin/install-texlive@v4
         with:
-           package_file: tl_packages
+          package_file: tl_packages
       - name: cv
         run: latexmk -pdfxe -xelatex="xelatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
-      - name: move
+      - name: move pdf to artifact folder
         run: mkdir -p github_artifacts && mv ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
-      - name: Upload pdf as artifact
+      - name: Add site files to artifact (index.html, CNAME)
+        run: |
+          mkdir -p github_artifacts
+          # copy only if present (no failure if missing)
+          for f in index.html CNAME; do
+            if [ -f "$f" ]; then
+              cp -v "$f" github_artifacts/
+            fi
+          done
+      - name: Upload pdf and site files as artifact
         uses: actions/upload-artifact@v5
         with:
-          name: ${{ env.FILE }}.pdf
+          name: site-and-pdf
           path: ./github_artifacts
   deploy:
     needs: [build]
@@ -33,13 +42,14 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-      - uses: actions/download-artifact@v6
+      - name: Download artifact
+        uses: actions/download-artifact@v6
         with:
           path: github_artifacts
-      - name: move
-        run: mkdir -p github_deploy && mv github_artifacts/* github_deploy
+      - name: Prepare deploy directory
+        run: |
+          mkdir -p github_deploy
+          mv github_artifacts/* github_deploy || true
       - name: deploy on orphan branch
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -47,18 +57,4 @@ jobs:
           publish_dir: ./github_deploy
           publish_branch: build
           force_orphan: true
-          enable_jekyll: true
-  copy-index-to-build:
-    needs: [deploy]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-      - name: Copy To Branches Action
-        uses: planetoftheweb/copy-to-branches@v1.3
-        env:
-          key: main
-          files: index.html CNAME
+          enable_jekyll: false
