@@ -57,6 +57,18 @@
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage[scale=0.9]{geometry}
 
+%fancy footer
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhf{} % clear existing header/footer entries
+\fancyfoot[C]{MDL CV -- \thepage\ of \pageref{LastPage}}
+\fancypagestyle{plain}{%
+  \renewcommand{\headrulewidth}{0pt}%
+  \fancyhf{}%
+  \fancyfoot[C]{MDL CV -- \thepage\ of \pageref{LastPage}}}
+
 %tabularx environment
 \usepackage{tabularx}
 
@@ -124,7 +136,7 @@
       % no DOI, no URL -> nothing
     }{%
       % URL but no DOI
-      \hspace{2mm}\href{\thefield{url}}{\faLink}%
+      \hspace{2mm}\href{\thefield{url}}{\faArrowUpRightFromSquare}%
     }%
   }{%
     % DOI present
@@ -140,7 +152,7 @@
   }%
   % Correction note (if present)
   \iffieldundef{userc}{}{%
-    \hfill\break \href{\thefield{userc}}{\faLink \ Correction}%
+    \hfill\break \href{\thefield{userc}}{\faArrowUpRightFromSquare \ Correction}%
   }%
 }
 
@@ -241,7 +253,7 @@ MSC 1042-207-1101, One Brookings Drive, St. Louis, MO 63130\ $|$ \
 \href{https://lewlab.wustl.edu}{\raisebox{-0.05\height}\faGlobe \ lewlab.wustl.edu} \ $|$ \ 
 \href{https://orcid.org/0000-0002-5614-3292}{\raisebox{-0.05\height}\faOrcid \ 0000-0002-5614-3292} \ $|$ \ 
 \href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\raisebox{-0.05\height} \faGoogleScholar \ Google Scholar} \ $|$ \ 
-\href{https://www.webofscience.com/wos/author/record/D-6270-2012}{\raisebox{-0.05\height}\faGlobe \ Web of Science} \ $|$ \ 
+\href{https://www.webofscience.com/wos/author/record/D-6270-2012}{\raisebox{-0.05\height}\faArrowUpRightFromSquare \ Web of Science} \ $|$ \ 
 \href{https://github.com/Lew-Lab/}{\raisebox{-0.05\height}\faGithub \ Lew-Lab} 
 \\
 \end{tabularx}
@@ -317,13 +329,21 @@ San Antonio, TX
 \begin{tabularx}{\linewidth}{ >{\raggedright\arraybackslash}l 
 >{\raggedleft\arraybackslash}X}	
 \href{https://lewlab.wustl.edu/files/OFSA-Program-2023.pdf}{Outstanding Faculty Award}, \textit{Washington University Graduate Student Senate} & 2023 \\
+\href{https://www.optica.org/membership/distinguished_honorary/senior/senior_member_classes/2021_optica_senior_members/}{Senior Member, Class of 2021}, \textit{Optica} & 2021 \\
+\href{https://rescorp.org/scialog/advancing-bioimaging/}{Scialog: Advancing Bioimaging Fellow}, \textit{Research Corporation for Science Advancement} & 2021 \\
+\href{https://source.washu.edu/2020/11/seven-faculty-honored-with-2020-emerson-teaching-awards/}{Excellence in Teaching Award}, \textit{Emerson Electric Co.} & 2020 \\
+\href{https://lewlab.wustl.edu/files/McKelvey_Honors_Program_2020.pdf}{Outstanding Teaching Award}, \textit{Preston M.\ Green Department of Electrical \& Systems Engineering} & 2020 \\
+Full Membership Inductee, \textit{Sigma Xi, The Scientific Research Honor Society} & 2020 \\
+\href{https://www.nsf.gov/awardsearch/show-award?AWD_ID=1653777}{CAREER Award}, \textit{National Science Foundation} & 2017 \\
+Hiruma/Wagner Award, \textit{16$^\textit{th}$ Conference of Peace through Mind/Brain Science} & 2016 \\
+\href{https://www.optica-opn.org/home/gallery/photo_contests/2015/}{Winner of 2015 After Image Photo Contest}, \textit{Optics \& Photonics News} & 2015 \\
 ... \\
 \end{tabularx}
 
 %----------------------------------------------------------------------------------------
 %	PUBLICATIONS
 %----------------------------------------------------------------------------------------
-\section[Publications]{Publications \small{ \href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\faGoogleScholar \ h-index: 31, i10-index: 46}}\ $|$ \ \href{https://lewlab.wustl.edu/pages/publications.html}{\faGlobe \ journal covers, citation \& attention metrics}}
+\section[Publications]{Publications \small{ \href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\faGoogleScholar \ h-index: 31, i10-index: 46}}\ $|$ \ \href{https://lewlab.wustl.edu/pages/publications.html}{\faArrowUpRightFromSquare \ journal covers, citation \& attention metrics}}
 \faImage \ cover article \ $|$ \ \faStar \ editor’s pick/hot paper \ $|$ \ *equal contribution \ $|$ \ $^+$co-corresponding authors
 
 \subsection{Refereed Articles}
@@ -378,6 +398,6 @@ Some More Skills  &  \normalsize{Also some more of this, Some more that, And som
 
 \vfill
 {\footnotesize Updated: \href{https://cv.matthewlew.info}{\today}\\
-\href{https://github.com/mdlew/autoCV_MDL}{Adapted with gratitude} from \href{https://github.com/jitinnair1/autoCV}{Jitin's autoCV repository}.
+\href{https://github.com/mdlew/autoCV_MDL}{Adapted with gratitude} from \href{https://github.com/jitinnair1/autoCV}{Jitin's autoCV template}.
 
 \end{document}
