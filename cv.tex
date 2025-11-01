@@ -101,7 +101,8 @@
 %for publications
 % \usepackage[style=authoryear,sorting=ynt, maxbibnames=2]{biblatex}
 % \usepackage[style=ieee, maxnames=99]{biblatex}
-\usepackage[style=science, maxnames=99, articletitle=true, date=year, isbn=false]{biblatex}
+\usepackage[style=science, maxnames=99, articletitle=true, date=year, isbn=false, eprint=false, url=false]{biblatex}
+
 
 % Count total number of entries in each refsection
 \AtDataInput{%
@@ -182,6 +183,47 @@
   \printtext[parens]{\usebibmacro{date}}%
   % Links
   % \usebibmacro{doi+eprint+url}%
+  \usebibmacro{finentry}%
+}
+
+% modify incollection style to include chapter title
+\DeclareBibliographyDriver{incollection}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit\newblock
+  % === INSERTED: print the chapter title before the “In:” block ===
+  \printtext{\printfield[titlecase]{title}}%
+  \newunit\newblock
+  % ===============================================================
+  \usebibmacro{in:}%
+  \usebibmacro{maintitle+booktitle}%
+  \newunit\newblock
+  \usebibmacro{byeditor+others}%
+  \newunit\newblock
+  \printfield{volumes}%
+  \newunit\newblock
+  \printfield{note}%
+  \newunit\newblock
+  \usebibmacro{publisher+location+date}%
+  \newunit\newblock
+  \printfield{volume}%
+  \newunit
+  \usebibmacro{chapter+pages}%
+  \newunit\newblock
+  \iftoggle{bbx:isbn}{\printfield{isbn}}{}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \newunit\newblock
+  \iftoggle{bbx:related}{\usebibmacro{related:init}\usebibmacro{related}}{}%
   \usebibmacro{finentry}%
 }
 
