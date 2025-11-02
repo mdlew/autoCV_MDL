@@ -1,0 +1,197 @@
+% science_biblatex_mods.sty
+% modifications to the standard Science style for my CV
+% Matthew Lew, November 2025
+
+% Count total number of entries in each refsection
+\AtDataInput{%
+  \csnumgdef{entrycount:\therefsection}{%
+    \csuse{entrycount:\therefsection}+1}}
+
+% Print the label number as (total in this refsection) - (actual label) + 1
+\DeclareFieldFormat{labelnumber}{\mkbibdesc{#1}}
+\newrobustcmd*{\mkbibdesc}[1]{%
+  \number\numexpr\csuse{entrycount:\therefsection}+1-#1\relax}
+
+% set up author highlighting
+\renewcommand*{\mkbibnamegiven}[1]{%
+  \ifitemannotation{highlight}
+    {\textbf{#1}}
+    {#1}}
+\renewcommand*{\mkbibnamefamily}[1]{%
+  \ifitemannotation{highlight}
+    {\textbf{#1}}
+    {#1}}
+
+
+% Add DOI/URL and cover-image icons at the end of each entry
+% usera = URL for cover image link
+% userb = URL for editor's pick link
+\renewbibmacro*{finentry}{%
+  % Close the entry first, then add icons
+  \finentry%
+  % DOI vs URL icon
+  \iffieldundef{doi}{%
+    \iffieldundef{url}{%
+      % no DOI, no URL -> nothing
+    }{%
+      % URL but no DOI
+      \hspace{2mm}\href{\thefield{url}}{\small\faArrowUpRightFromSquare}%
+    }%
+  }{%
+    % DOI present
+    \hspace{2mm}\href{https://doi.org/\thefield{doi}}{\small\faFileLines \ Article}%
+  }%
+  % Cover image icon (if present)
+  \iffieldundef{usera}{}{%
+    \hspace{2mm}\href{\thefield{usera}}{\small\faImage \ Cover image}%
+  }%
+  % Editor's pick icon (if present)
+  \iffieldundef{userb}{}{%
+    \hspace{2mm}\href{\thefield{userb}}{\small\faStar}%
+  }%
+  % Correction note (if present)
+  \iffieldundef{userc}{}{%
+    \hspace{2mm}\href{\thefield{userc}}{\small\faArrowUpRightFromSquare \ Correction}%
+  }%
+}
+
+% modify patent style to include title
+% Ensure quotes for patent titles via a field format:
+\DeclareFieldFormat[patent]{title}{#1}
+
+\DeclareBibliographyDriver{patent}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author}%
+  \setunit{\labelnamepunct}\newblock
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit\newblock
+  % Title via the standard title macro (uses the field format above)
+  \usebibmacro{title}%
+  \newunit\newblock
+  \printfield{type}%
+  \newunit
+  \printfield{number}%
+  %\iflistundef{location}{}{%
+  %  \setunit*{\addspace}%
+  %  \printtext[parens]{%
+  %    \printlist[][-\value{listtotal}]{location}}}%
+  %\newunit\newblock
+  %\printfield{note}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit
+  \nopunct
+  \printfield[parens]{year}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \newunit\newblock
+  \iftoggle{bbx:related}{\usebibmacro{related:init}\usebibmacro{related}}{}%
+  \usebibmacro{finentry}%
+}
+
+% modify incollection style to include chapter title
+\DeclareBibliographyDriver{incollection}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit\newblock
+  % === INSERTED: print the chapter title before the “In:” block ===
+  \printtext{\printfield[titlecase]{title}}%
+  \newunit\newblock
+  % ===============================================================
+  \usebibmacro{in:}%
+  \usebibmacro{maintitle+booktitle}%
+  \newunit\newblock
+  \usebibmacro{byeditor+others}%
+  \newunit\newblock
+  \printfield{volumes}%
+  \newunit\newblock
+  \printfield{note}%
+  \newunit\newblock
+  \usebibmacro{publisher+location+date}%
+  \newunit\newblock
+  \printfield{volume}%
+  \newunit
+  \usebibmacro{chapter+pages}%
+  \newunit\newblock
+  \iftoggle{bbx:isbn}{\printfield{isbn}}{}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \newunit\newblock
+  \iftoggle{bbx:related}{\usebibmacro{related:init}\usebibmacro{related}}{}%
+  \usebibmacro{finentry}%
+}
+
+% --- Field formats (inproceedings only) ---
+\DeclareFieldFormat[inproceedings]{title}{#1}     % title without quotes after authors
+\DeclareFieldFormat[inproceedings]{booktitle}{\mkbibemph{#1}}   % Proc. SPIE in italics
+\DeclareFieldFormat[inproceedings]{pages}{#1}                  % no "p." / "pp."
+\DeclareFieldFormat[inproceedings]{volume}{\mkbibbold{#1}}     % bold volume, no "vol."
+\DeclareFieldFormat[inproceedings]{volumes}{\mkbibbold{#1}}    % bold volumes (plural), no "vols."
+
+% --- Driver override for @inproceedings ---
+% Edits vs Science default:
+%   • insert title right after author list
+%   • remove "presented at the" (no leading prefix before booktitle)
+%   • move volume next to booktitle with NO comma between them
+%   • add (Year) at the very end
+\DeclareBibliographyDriver{inproceedings}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \printlist{language}%
+  \newunit\newblock
+  \usebibmacro{byauthor}%
+  \newunit\newblock
+  % === NEW: Title immediately after the author list ===
+  \usebibmacro{title}%
+  \newunit\newblock
+  % ================================================
+  % No "presented at the": go straight to booktitle
+  % Locally suppress the Science comma between units:
+  \begingroup
+    \renewcommand*{\newunitpunct}{\addspace}% ensures "Proc. SPIE 12853" (no comma)
+    \usebibmacro{maintitle+booktitle}%
+    \setunit*{\addspace}%
+    \printfield{volume}% bold via field format above
+    \printfield{part}%
+  \endgroup
+  \newunit\newblock
+  \printfield{volumes}% bold (plural) if present
+  \newunit\newblock
+  \printfield{note}%
+  \newunit\newblock
+  \usebibmacro{event+venue+date}%
+  \newunit\newblock
+  % Pages without "p./pp."
+  \usebibmacro{chapter+pages}%
+  \newunit\newblock
+  \iftoggle{bbx:isbn}{\printfield{isbn}}{}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
+  \newunit\newblock
+  \usebibmacro{addendum+pubstate}%
+  \setunit{\bibpagerefpunct}\newblock
+  \usebibmacro{pageref}%
+  \newunit\newblock
+  % Year at the end, in parentheses
+  \nopunct
+  \printtext[parens]{\usebibmacro{date}}%
+  \newunit\newblock
+  \iftoggle{bbx:related}{\usebibmacro{related:init}\usebibmacro{related}}{}%
+  \usebibmacro{finentry}%
+}

@@ -57,17 +57,35 @@
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage[scale=0.9]{geometry}
 
+% Suppress numbering for ALL levels (chapters, sections, subsections, ...)
+\setcounter{secnumdepth}{-1}
+
 %fancy footer
 \usepackage{lastpage}
 \usepackage{fancyhdr}
+
+% Ensure the section "mark" contains ONLY the section title (no number)
+% --- Marks: keep the most recent of section/subsection in \rightmark ---
+\makeatletter
+% Always update the "right mark" from sections and subsections
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\renewcommand{\subsectionmark}[1]{\markright{#1}}
+\makeatother
+
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0pt}
 \fancyhf{} % clear existing header/footer entries
-\fancyfoot[C]{MDL CV -- \thepage\ of \pageref{LastPage}}
+\fancyfoot[L]{\footnotesize MDL CV -- \nouppercase{\rightmark}}
+\fancyfoot[R]{\footnotesize \thepage\ of \pageref{LastPage}}
 \fancypagestyle{plain}{%
   \renewcommand{\headrulewidth}{0pt}%
   \fancyhf{}%
-  \fancyfoot[C]{MDL CV -- \thepage\ of \pageref{LastPage}}}
+  \fancyfoot[L]{\footnotesize MDL CV -- \nouppercase{\rightmark}}
+  \fancyfoot[R]{\footnotesize \thepage\ of \pageref{LastPage}}
+}
+
+% --- Hide header/footer on the FIRST page only ---
+\AtBeginDocument{\thispagestyle{empty}}
 
 %tabularx environment
 \usepackage{tabularx}
@@ -103,129 +121,7 @@
 % \usepackage[style=ieee, maxnames=99]{biblatex}
 \usepackage[style=science, maxnames=99, articletitle=true, date=year, isbn=false, eprint=false, url=false]{biblatex}
 
-
-% Count total number of entries in each refsection
-\AtDataInput{%
-  \csnumgdef{entrycount:\therefsection}{%
-    \csuse{entrycount:\therefsection}+1}}
-
-% Print the label number as (total in this refsection) - (actual label) + 1
-\DeclareFieldFormat{labelnumber}{\mkbibdesc{#1}}
-\newrobustcmd*{\mkbibdesc}[1]{%
-  \number\numexpr\csuse{entrycount:\therefsection}+1-#1\relax}
-
-% set up author highlighting
-\renewcommand*{\mkbibnamegiven}[1]{%
-  \ifitemannotation{highlight}
-    {\textbf{#1}}
-    {#1}}
-\renewcommand*{\mkbibnamefamily}[1]{%
-  \ifitemannotation{highlight}
-    {\textbf{#1}}
-    {#1}}
-
-
-% Add DOI/URL and cover-image icons at the end of each entry
-% usera = URL for cover image link
-% userb = URL for editor's pick link
-\renewbibmacro*{finentry}{%
-  % Close the entry first, then add icons
-  \finentry%
-  % DOI vs URL icon
-  \iffieldundef{doi}{%
-    \iffieldundef{url}{%
-      % no DOI, no URL -> nothing
-    }{%
-      % URL but no DOI
-      \hspace{2mm}\href{\thefield{url}}{\small\faArrowUpRightFromSquare}%
-    }%
-  }{%
-    % DOI present
-    \hspace{2mm}\href{https://doi.org/\thefield{doi}}{\small\faFileLines \ Article}%
-  }%
-  % Cover image icon (if present)
-  \iffieldundef{usera}{}{%
-    \hspace{2mm}\href{\thefield{usera}}{\small\faImage \ Cover image}%
-  }%
-  % Editor's pick icon (if present)
-  \iffieldundef{userb}{}{%
-    \hspace{2mm}\href{\thefield{userb}}{\small\faStar}%
-  }%
-  % Correction note (if present)
-  \iffieldundef{userc}{}{%
-    \hspace{2mm}\href{\thefield{userc}}{\small\faArrowUpRightFromSquare \ Correction}%
-  }%
-}
-
-% modify patent style to include title
-% Default: plain roman, but in titlecase as Science style expects:
-\DeclareFieldFormat[patent]{title}{#1}
-
-% Redefine the patent driver to include the title
-\DeclareBibliographyDriver{patent}{%
-  \usebibmacro{bibindex}%
-  \usebibmacro{begentry}%
-  % Inventors
-  \printnames{author}%
-  \setunit{\labelnamepunct}\newblock
-  % Assignee
-  \printnames{holder}%
-  \setunit{\labelnamepunct}\newblock
-  % >>> Title (newly added) <<<
-  \printfield[titlecase]{title}%
-  \newunit\newblock
-  % Patent type and number (e.g., US 2018/0299251 A1)
-  \printfield{type}%
-  \setunit*{\space}%
-  \printfield{number}%
-  % Date (respects date=year)
-  \setunit{\addspace}%
-  \printtext[parens]{\usebibmacro{date}}%
-  % Links
-  % \usebibmacro{doi+eprint+url}%
-  \usebibmacro{finentry}%
-}
-
-% modify incollection style to include chapter title
-\DeclareBibliographyDriver{incollection}{%
-  \usebibmacro{bibindex}%
-  \usebibmacro{begentry}%
-  \usebibmacro{author/translator+others}%
-  \setunit{\labelnamepunct}\newblock
-  \printlist{language}%
-  \newunit\newblock
-  \usebibmacro{byauthor}%
-  \newunit\newblock
-  % === INSERTED: print the chapter title before the “In:” block ===
-  \printtext{\printfield[titlecase]{title}}%
-  \newunit\newblock
-  % ===============================================================
-  \usebibmacro{in:}%
-  \usebibmacro{maintitle+booktitle}%
-  \newunit\newblock
-  \usebibmacro{byeditor+others}%
-  \newunit\newblock
-  \printfield{volumes}%
-  \newunit\newblock
-  \printfield{note}%
-  \newunit\newblock
-  \usebibmacro{publisher+location+date}%
-  \newunit\newblock
-  \printfield{volume}%
-  \newunit
-  \usebibmacro{chapter+pages}%
-  \newunit\newblock
-  \iftoggle{bbx:isbn}{\printfield{isbn}}{}%
-  \newunit\newblock
-  \usebibmacro{doi+eprint+url}%
-  \newunit\newblock
-  \usebibmacro{addendum+pubstate}%
-  \setunit{\bibpagerefpunct}\newblock
-  \usebibmacro{pageref}%
-  \newunit\newblock
-  \iftoggle{bbx:related}{\usebibmacro{related:init}\usebibmacro{related}}{}%
-  \usebibmacro{finentry}%
-}
+\usepackage{science_biblatex_mods}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -457,6 +353,6 @@ Some More Skills  &  \normalsize{Also some more of this, Some more that, And som
 
 \vfill
 {\footnotesize Updated: \href{https://cv.matthewlew.info}{\today}\\
-\href{https://github.com/mdlew/autoCV_MDL}{Adapted with gratitude} from \href{https://github.com/jitinnair1/autoCV}{Jitin's autoCV template}.
+\href{https://github.com/mdlew/autoCV_MDL}{Adapted with gratitude} from \href{https://github.com/jitinnair1/autoCV}{Jitin's autoCV template}.}
 
 \end{document}
