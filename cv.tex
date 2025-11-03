@@ -94,7 +94,8 @@
 
 %for lists within experience section
 \usepackage{enumitem}
-
+%reverse-ordered lists
+\usepackage{etaremune}
 
 %to prevent spillover of tabular into next pages
 \usepackage{supertabular}
@@ -142,8 +143,8 @@
 \newenvironment{jobshort}[2]
 {
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill &  #2 \\[\tablerowskip]
-    \end{tabularx}
+    \textbf{#1} & \hfill &  #2 
+    \end{tabularx} \par%
 }
 {
 }
@@ -151,8 +152,8 @@
 \newenvironment{joblong}[2]
 {
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill &  #2 \\[\tablerowskip]
-    \end{tabularx}
+    \textbf{#1} & \hfill & #2 
+    \end{tabularx} \par%
     \begin{minipage}[t]{\linewidth}
     \begin{itemize}[nosep,after=\strut, leftmargin=1em, itemsep=3pt,label=--]
 }
@@ -165,15 +166,25 @@
 \newenvironment{activityshort}[2]
 {
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textit{#1} & \hfill &  #2 \\[\tablerowskip]
-    \end{tabularx}
+    \textit{#1} & \hfill & #2 
+    \end{tabularx} \par%
 }
 {
 }
 
+% any optional argument will turn off italics
+% \activitynone[plain]{Brian Sun, Electrical Engineering}{2023} % plain
+\newcommand{\activitynone}[3][]{%
+  \begin{tabularx}{\linewidth}{@{}l X r@{}}%
+    \ifx\relax#1\relax \textit{#2}\else #2\fi
+    & \hfill & #3%
+  \end{tabularx}\par%
+}
+
 % Remove bullets and indentation for itemize
 \renewcommand{\labelitemi}{} % hides bullet
-\setlength{\leftmargini}{0pt} % removes indent
+% Apply only to itemize, first level
+\setlist[itemize,1]{leftmargin=0pt}
 % Set spacing between items
 \setlength{\itemsep}{\tablerowskip}
 
@@ -386,6 +397,111 @@ National Merit Scholarship & 2004 \\
 \printbibliography[heading=none, locallabelwidth=true]
 \end{refsection}
 
+
+%----------------------------------------------------------------------------------------
+%	Mentoring
+%----------------------------------------------------------------------------------------
+\section{Student Mentoring}
+
+\subsection{Ph.D.}
+\begin{etaremune}
+
+\item Zhihang Li, Imaging Science (current)
+\item Brian Sun, MSTP/Electrical Engineering (current)
+\item Suraj Deepak Khochare, Imaging Science (current)
+\item Yiyang Chen, Imaging Science (current)
+\item Yuanxin Qiu, Imaging Science (current)
+
+\item \begin{activityshort}{Dr.\ Tingting Wu, Imaging Science}{2023}
+\href{https://doi.org/10.7936/kq2q-jp12}{Information-Rich 6D Single-Molecule Imaging Design Using Optimization} \\
+Senior Imaging Quality Engineer, metalenz
+\end{activityshort} 
+
+
+\item \begin{activityshort}{Prof.\ Oumeng Zhang, Electrical Engineering}{2022}
+\href{https://doi.org/10.7936/kyz7-kw50}{Multi-Dimensional Single-Molecule Nanoscopy: Fundamental Limits and Novel Approaches} \\
+Assistant Professor, Department of Physics \& Astronomy, Texas A\&M University
+\end{activityshort} 
+
+\item \begin{activityshort}{Prof.\ Tianben Ding, Electrical Engineering}{2020}
+\href{https://doi.org/10.7936/qq7n-e207}{Structural Organization and Chemical Activity Revealed by New Developments in Single-Molecule Fluorescence and Orientation Imaging} \\
+Assistant Professor, Department of Chemistry, University of Tokyo
+\end{activityshort}
+
+\item \begin{activityshort}{Dr.\ Hesam Mazidisharfabadi, Electrical Engineering (co-advised with Arye Nehorai)}{2020}
+\href{https://doi.org/10.7936/6054-tr98}{Convex Relaxations for Particle-Gradient Flow with Applications in Super-Resolution Single-Molecule Localization Microscopy} \\
+Vice President, MUFG Securities Americas
+\end{activityshort}
+
+\end{etaremune}
+
+\subsection{M.S.}
+\begin{etaremune}
+
+\item \begin{activityshort}{Ziyi Hu, Biomedical Engineering}{2023}
+\href{https://doi.org/10.7936/r8cg-3z04}{Single-Molecule Super-Resolution Imaging of Geobacter sulfurreducens under Anaerobic Conditions} \\
+Placement: WashU BME Ph.D. Program
+\end{activityshort}
+
+\item \begin{activityshort}{Tristan Carlson, Electrical Engineering}{2022}
+\href{https://doi.org/10.7936/q24e-bh48}{Design of an Offner-Chrisp Imaging Spectrometer for a Planetary Fluorescence Instrument} \\
+Optical/Electronics Engineer, MIT Lincoln Laboratory
+\end{activityshort}
+
+\item \begin{activityshort}{Jackson Hyde, Electrical Engineering}{2020}
+\href{https://doi.org/10.7936/nk7z-0p22}{Data Processing Electronics for an Ultra-Fast Single-Photon Counting Camera} \\
+Hardware Engineer, IMC Trading    
+\end{activityshort}  
+
+\item \begin{activityshort}{Weiran Wang, Electrical Engineering}{2019}
+\href{https://doi.org/10.7936/856m-dx73}{Three-dimensional Point Spread Function Engineering for High Axial Localization Precision}   
+\end{activityshort} 
+
+\item \begin{activityshort}{Oumeng Zhang, Electrical Engineering}{2017}
+\href{https://doi.org/10.7936/K7ZP44J5}{Measuring Molecular Orientation and Rotational Mobility Using a Tri-spot Point Spread Function} \\
+Placement: WashU EE Ph.D. Program
+\end{activityshort} 
+
+\end{etaremune}
+
+\subsection{B.S.}
+\begin{multicols}{2}
+\begin{etaremune}
+
+\item Alex Nie, Electrical Engineering (current)
+
+\item \activitynone{Erik Lindeman, Physics, Caltech}{2024}
+
+\item \activitynone{Sam Kang, Electrical Engineering}{2024}
+
+\item \begin{activityshort}{Jasmine Cheng, Electrical Engineering}{2024}
+\href{https://openscholarship.wustl.edu/eseundergraduate_research/19}{Robust 6D Fluorescence Microscopy}
+\end{activityshort}
+    
+\item \activitynone{Brian Sun, Electrical Engineering}{2023}
+
+\item \activitynone{Makaiya Smith, Computer Engineering,}{2021}
+\textit{Jackson State University}
+
+\item \activitynone{Max Huang, Electrical Engineering}{2021}
+
+\item \activitynone{Tristan Carlson, Electrical Engineering}{2020}
+
+\item \activitynone{James Cevasco, Electrical Engineering}{2020}
+
+\item \activitynone{Jackson Hyde, Electrical Engineering}{2020}
+
+\item \activitynone{Tara Porter, Electrical Engineering, Caltech}{2019}
+
+\item \activitynone{James Jusuf, Physics, Caltech}{2019}
+
+\item \activitynone{Kevin Spehar, Biomedical Engineering}{2019}
+
+\item \activitynone{Eshan King, Biomedical Engineering}{2019}
+
+\end{etaremune}
+\end{multicols}
+
 %----------------------------------------------------------------------------------------
 %	Teaching Experience
 %----------------------------------------------------------------------------------------
@@ -434,60 +550,6 @@ National Merit Scholarship & 2004 \\
              {}
 \end{tabularx}
 
-%----------------------------------------------------------------------------------------
-%	Mentoring
-%----------------------------------------------------------------------------------------
-\section{Student Mentoring}
-
-\subsection{Ph.D.}
-\begin{itemize}
-\item Zhihang Li, Imaging Science (current)
-\item Brian Sun, MSTP/Electrical Engineering (current)
-\item Suraj Deepak Khochare, Imaging Science (current)
-\item Yiyang Chen, Imaging Science (current)
-\item Yuanxin Qiu, Imaging Science (current)
-\end{itemize}
-
-\begin{activityshort}{Dr.\ Tingting Wu, Imaging Science}{2023}
-\href{https://doi.org/10.7936/kq2q-jp12}{Information-Rich 6D Single-Molecule Imaging Design Using Optimization} \\
-Senior Imaging Quality Engineer, metalenz
-\end{activityshort} 
-
-\begin{activityshort}{Prof.\ Oumeng Zhang, Electrical Engineering}{2022}
-\href{https://doi.org/10.7936/kyz7-kw50}{Multi-Dimensional Single-Molecule Nanoscopy: Fundamental Limits and Novel Approaches} \\
-Assistant Professor, Department of Physics \& Astronomy, Texas A\&M University
-\end{activityshort} 
-
-\begin{activityshort}{Prof.\ Tianben Ding, Electrical Engineering}{2020}
-\href{https://doi.org/10.7936/qq7n-e207}{Structural Organization and Chemical Activity Revealed by New Developments in Single-Molecule Fluorescence and Orientation Imaging} \\
-Assistant Professor, Department of Chemistry, University of Tokyo
-\end{activityshort}
-
-\begin{activityshort}{Dr.\ Hesam Mazidisharfabadi, Electrical Engineering (co-advised with Arye Nehorai)}{2020}
-\href{https://doi.org/10.7936/6054-tr98}{Convex Relaxations for Particle-Gradient Flow with Applications in Super-Resolution Single-Molecule Localization Microscopy} \\
-Vice President, MUFG Securities Americas
-\end{activityshort}
-
-\subsection{M.S.}
-\begin{activityshort}{Ziyi Hu, Biomedical Engineering}{2023}
-\href{https://doi.org/10.7936/r8cg-3z04}{Single-Molecule Super-Resolution Imaging of Geobacter sulfurreducens under Anaerobic Conditions} \\
-Placement: WashU BME Ph.D. Program
-\end{activityshort}
-
-\begin{activityshort}{Jackson Hyde, Electrical Engineering}{2020}
-\href{https://doi.org/10.7936/nk7z-0p22}{Data Processing Electronics for an Ultra-Fast Single-Photon Counting Camera} \\
-Hardware Engineer, IMC Trading    
-\end{activityshort}  
-
-\begin{activityshort}{Weiran Wang, Electrical Engineering}{2019}
-\href{https://doi.org/10.7936/856m-dx73}{Three-dimensional Point Spread Function Engineering for High Axial Localization Precision}    
-\end{activityshort} 
-
-\begin{activityshort}{Oumeng Zhang, Electrical Engineering}{2017}
-\href{https://doi.org/10.7936/K7ZP44J5}{Measuring Molecular Orientation and Rotational Mobility Using a Tri-spot Point Spread Function} \\
-Placement: WashU EE Ph.D. Program
-\end{activityshort} 
-
 
 %----------------------------------------------------------------------------------------
 %	Other professional activities
@@ -495,22 +557,15 @@ Placement: WashU EE Ph.D. Program
 \section{Other Professional Activities}
 
 \subsection{Editorial Boards}
+\begin{tabularx}{\linewidth}{ >{\raggedright\arraybackslash}l 
+>{\raggedleft\arraybackslash}X}
 
-\begin{activityshort}{Chemical \& Biomedical Imaging}{2024 -- present}
-\href{https://pubs.acs.org/page/cbihbp/editors.html}{Early Career Board}
-\end{activityshort}
+\href{https://pubs.acs.org/page/cbihbp/editors.html}{Early Career Board}, \textit{Chemical \& Biomedical Imaging} & 2024 -- present \\
+\href{https://www.nature.com/srep/about/editors\#photonics}{Editorial Board}, \textit{Scientific Reports} & 2019 -- present \\
+Associate Editor, \textit{Biological Imaging} & 2020 -- 2024 \\
+Guest Editor, \href{https://pubs.acs.org/page/jpcbfk/vsi/Moerner-festschrift}{W.\ E.\ Moerner Festschrift}, \textit{Journal of Physical Chemistry B} & 2022 \\
 
-\begin{activityshort}{Scientific Reports}{2019 -- present}
-\href{https://www.nature.com/srep/about/editors#photonics}{Editorial Board}
-\end{activityshort}
-
-\begin{activityshort}{Biological Imaging}{2020 -- 2024}
-Associate Editor
-\end{activityshort}
-
-\begin{activityshort}{J.\ Phys.\ Chem.\ B}{2022}
-Guest Editor, \href{https://pubs.acs.org/page/jpcbfk/vsi/Moerner-festschrift}{W.\ E.\ Moerner Festschrift}
-\end{activityshort}
+\end{tabularx}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Conference Leadership}
@@ -559,7 +614,7 @@ Division of Electrical, Communications and Cyber Systems
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection[Peer Review (Journals)]{Peer Review (Journals) \small (number of \href{https://www.webofscience.com/wos/author/record/D-6270-2012}{verified reviews})}
 
-\begin{multicols}{2}
+\begin{multicols}{3}
 \begin{itemize}
     \item (14) Nature Communications
     \item (11) Optics Express
@@ -692,22 +747,15 @@ Caltech Chapter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Community Outreach}
+\begin{tabularx}{\linewidth}{ >{\raggedright\arraybackslash}l 
+>{\raggedleft\arraybackslash}X}
 
-\begin{activityshort}{SciFest Demonstrations}{2016 -- present}
-Saint Louis Science Center
-\end{activityshort}
+SciFest Demonstrations, \textit{Saint Louis Science Center} & 2016 -- present \\
+\href{https://lewlab.wustl.edu/images/SLSC_Quantum100Panel_2025.webp}{Quantum 100 Celebration Panelist}, \textit{Saint Louis Science Center} & 2025 \\
+Portal to the Public, \textit{Saint Louis Science Center} & 2016 -- 2023\\
+LEGO Microscope Demonstration with WashU SPECTRA, \textit{Gateway STEM High School} & 2016 \\
 
-\begin{activityshort}{\href{https://lewlab.wustl.edu/images/SLSC_Quantum100Panel_2025.webp}{Quantum 100 Celebration Panelist}}{2025}
-Saint Louis Science Center
-\end{activityshort}
-
-\begin{activityshort}{Portal to the Public}{2016 -- 2023}
-Saint Louis Science Center
-\end{activityshort}
-
-\begin{activityshort}{LEGO Microscope Demonstration with WashU SPECTRA}{2016}
-Gateway STEM High School
-\end{activityshort}
+\end{tabularx}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -735,7 +783,6 @@ IEEE Engineering in Medicine and Biology Society & 2020 \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vfill
-{\footnotesize Updated: \href{https://cv.matthewlew.info}{\today}\\
-\href{https://github.com/mdlew/autoCV_MDL}{Adapted with gratitude} from \href{https://github.com/jitinnair1/autoCV}{Jitin's autoCV template}.}
+{\footnotesize Updated \href{https://cv.matthewlew.info}{\today}. \href{https://github.com/mdlew/autoCV_MDL}{Adapted with gratitude} from \href{https://github.com/jitinnair1/autoCV}{Jitin's autoCV template}.}
 
 \end{document}
