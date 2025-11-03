@@ -89,16 +89,15 @@
 
 %tabularx environment
 \usepackage{tabularx}
+% Global spacing (you can tweak these)
+\newcommand{\tablerowskip}{3.75pt}   % space after each entry
 
 %for lists within experience section
 \usepackage{enumitem}
 
-% centered version of 'X' col. type
-\newcolumntype{C}{>{\centering\arraybackslash}X} 
 
 %to prevent spillover of tabular into next pages
 \usepackage{supertabular}
-\usepackage{tabularx}
 \newlength{\fullcollw}
 \setlength{\fullcollw}{0.47\textwidth}
 
@@ -113,7 +112,7 @@
 \titlespacing{\section}{0pt}{10pt}{10pt}
 
 \titleformat{\subsection}{\bfseries\raggedright}{}{0em}{}
-\titlespacing{\subsection}{0pt}{10pt}{10pt}
+\titlespacing{\subsection}{0pt}{10pt}{\tablerowskip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %for publications
@@ -121,16 +120,8 @@
 % \usepackage[style=ieee, maxnames=99]{biblatex}
 \usepackage[style=science, maxnames=99, articletitle=true, date=year, isbn=false, eprint=false, url=false]{biblatex}
 
-\usepackage{science_biblatex_mods}
+\usepackage{biblatex_science_mods}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%Setup hyperref package, and colours for links
-\usepackage[unicode, draft=false]{hyperref}
-\definecolor{linkcolour}{rgb}{0,0.2,0.6}
-\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour,linkcolor=linkcolour}
-%\addbibresource{citations.bib}
-\setlength\bibitemsep{1em}
 
 %for social icons
 % \usepackage{fontawesome5}
@@ -140,30 +131,80 @@
 %\usepackage{showframe}
 
 
+%Setup hyperref package, and colours for links
+\usepackage[unicode, draft=false]{hyperref}
+\definecolor{linkcolour}{rgb}{0,0.2,0.6}
+\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour,linkcolor=linkcolour}
+%\addbibresource{citations.bib}
+\setlength\bibitemsep{1em}
+
 % job listing environments
 \newenvironment{jobshort}[2]
-    {
+{
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill &  #2 \\[3.75pt]
+    \textbf{#1} & \hfill &  #2 \\[\tablerowskip]
     \end{tabularx}
-    }
-    {
-    }
+}
+{
+}
 
 \newenvironment{joblong}[2]
-    {
+{
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill &  #2 \\[3.75pt]
+    \textbf{#1} & \hfill &  #2 \\[\tablerowskip]
     \end{tabularx}
     \begin{minipage}[t]{\linewidth}
     \begin{itemize}[nosep,after=\strut, leftmargin=1em, itemsep=3pt,label=--]
-    }
-    {
-    \end{itemize}
-    \end{minipage}    
-    }
+}
+{
+\end{itemize}
+\end{minipage}    
+}
 
+% activity listing environments
+\newenvironment{activityshort}[2]
+{
+    \begin{tabularx}{\linewidth}{@{}l X r@{}}
+    \textit{#1} & \hfill &  #2 \\[\tablerowskip]
+    \end{tabularx}
+}
+{
+}
 
+% Remove bullets and indentation for itemize
+\renewcommand{\labelitemi}{} % hides bullet
+\setlength{\leftmargini}{0pt} % removes indent
+% Set spacing between items
+\setlength{\itemsep}{\tablerowskip}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%for teaching
+% Wide left column; compact right column
+\newcolumntype{Y}{>{\raggedright\arraybackslash}p{0.53\textwidth}}
+\newcolumntype{Z}{>{\raggedleft\arraybackslash}X}
+% \setlength{\tabcolsep}{6pt} % optional
+
+% Institution header: bold, spans both columns, simple spacing
+\newcommand{\teachinstitution}[1]{%
+  \multicolumn{2}{l}{\textbf{#1}}\\[\tablerowskip]%
+}
+
+% Entry:
+%   #1 = course number+title, incl. (UG)/(GR) — fully italicized
+%   #2 = role (free text; include any notes here)
+%   #3 = terms1 (first line, right column)
+%   #4 = terms2 (second line, right column) — pass {} to omit
+\newcommand{\teachentry}[4]{%
+  % Left cell (two lines)
+  \emph{#1}
+  % Right cell (one or two lines)
+  & #3 \\%
+  #2 &%
+  \if\relax\detokenize{#4}\relax\else#4\fi%
+  \\[\tablerowskip]%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %----------------------------------------------------------------------------------------
 %	BEGIN DOCUMENT
@@ -226,7 +267,7 @@ Preston M. Green Department of Electrical and Systems Engineering
 \begin{jobshort}{Postdoctoral Scholar, Stanford University School of Medicine}{Nov 2014 -- Jun 2015}
 Department of Structural Biology \\
 \emph{Molecular Imaging: Speckle-Modulating Optical Coherence Tomography} \\
-Research Advisor: Adam de la Zerda
+Research Advisor: \href{https://med.stanford.edu/delazerda.html}{Adam de la Zerda}
 \end{jobshort}
 
 \begin{jobshort}{Research Intern, Google[x]}{2014}
@@ -241,7 +282,7 @@ San Antonio, TX
 % \section{Projects}
 
 % \begin{tabularx}{\linewidth}{ @{}l r@{} }
-% \textbf{Some Project} & \hfill \href{https://some-link.com}{Link to Demo} \\[3.75pt]
+% \textbf{Some Project} & \hfill \href{https://some-link.com}{Link to Demo} \\[\tablerowskip]
 % \multicolumn{2}{@{}X@{}}{long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width}  \\
 % \end{tabularx}
 
@@ -252,13 +293,13 @@ San Antonio, TX
 \begin{tabularx}{\linewidth}{@{}l X@{}}	
 2008 -- 2015 & \textbf{Ph.D.\ in Electrical Engineering} at Stanford University \hfill \normalsize (GPA: 4.0/4.0) \\
     & \href{https://searchworks.stanford.edu/view/10636571}{\textit{Engineering New Capabilities into Optical Microscopes: Toward Measuring the Three-Dimensional Position and Orientation of Single Molecules in Living Cells}} \\
-    & Research Advisor: W.\ E.\ Moerner \\
+    & Research Advisor: \href{https://web.stanford.edu/group/moerner/}{W.\ E.\ Moerner} \\[\tablerowskip]
 
-2008 -- 2010 & \textbf{M.S.\ in Electrical Engineering} at Stanford University \hfill \normalsize (GPA: 3.9/4.0) \\
+2008 -- 2010 & \textbf{M.S.\ in Electrical Engineering} at Stanford University \hfill \normalsize (GPA: 3.9/4.0) \\[\tablerowskip]
 
 2004 -- 2008 & \textbf{B.S.\ \href{https://resolver.caltech.edu/CaltechCampusPubs:20110511-115217108}{with Honor} in Electrical Engineering} at the California Institute of Technology \hfill \normalsize (GPA: 4.0/4.0) \\
     & \textit{Quantitative Differential Phase Imaging and Phase Reconstruction} \\
-    & Research Advisor: Changhuei Yang \\
+    & Research Advisor: \href{https://biophot.caltech.edu/}{Changhuei Yang} \\[\tablerowskip]
 \end{tabularx}
 
 %----------------------------------------------------------------------------------------
@@ -266,6 +307,7 @@ San Antonio, TX
 %----------------------------------------------------------------------------------------
 
 \section{Awards and Recognitions}
+
 \begin{tabularx}{\linewidth}{ >{\raggedright\arraybackslash}l 
 >{\raggedleft\arraybackslash}X}	
 \href{https://lewlab.wustl.edu/files/OFSA-Program-2023.pdf}{Outstanding Faculty Award}, \textit{Washington University Graduate Student Senate} & 2023 \\
@@ -302,19 +344,19 @@ National Merit Scholarship & 2004 \\
 \faImage \ cover article \ $|$ \ \faStar \ editor’s pick/hot paper \ $|$ \ *equal contribution \ $|$ \ $^+$co-corresponding authors
 
 \subsection{Refereed Articles}
-\begin{refsection}[refereed.bib]
+\begin{refsection}[pubs_journal.bib]
 \nocite{*}
 \printbibliography[heading=none, locallabelwidth=true]
 \end{refsection}
 
 \subsection{Review Articles, Book Chapters, and Commentaries}
-\begin{refsection}[review.bib]
+\begin{refsection}[pubs_reviews.bib]
 \nocite{*}
 \printbibliography[heading=none, locallabelwidth=true]
 \end{refsection}
 
 \subsection{Other Publications}
-\begin{refsection}[other.bib]
+\begin{refsection}[pubs_other.bib]
 \nocite{*}
 \printbibliography[heading=none, locallabelwidth=true]
 \end{refsection}
@@ -332,25 +374,366 @@ National Merit Scholarship & 2004 \\
 %	Oral Presentations
 %----------------------------------------------------------------------------------------
 \section{Oral Presentations}
-\subsection{Invited}
+\subsection{Invited Talks}
+\begin{refsection}[talks_invited.bib]
+\nocite{*}
+\printbibliography[heading=none, locallabelwidth=true]
+\end{refsection}
 
-\subsection{Contributed}
+\subsection{Contributed Talks}
+\begin{refsection}[talks_contributed.bib]
+\nocite{*}
+\printbibliography[heading=none, locallabelwidth=true]
+\end{refsection}
 
 %----------------------------------------------------------------------------------------
 %	Teaching Experience
 %----------------------------------------------------------------------------------------
-\section{Teaching Experience}
+\section[Teaching Experience]{Teaching Experience \small (enrollment)}
+\begin{tabularx}{\textwidth}{Y Z}
+  \teachinstitution{Washington University in St.\ Louis}
+  \teachentry{ESE 4880 Signals and Imaging Laboratory (UG)}
+             {Co-Developer and Co-Instructor with Jason Trobaugh}
+             {FL24 (12), SP25 (3), FL25 (13)}
+             {}
+  \teachentry{ESE 5820 Fundamentals and Applications of Modern Optical Imaging (GR)}
+             {Developer and Instructor}
+             {\parbox[t]{0.35\textwidth}{FL15 (18), SP17 (15), SP18 (28), SP19 (12), \\ SP20 (18), SP21 (23), SP22 (15), SP24 (21),}}
+             {SP26 ()}
+  \teachentry{ESE 4301 Quantum Mechanics for Engineers (UG)}
+             {Instructor}
+             {FL24 (8)}
+             {}
+  \teachentry{ESE 105 Introduction to Electrical and Systems Engineering (UG)}
+             {Co-Developer and Co-Instructor with Shinung Ching}
+             {FL18 (36), FL19 (67), FL20 (76), FL21 (83),}
+             {FL22 (93), FL23 (66)}
+  \teachentry{ESE 330 Engineering Electromagnetics Principles (UG)}
+             {Instructor}
+             {FL16 (37)}
+             {}
+\end{tabularx}
+
+\begin{tabularx}{\textwidth}{Y Z}
+  \teachinstitution{Stanford University}
+  \teachentry{EE 134 Introduction to Photonics (UG)}
+             {Co-Developer (taught by Audrey K.\ Bowden)}
+             {2012}
+             {}
+\end{tabularx}
+
+\begin{tabularx}{\textwidth}{Y Z}
+  \teachinstitution{California Institute of Technology}
+  \teachentry{EE 113 Feedback and Control Circuits (UG)}
+             {Teaching Assistant (taught by Glen George)}
+             {2006--2008}
+             {}
+  \teachentry{EE 20 Electronics Laboratory (UG)}
+             {Teaching Assistant (taught by Dimitrios Antsos)}
+             {2006--2008}
+             {}
+\end{tabularx}
+
+%----------------------------------------------------------------------------------------
+%	Mentoring
+%----------------------------------------------------------------------------------------
+\section{Student Mentoring}
+
+\subsection{Ph.D.}
+\begin{itemize}
+\item Zhihang Li, Imaging Science (current)
+\item Brian Sun, MSTP/Electrical Engineering (current)
+\item Suraj Deepak Khochare, Imaging Science (current)
+\item Yiyang Chen, Imaging Science (current)
+\item Yuanxin Qiu, Imaging Science (current)
+\end{itemize}
+
+\begin{activityshort}{Dr.\ Tingting Wu, Imaging Science}{2023}
+\href{https://doi.org/10.7936/kq2q-jp12}{Information-Rich 6D Single-Molecule Imaging Design Using Optimization} \\
+Senior Imaging Quality Engineer, metalenz
+\end{activityshort} 
+
+\begin{activityshort}{Prof.\ Oumeng Zhang, Electrical Engineering}{2022}
+\href{https://doi.org/10.7936/kyz7-kw50}{Multi-Dimensional Single-Molecule Nanoscopy: Fundamental Limits and Novel Approaches} \\
+Assistant Professor, Department of Physics \& Astronomy, Texas A\&M University
+\end{activityshort} 
+
+\begin{activityshort}{Prof.\ Tianben Ding, Electrical Engineering}{2020}
+\href{https://doi.org/10.7936/qq7n-e207}{Structural Organization and Chemical Activity Revealed by New Developments in Single-Molecule Fluorescence and Orientation Imaging} \\
+Assistant Professor, Department of Chemistry, University of Tokyo
+\end{activityshort}
+
+\begin{activityshort}{Dr.\ Hesam Mazidisharfabadi, Electrical Engineering (co-advised with Arye Nehorai)}{2020}
+\href{https://doi.org/10.7936/6054-tr98}{Convex Relaxations for Particle-Gradient Flow with Applications in Super-Resolution Single-Molecule Localization Microscopy} \\
+Vice President, MUFG Securities Americas
+\end{activityshort}
+
+\subsection{M.S.}
+\begin{activityshort}{Ziyi Hu, Biomedical Engineering}{2023}
+\href{https://doi.org/10.7936/r8cg-3z04}{Single-Molecule Super-Resolution Imaging of Geobacter sulfurreducens under Anaerobic Conditions} \\
+Placement: WashU BME Ph.D. Program
+\end{activityshort}
+
+\begin{activityshort}{Jackson Hyde, Electrical Engineering}{2020}
+\href{https://doi.org/10.7936/nk7z-0p22}{Data Processing Electronics for an Ultra-Fast Single-Photon Counting Camera} \\
+Hardware Engineer, IMC Trading    
+\end{activityshort}  
+
+\begin{activityshort}{Weiran Wang, Electrical Engineering}{2019}
+\href{https://doi.org/10.7936/856m-dx73}{Three-dimensional Point Spread Function Engineering for High Axial Localization Precision}    
+\end{activityshort} 
+
+\begin{activityshort}{Oumeng Zhang, Electrical Engineering}{2017}
+\href{https://doi.org/10.7936/K7ZP44J5}{Measuring Molecular Orientation and Rotational Mobility Using a Tri-spot Point Spread Function} \\
+Placement: WashU EE Ph.D. Program
+\end{activityshort} 
 
 
 %----------------------------------------------------------------------------------------
 %	Other professional activities
 %----------------------------------------------------------------------------------------
 \section{Other Professional Activities}
-\begin{tabularx}{\linewidth}{@{}l X@{}}
-Some Skills &  \normalsize{This, That, Some of this and that etc.}\\
-Some More Skills  &  \normalsize{Also some more of this, Some more that, And some of this and that etc.}\\  
+
+\subsection{Editorial Boards}
+
+\begin{activityshort}{Chemical \& Biomedical Imaging}{2024 -- present}
+\href{https://pubs.acs.org/page/cbihbp/editors.html}{Early Career Board}
+\end{activityshort}
+
+\begin{activityshort}{Scientific Reports}{2019 -- present}
+\href{https://www.nature.com/srep/about/editors#photonics}{Editorial Board}
+\end{activityshort}
+
+\begin{activityshort}{Biological Imaging}{2020 -- 2024}
+Associate Editor
+\end{activityshort}
+
+\begin{activityshort}{J.\ Phys.\ Chem.\ B}{2022}
+Guest Editor, \href{https://pubs.acs.org/page/jpcbfk/vsi/Moerner-festschrift}{W.\ E.\ Moerner Festschrift}
+\end{activityshort}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Conference Leadership}
+\begin{activityshort}{Session Leader, ``Single Molecules and Phase''}{2022}
+65th Welch Conference on Chemical Research, ``Molecules and Sculpted Light,'' Post Oak Hotel, Houston, TX
+\end{activityshort}
+
+\begin{activityshort}{\parbox[t]{0.9\textwidth}{Symposium Organizer, ``Frontiers in Fluorescence Lifetime and Super-resolution Imaging of Biological Structures and Dynamics''}}{2021}
+Microscopy \& Microanalysis (M\&M), virtual
+\end{activityshort}
+
+\begin{activityshort}{Program Committee, Stanford University Photonics Retreat (SUPR)}{2015}
+Asilomar Conference Grounds, Pacific Grove, CA
+\end{activityshort}
+
+\begin{activityshort}{Program Committee, Stanford University Photonics Retreat (SUPR)}{2014}
+Marconi Conference Center, Marshall, CA
+\end{activityshort}
+
+\begin{activityshort}{Program Committee, Stanford University Photonics Retreat (SUPR) 5}{2013}
+DoubleTree Hotel Sonoma Wine Country, Rohnert Park, CA
+\end{activityshort}
+
+\begin{activityshort}{Program Committee, Stanford University Photonics Retreat (SUPR)}{2012}
+Asilomar Conference Grounds, Pacific Grove, CA
+\end{activityshort}
+
+\begin{activityshort}{Program Committee, International OSA Network of Students (IONS) North America-3}{2012}
+Stanford University, Stanford, CA
+\end{activityshort}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Peer Review (Funding Agencies)}
+\begin{activityshort}{Department of Energy}{}
+Basic Energy Sciences
+\end{activityshort}
+
+\begin{activityshort}{National Institutes of Health}{}
+Molecular and Cellular Sciences and Technologies Review Branch (MCST), Enabling Bioanalytical and Imaging Technologies (EBIT)
+\end{activityshort}
+
+\begin{activityshort}{National Science Foundation}{}
+Division of Electrical, Communications and Cyber Systems
+\end{activityshort}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection[Peer Review (Journals)]{Peer Review (Journals) \small (number of \href{https://www.webofscience.com/wos/author/record/D-6270-2012}{verified reviews})}
+
+\begin{multicols}{2}
+\begin{itemize}
+    \item (14) Nature Communications
+    \item (11) Optics Express
+    \item (9) Journal of the Optical Society of America A
+    \item (8) Optics Letters
+    \item (7) Applied Physics Letters
+    \item (7) Biomedical Optics Express
+    \item (4) Biophysical Journal
+    \item (4) Chemical Science
+    \item (4) Journal of Physical Chemistry Letters
+    \item (4) Nature Methods
+    \item (3) Nano Letters
+    \item (3) Nature Structural \& Molecular Biology
+    \item (3) Optica
+    \item (3) Proceedings of the National Academy of Sciences
+    \item (3) Science Advances
+    \item (3) Scientific Reports
+    \item (2) Angewandte Chemie International Edition
+    \item (2) Applied Optics
+    \item (2) Biological Imaging
+    \item (2) IEEE Transactions on Computational Imaging
+    \item (2) Laser \& Photonics Reviews
+    \item (2) Optics Communications
+    \item (2) The Journal of Chemical Physics
+    \item (1) ACS Nano
+    \item (1) APL Photonics
+    \item (1) IEEE Access
+    \item (1) Nature Nanotechnology
+    \item (1) Neurobiology of Disease
+\end{itemize}
+\end{multicols}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Service to Washington University in St.\ Louis}
+
+\begin{activityshort}{Advisory Committee on Teaching-Track Faculty Promotion}{2024 -- present}
+McKelvey School of Engineering
+\end{activityshort}
+
+\begin{activityshort}{LinQ-STL Leadership Team}{2022 -- present}
+NSF Research Traineeship (NRT) Award 2152221
+\end{activityshort}
+
+\begin{activityshort}{Doctoral Council}{2022 -- present}
+Office of the Provost, Washington University
+\end{activityshort}
+
+\begin{activityshort}{Undergraduate Curriculum Committee}{2021 -- present}
+Preston M.\ Green Department of Electrical and Systems Engineering
+\end{activityshort}
+
+\begin{activityshort}{Laser Safety Advisory Committee}{2018 -- present}
+Environmental Health and Safety, Washington University
+\end{activityshort}
+
+\begin{activityshort}{PhD Admissions Committee, Imaging Science PhD Program}{2018 -- present}
+McKelvey School of Engineering
+\end{activityshort}
+
+\begin{activityshort}{Curriculum Committee, Imaging Science PhD Program}{2017 -- present}
+McKelvey School of Engineering
+\end{activityshort}
+
+\begin{activityshort}{Faculty Search Committee}{2016, 2017, 2020 -- 2025}
+Preston M.\ Green Department of Electrical and Systems Engineering
+\end{activityshort}
+
+\begin{activityshort}{Speaker, Faculty Assembly}{2024 -- 2025}
+McKelvey School of Engineering
+\end{activityshort}
+
+\begin{activityshort}{Faculty Assembly Advisory Committee}{2023 -- 2025}
+McKelvey School of Engineering
+\end{activityshort}
+
+\begin{activityshort}{Marshal, 163rd Commencement}{2024}
+McKelvey School of Engineering, Washington University
+\end{activityshort}
+
+\begin{activityshort}{Research Advisory Committee}{2021}
+McKelvey School of Engineering
+\end{activityshort}
+
+\begin{activityshort}{PhD Admissions Committee}{2017 -- 2021}
+Preston M.\ Green Department of Electrical and Systems Engineering
+\end{activityshort}
+
+\begin{activityshort}{Department Chair Search Committee, Electrical and Systems Engineering}{2018}
+School of Engineering \& Applied Science
+\end{activityshort}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Service to Optica}
+
+\begin{activityshort}{Faculty Advisor}{2021 -- present}
+\href{https://sites.wustl.edu/spectra/}{WashU SPECTRA}, a student chapter of Optica and SPIE
+\end{activityshort}
+
+\begin{activityshort}{Chair}{2017 -- 2019}
+Molecular Probes and Nanobio-Optics Technical Group
+\end{activityshort}
+
+\begin{activityshort}{Co-President}{2013 -- 2014}
+Stanford Optical Society, a student chapter of OSA and SPIE\\
+-- Recipient of The Optical Society's \href{https://www.optica.org/get_involved/students/student_chapters/student_chapter_benefits/student_chapter_excellence_prize/}{2014 Student Chapter Excellence Award}
+\end{activityshort}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Service to Tau Beta Pi}
+
+\begin{activityshort}{Faculty Advisor}{2020 -- 2024}
+Missouri Gamma Chapter, Washington University
+\end{activityshort}
+
+\begin{activityshort}{President}{2007 -- 2008}
+California Beta Chapter, California Institute of Technology
+\end{activityshort}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Service to IEEE}
+
+\begin{activityshort}{Vice Chair}{2007 -- 2008}
+Caltech Chapter
+\end{activityshort}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Community Outreach}
+
+\begin{activityshort}{SciFest Demonstrations}{2016 -- present}
+Saint Louis Science Center
+\end{activityshort}
+
+\begin{activityshort}{\href{https://lewlab.wustl.edu/images/SLSC_Quantum100Panel_2025.webp}{Quantum 100 Celebration Panelist}}{2025}
+Saint Louis Science Center
+\end{activityshort}
+
+\begin{activityshort}{Portal to the Public}{2016 -- 2023}
+Saint Louis Science Center
+\end{activityshort}
+
+\begin{activityshort}{LEGO Microscope Demonstration with WashU SPECTRA}{2016}
+Gateway STEM High School
+\end{activityshort}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection[Professional Society Memberships]{Professional Society Memberships \small (with ranks)}
+
+\begin{tabularx}{\linewidth}{ >{\raggedright\arraybackslash}l 
+>{\raggedleft\arraybackslash}X}
+Sigma Xi & 2020 -- present \\
+American Association for the Advancement of Science & 2017 -- present \\
+American Chemical Society & 2015 -- present \\
+Optica, \textit{Senior Member} & 2008 -- present \\
+\href{https://spie.org/profile/Matthew.Lew}{SPIE} & 2007 -- present \\
+Tau Beta Pi & 2007 -- present \\
+Biophysical Society & 2014 -- 2023 \\
+Microanalysis Society & 2021 \\
+IEEE Engineering in Medicine and Biology Society & 2020 \\
 \end{tabularx}
 
+
+
+% \begin{tabularx}{\linewidth}{@{}l X@{}}
+% Some Skills &  \normalsize{This, That, Some of this and that etc.}\\
+% Some More Skills  &  \normalsize{Also some more of this, Some more that, And some of this and that etc.}\\  
+% \end{tabularx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vfill
 {\footnotesize Updated: \href{https://cv.matthewlew.info}{\today}\\
 \href{https://github.com/mdlew/autoCV_MDL}{Adapted with gratitude} from \href{https://github.com/jitinnair1/autoCV}{Jitin's autoCV template}.}

@@ -1,4 +1,4 @@
-% science_biblatex_mods.sty
+% biblatex_science_mods.sty
 % modifications to the standard Science style for my CV
 % Matthew Lew, November 2025
 
@@ -193,5 +193,41 @@
   \printtext[parens]{\usebibmacro{date}}%
   \newunit\newblock
   \iftoggle{bbx:related}{\usebibmacro{related:init}\usebibmacro{related}}{}%
+  \usebibmacro{finentry}%
+}
+
+% --- @misc customizations for biblatex-science (used for talks/presentations) --------------------------
+% Field formats
+\DeclareFieldFormat[misc]{title}{#1}
+\DeclareFieldFormat[misc]{howpublished}{\mkbibemph{#1}}
+
+% Month+Year macro
+\newbibmacro*{month+year}{%
+  \iffieldundef{year}{}{%
+    \iffieldundef{month}{\printfield{year}}{\printfield{month}\space\printfield{year}}}}
+
+% Modified @misc driver:
+% - Title followed by comma
+% - howpublished in italics, followed by comma
+% - location (if present) separated by comma; otherwise just space
+% - Date in parentheses with NO preceding comma
+\DeclareBibliographyDriver{misc}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  % Title with comma after
+  \printfield{title}\addcomma\space
+  % howpublished (italic) with comma after
+  \printfield[howpublished]{howpublished}\addcomma\space
+  % If location exists, add comma+space before it; otherwise only space
+  \iffieldundef{location}
+    {\setunit{\addspace}}
+    {\setunit{\addcomma\space}}%
+  \printlist{location}%
+  % Before the date, force only a space (never a comma)
+  \setunit{\addspace}%
+  \iffieldundef{year}{}{%
+    \printtext[parens]{\usebibmacro{month+year}}}%
+  \newunit\newblock
+  \usebibmacro{doi+eprint+url}%
   \usebibmacro{finentry}%
 }
