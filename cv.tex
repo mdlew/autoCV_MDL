@@ -39,7 +39,7 @@
 %----------------------------------------------------------------------------------------
 %	FONT
 %----------------------------------------------------------------------------------------
-\usepackage[a-2b]{pdfx} % PDF/A-2b compliance
+
 \usepackage[stixtwo]{fontsetup}
 % % fontspec allows you to use TTF/OTF fonts directly
 % \usepackage{fontspec}
@@ -142,6 +142,11 @@
 
 %Setup hyperref package, and colours for links
 % \usepackage[unicode, draft=false]{hyperref}
+% PDF/A-2b compliance
+\usepackage[a-2b]{pdfx} 
+%fix bookmarks
+\usepackage[open]{bookmark}
+
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}
 \hypersetup{
 draft=false,
@@ -150,8 +155,7 @@ breaklinks,
 urlcolor=linkcolour,
 linkcolor=linkcolour
 }
-%fix bookmarks
-\usepackage{bookmark}
+
 %\addbibresource{citations.bib}
 \setlength\bibitemsep{1em}
 
