@@ -25,13 +25,21 @@
 %	DOCUMENT DEFINITION
 %----------------------------------------------------------------------------------------
 
+% define metadata for PDF/A
+\begin{filecontents}[force]{\jobname.xmpdata}
+\Title{Matthew D. Lew, Associate Professor, Washington University in St. Louis}
+\Author{Matthew D. Lew}
+\Language{en-US}
+\Subject{Curriculum Vitae}
+\end{filecontents}
+
 % article class because we want to fully customize the page and not use a cv template
 \documentclass[letter,11pt]{article}
 
 %----------------------------------------------------------------------------------------
 %	FONT
 %----------------------------------------------------------------------------------------
-
+\usepackage[a-2b]{pdfx} % PDF/A-2b compliance
 \usepackage[stixtwo]{fontsetup}
 % % fontspec allows you to use TTF/OTF fonts directly
 % \usepackage{fontspec}
@@ -133,9 +141,16 @@
 
 
 %Setup hyperref package, and colours for links
-\usepackage[unicode, draft=false]{hyperref}
+% \usepackage[unicode, draft=false]{hyperref}
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}
-\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour,linkcolor=linkcolour}
+\hypersetup{
+unicode, 
+draft=false,
+colorlinks,
+breaklinks,
+urlcolor=linkcolour,
+linkcolor=linkcolour
+}
 %\addbibresource{citations.bib}
 \setlength\bibitemsep{1em}
 
@@ -180,6 +195,26 @@
     & \hfill & #3%
   \end{tabularx}\par%
 }
+
+% person listing environments (with url profile link)
+\newenvironment{personshort}[3]
+{
+    \begin{tabularx}{\linewidth}{@{}l X r@{}}
+    \href{#1}{\textit{#2}} & \hfill & #3 
+    \end{tabularx} \par%
+}
+{
+}
+
+% any optional argument will turn off italics
+% \personnone[plain]{Brian Sun, Electrical Engineering}{2023} % plain
+\newcommand{\personnone}[4][]{%
+  \begin{tabularx}{\linewidth}{@{}l X r@{}}%
+    \ifx\relax#1\relax \href{#2}{\textit{#3}}\else \href{#2}{#3}\fi
+    & \hfill & #4%
+  \end{tabularx}\par%
+}
+
 
 % Remove bullets and indentation for itemize
 \renewcommand{\labelitemi}{} % hides bullet
@@ -401,7 +436,7 @@ National Merit Scholarship & 2004 \\
 %----------------------------------------------------------------------------------------
 %	Mentoring
 %----------------------------------------------------------------------------------------
-\section{Student Mentoring}
+\section[Student Mentoring]{Student Mentoring \small(with dissertation titles and current position, if known)}
 
 \subsection{Ph.D.}
 \begin{etaremune}
@@ -412,26 +447,25 @@ National Merit Scholarship & 2004 \\
 \item Yiyang Chen, Imaging Science (current)
 \item Yuanxin Qiu, Imaging Science (current)
 
-\item \begin{activityshort}{Dr.\ Tingting Wu, Imaging Science}{2023}
+\item \begin{personshort}{https://scholar.google.com/citations?hl=en\&user=Bp7Cif0AAAAJ}{Dr.\ Tingting Wu, Imaging Science}{2023}
 \href{https://doi.org/10.7936/kq2q-jp12}{Information-Rich 6D Single-Molecule Imaging Design Using Optimization} \\
 Senior Imaging Quality Engineer, metalenz
-\end{activityshort} 
+\end{personshort} 
 
-
-\item \begin{activityshort}{Prof.\ Oumeng Zhang, Electrical Engineering}{2022}
+\item \begin{personshort}{https://scholar.google.com/citations?user=TjMoTKsAAAAJ\&hl=en}{Prof.\ Oumeng Zhang, Electrical Engineering}{2022}
 \href{https://doi.org/10.7936/kyz7-kw50}{Multi-Dimensional Single-Molecule Nanoscopy: Fundamental Limits and Novel Approaches} \\
 Assistant Professor, Department of Physics \& Astronomy, Texas A\&M University
-\end{activityshort} 
+\end{personshort} 
 
-\item \begin{activityshort}{Prof.\ Tianben Ding, Electrical Engineering}{2020}
+\item \begin{personshort}{https://scholar.google.com/citations?user=ObVTKmUAAAAJ\&hl=en}{Prof.\ Tianben Ding, Electrical Engineering}{2020}
 \href{https://doi.org/10.7936/qq7n-e207}{Structural Organization and Chemical Activity Revealed by New Developments in Single-Molecule Fluorescence and Orientation Imaging} \\
 Assistant Professor, Department of Chemistry, University of Tokyo
-\end{activityshort}
+\end{personshort}
 
-\item \begin{activityshort}{Dr.\ Hesam Mazidisharfabadi, Electrical Engineering (co-advised with Arye Nehorai)}{2020}
+\item \begin{personshort}{https://scholar.google.com/citations?user=pBlqrm8AAAAJ\&hl=en}{Dr.\ Hesam Mazidisharfabadi, Electrical Engineering (co-advised with Arye Nehorai)}{2020}
 \href{https://doi.org/10.7936/6054-tr98}{Convex Relaxations for Particle-Gradient Flow with Applications in Super-Resolution Single-Molecule Localization Microscopy} \\
 Vice President, MUFG Securities Americas
-\end{activityshort}
+\end{personshort}
 
 \end{etaremune}
 
@@ -491,13 +525,13 @@ Placement: WashU EE Ph.D. Program
 
 \item \activitynone{Jackson Hyde, Electrical Engineering}{2020}
 
-\item \activitynone{Tara Porter, Electrical Engineering, Caltech}{2019}
+\item \personnone{https://scholar.google.com/citations?user=nJhjqEUAAAAJ\&hl=en}{Tara Porter, Electrical Engineering, Caltech}{2019}
 
 \item \activitynone{James Jusuf, Physics, Caltech}{2019}
 
-\item \activitynone{Kevin Spehar, Biomedical Engineering}{2019}
+\item \personnone{https://scholar.google.com/citations?user=htHmXtkAAAAJ\&hl=en}{Kevin Spehar, Biomedical Engineering}{2019}
 
-\item \activitynone{Eshan King, Biomedical Engineering}{2019}
+\item \personnone{https://scholar.google.com/citations?user=RPEQuQIAAAAJ\&hl=en}{Eshan King, Biomedical Engineering}{2019}
 
 \end{etaremune}
 \end{multicols}
@@ -769,6 +803,7 @@ American Chemical Society & 2015 -- present \\
 Optica, \textit{Senior Member} & 2008 -- present \\
 \href{https://spie.org/profile/Matthew.Lew}{SPIE} & 2007 -- present \\
 Tau Beta Pi & 2007 -- present \\
+American Physical Society & 2024 \\
 Biophysical Society & 2014 -- 2023 \\
 Microanalysis Society & 2021 \\
 IEEE Engineering in Medicine and Biology Society & 2020 \\
