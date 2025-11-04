@@ -3,6 +3,6 @@ collection-latexrecommended
 collection-latexextra
 collection-fontsrecommended
 collection-fontsextra
-collection-xetex
+collection-luatex
 collection-bibtexextra
 latexmk
