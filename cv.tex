@@ -144,7 +144,6 @@
 % \usepackage[unicode, draft=false]{hyperref}
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}
 \hypersetup{
-unicode, 
 draft=false,
 colorlinks,
 breaklinks,
@@ -153,6 +152,16 @@ linkcolor=linkcolour
 }
 %\addbibresource{citations.bib}
 \setlength\bibitemsep{1em}
+
+% Put this in your preamble once
+\newcommand{\IfNonEmptyURL}[2]{%
+  % #1 = URL, #2 = content to typeset if URL is non-empty
+  \if\relax\detokenize{#1}\relax
+    % URL empty: do nothing
+  \else
+    #2%
+  \fi
+}
 
 % job listing environments
 \newenvironment{jobshort}[2]
@@ -187,32 +196,30 @@ linkcolor=linkcolour
 {
 }
 
-% any optional argument will turn off italics
-% \activitynone[plain]{Brian Sun, Electrical Engineering}{2023} % plain
-\newcommand{\activitynone}[3][]{%
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}%
-    \ifx\relax#1\relax \textit{#2}\else #2\fi
-    & \hfill & #3%
-  \end{tabularx}\par%
-}
-
-% person listing environments (with url profile link)
-\newenvironment{personshort}[3]
-{
+\newcommand{\activitynone}[2][]{%
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \href{#1}{\textit{#2}} & \hfill & #3 
+    \textit{#1} & \hfill & #2 
     \end{tabularx} \par%
 }
-{
-}
 
-% any optional argument will turn off italics
-% \personnone[plain]{Brian Sun, Electrical Engineering}{2023} % plain
-\newcommand{\personnone}[4][]{%
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}%
-    \ifx\relax#1\relax \href{#2}{\textit{#3}}\else \href{#2}{#3}\fi
-    & \hfill & #4%
+% Optional first argument [URL], then {Name}{Right-side}
+\newenvironment{personshort}[3][]%
+{%
+  \begin{tabularx}{\linewidth}{@{}l X r@{}}
+    #2%
+    \IfNonEmptyURL{#1}{\href{#1}{\ \small\faGoogleScholar}}%
+    & \hfill & #3
   \end{tabularx}\par%
+}%
+{}
+
+% Optional first argument [URL], then {Name}{Right-side}
+\newcommand{\personnone}[3][]{%
+  \begin{tabularx}{\linewidth}{@{}l X r@{}}
+    #2%
+    \IfNonEmptyURL{#1}{\href{#1}{\ \small\faGoogleScholar}}%
+    & \hfill & #3
+  \end{tabularx} \par%
 }
 
 
@@ -441,29 +448,29 @@ National Merit Scholarship & 2004 \\
 \subsection{Ph.D.}
 \begin{etaremune}
 
-\item Zhihang Li, Imaging Science (current)
-\item Brian Sun, MSTP/Electrical Engineering (current)
-\item Suraj Deepak Khochare, Imaging Science (current)
-\item Yiyang Chen, Imaging Science (current)
-\item Yuanxin Qiu, Imaging Science (current)
+\item \personnone{Zhihang Li, Imaging Science}{(current)}
+\item \personnone[https://scholar.google.com/citations?user=orwPCzQAAAAJ\&hl=en]{Brian Sun, MSTP/Electrical Engineering}{(current)}
+\item \personnone{Suraj Deepak Khochare, Imaging Science}{(current)}
+\item \personnone[https://scholar.google.com/citations?hl=en\&user=Mn-n8KIAAAAJ]{Yiyang Chen, Imaging Science}{(current)}
+\item \personnone[https://scholar.google.com/citations?hl=en\&user=7-YE318AAAAJ]{Yuanxin Qiu, Imaging Science}{(current)}
 
-\item \begin{personshort}{https://scholar.google.com/citations?hl=en\&user=Bp7Cif0AAAAJ}{Dr.\ Tingting Wu, Imaging Science}{2023}
-\href{https://doi.org/10.7936/kq2q-jp12}{Information-Rich 6D Single-Molecule Imaging Design Using Optimization} \\
+\item \begin{personshort}[https://scholar.google.com/citations?hl=en\&user=Bp7Cif0AAAAJ]{Dr.\ Tingting Wu, Imaging Science}{2023}
+Information-Rich 6D Single-Molecule Imaging Design Using Optimization \href{https://doi.org/10.7936/kq2q-jp12}{\ \small\faArrowUpRightFromSquare} \\
 Senior Imaging Quality Engineer, metalenz
 \end{personshort} 
 
-\item \begin{personshort}{https://scholar.google.com/citations?user=TjMoTKsAAAAJ\&hl=en}{Prof.\ Oumeng Zhang, Electrical Engineering}{2022}
-\href{https://doi.org/10.7936/kyz7-kw50}{Multi-Dimensional Single-Molecule Nanoscopy: Fundamental Limits and Novel Approaches} \\
+\item \begin{personshort}[https://scholar.google.com/citations?user=TjMoTKsAAAAJ\&hl=en]{Prof.\ Oumeng Zhang, Electrical Engineering}{2022}
+Multi-Dimensional Single-Molecule Nanoscopy: Fundamental Limits and Novel Approaches \href{https://doi.org/10.7936/kyz7-kw50}{\ \small\faArrowUpRightFromSquare} \\
 Assistant Professor, Department of Physics \& Astronomy, Texas A\&M University
 \end{personshort} 
 
-\item \begin{personshort}{https://scholar.google.com/citations?user=ObVTKmUAAAAJ\&hl=en}{Prof.\ Tianben Ding, Electrical Engineering}{2020}
-\href{https://doi.org/10.7936/qq7n-e207}{Structural Organization and Chemical Activity Revealed by New Developments in Single-Molecule Fluorescence and Orientation Imaging} \\
+\item \begin{personshort}[https://scholar.google.com/citations?user=ObVTKmUAAAAJ\&hl=en]{Prof.\ Tianben Ding, Electrical Engineering}{2020}
+Structural Organization and Chemical Activity Revealed by New Developments in Single-Molecule Fluorescence and Orientation Imaging \href{https://doi.org/10.7936/qq7n-e207}{\ \small\faArrowUpRightFromSquare} \\
 Assistant Professor, Department of Chemistry, University of Tokyo
 \end{personshort}
 
-\item \begin{personshort}{https://scholar.google.com/citations?user=pBlqrm8AAAAJ\&hl=en}{Dr.\ Hesam Mazidisharfabadi, Electrical Engineering (co-advised with Arye Nehorai)}{2020}
-\href{https://doi.org/10.7936/6054-tr98}{Convex Relaxations for Particle-Gradient Flow with Applications in Super-Resolution Single-Molecule Localization Microscopy} \\
+\item \begin{personshort}[https://scholar.google.com/citations?user=pBlqrm8AAAAJ\&hl=en]{Dr.\ Hesam Mazidisharfabadi, Electrical Engineering (co-advised with Arye Nehorai)}{2020}
+Convex Relaxations for Particle-Gradient Flow with Applications in Super-Resolution Single-Molecule Localization Microscopy \href{https://doi.org/10.7936/6054-tr98}{\ \small\faArrowUpRightFromSquare} \\
 Vice President, MUFG Securities Americas
 \end{personshort}
 
@@ -472,29 +479,29 @@ Vice President, MUFG Securities Americas
 \subsection{M.S.}
 \begin{etaremune}
 
-\item \begin{activityshort}{Ziyi Hu, Biomedical Engineering}{2023}
-\href{https://doi.org/10.7936/r8cg-3z04}{Single-Molecule Super-Resolution Imaging of Geobacter sulfurreducens under Anaerobic Conditions} \\
+\item \begin{personshort}{Ziyi Hu, Biomedical Engineering}{2023}
+Single-Molecule Super-Resolution Imaging of Geobacter sulfurreducens under Anaerobic Conditions \href{https://doi.org/10.7936/r8cg-3z04}{\ \small\faArrowUpRightFromSquare} \\
 Placement: WashU BME Ph.D. Program
-\end{activityshort}
+\end{personshort}
 
-\item \begin{activityshort}{Tristan Carlson, Electrical Engineering}{2022}
-\href{https://doi.org/10.7936/q24e-bh48}{Design of an Offner-Chrisp Imaging Spectrometer for a Planetary Fluorescence Instrument} \\
+\item \begin{personshort}{Tristan Carlson, Electrical Engineering}{2022}
+Design of an Offner-Chrisp Imaging Spectrometer for a Planetary Fluorescence Instrument \href{https://doi.org/10.7936/q24e-bh48}{\ \small\faArrowUpRightFromSquare} \\
 Optical/Electronics Engineer, MIT Lincoln Laboratory
-\end{activityshort}
+\end{personshort}
 
-\item \begin{activityshort}{Jackson Hyde, Electrical Engineering}{2020}
-\href{https://doi.org/10.7936/nk7z-0p22}{Data Processing Electronics for an Ultra-Fast Single-Photon Counting Camera} \\
+\item \begin{personshort}{Jackson Hyde, Electrical Engineering}{2020}
+Data Processing Electronics for an Ultra-Fast Single-Photon Counting Camera \href{https://doi.org/10.7936/nk7z-0p22}{\ \small\faArrowUpRightFromSquare} \\
 Hardware Engineer, IMC Trading    
-\end{activityshort}  
+\end{personshort}  
 
-\item \begin{activityshort}{Weiran Wang, Electrical Engineering}{2019}
-\href{https://doi.org/10.7936/856m-dx73}{Three-dimensional Point Spread Function Engineering for High Axial Localization Precision}   
-\end{activityshort} 
+\item \begin{personshort}{Weiran Wang, Electrical Engineering}{2019}
+Three-dimensional Point Spread Function Engineering for High Axial Localization Precision \href{https://doi.org/10.7936/856m-dx73}{\ \small\faArrowUpRightFromSquare}   
+\end{personshort} 
 
-\item \begin{activityshort}{Oumeng Zhang, Electrical Engineering}{2017}
-\href{https://doi.org/10.7936/K7ZP44J5}{Measuring Molecular Orientation and Rotational Mobility Using a Tri-spot Point Spread Function} \\
+\item \begin{personshort}[https://scholar.google.com/citations?user=TjMoTKsAAAAJ\&hl=en]{Prof.\ Oumeng Zhang, Electrical Engineering}{2017}
+Measuring Molecular Orientation and Rotational Mobility Using a Tri-spot Point Spread Function \href{https://doi.org/10.7936/K7ZP44J5}{\faArrowUpRightFromSquare} \\
 Placement: WashU EE Ph.D. Program
-\end{activityshort} 
+\end{personshort} 
 
 \end{etaremune}
 
@@ -502,36 +509,35 @@ Placement: WashU EE Ph.D. Program
 \begin{multicols}{2}
 \begin{etaremune}
 
-\item Alex Nie, Electrical Engineering (current)
+\item \personnone{Alex Nie, Electrical Engineering}{(current)}
 
-\item \activitynone{Erik Lindeman, Physics, Caltech}{2024}
+\item \personnone{Erik Lindeman, Physics}{2024} California Institute of Technology
 
-\item \activitynone{Sam Kang, Electrical Engineering}{2024}
+\item \personnone{Sam Kang, Electrical Engineering}{2024}
 
-\item \begin{activityshort}{Jasmine Cheng, Electrical Engineering}{2024}
-\href{https://openscholarship.wustl.edu/eseundergraduate_research/19}{Robust 6D Fluorescence Microscopy}
-\end{activityshort}
+\item \begin{personshort}[https://scholar.google.com/citations?user=77rs9mIAAAAJ\&hl=en]{Jasmine Cheng, Electrical Engineering}{2024}
+Robust 6D Fluorescence Microscopy \href{https://openscholarship.wustl.edu/eseundergraduate_research/19}{\small\faArrowUpRightFromSquare}
+\end{personshort}
     
-\item \activitynone{Brian Sun, Electrical Engineering}{2023}
+\item \personnone[https://scholar.google.com/citations?user=orwPCzQAAAAJ\&hl=en]{Brian Sun, Electrical Engineering}{2023}
 
-\item \activitynone{Makaiya Smith, Computer Engineering,}{2021}
-\textit{Jackson State University}
+\item \personnone{Makaiya Smith, Computer Engineering,}{2021} Jackson State University
 
-\item \activitynone{Max Huang, Electrical Engineering}{2021}
+\item \personnone{Max Huang, Electrical Engineering}{2021}
 
-\item \activitynone{Tristan Carlson, Electrical Engineering}{2020}
+\item \personnone{Tristan Carlson, Electrical Engineering}{2020}
 
-\item \activitynone{James Cevasco, Electrical Engineering}{2020}
+\item \personnone{James Cevasco, Electrical Engineering}{2020}
 
-\item \activitynone{Jackson Hyde, Electrical Engineering}{2020}
+\item \personnone{Jackson Hyde, Electrical Engineering}{2020}
 
-\item \personnone{https://scholar.google.com/citations?user=nJhjqEUAAAAJ\&hl=en}{Tara Porter, Electrical Engineering, Caltech}{2019}
+\item \personnone[https://scholar.google.com/citations?user=nJhjqEUAAAAJ\&hl=en]{Tara Porter, Electrical Engineering}{2019} California Institute of Technology
 
-\item \activitynone{James Jusuf, Physics, Caltech}{2019}
+\item \personnone{James Jusuf, Physics}{2019} California Institute of Technology
 
-\item \personnone{https://scholar.google.com/citations?user=htHmXtkAAAAJ\&hl=en}{Kevin Spehar, Biomedical Engineering}{2019}
+\item \personnone[https://scholar.google.com/citations?user=htHmXtkAAAAJ\&hl=en]{Kevin Spehar, Biomedical Engineering}{2019}
 
-\item \personnone{https://scholar.google.com/citations?user=RPEQuQIAAAAJ\&hl=en}{Eshan King, Biomedical Engineering}{2019}
+\item \personnone[https://scholar.google.com/citations?user=RPEQuQIAAAAJ\&hl=en]{Eshan King, Biomedical Engineering}{2019}
 
 \end{etaremune}
 \end{multicols}
