@@ -39,7 +39,7 @@
 %----------------------------------------------------------------------------------------
 %	FONT
 %----------------------------------------------------------------------------------------
-\usepackage[a-2b]{pdfx} % PDF/A-2b compliance
+
 \usepackage[stixtwo]{fontsetup}
 % % fontspec allows you to use TTF/OTF fonts directly
 % \usepackage{fontspec}
@@ -142,6 +142,11 @@
 
 %Setup hyperref package, and colours for links
 % \usepackage[unicode, draft=false]{hyperref}
+% PDF/A-2b compliance
+\usepackage[a-2b]{pdfx} 
+%fix bookmarks
+\usepackage[open]{bookmark}
+
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}
 \hypersetup{
 draft=false,
@@ -150,6 +155,7 @@ breaklinks,
 urlcolor=linkcolour,
 linkcolor=linkcolour
 }
+
 %\addbibresource{citations.bib}
 \setlength\bibitemsep{1em}
 
@@ -297,7 +303,7 @@ MSC 1042-207-1101, One Brookings Drive, St. Louis, MO 63130\ $|$ \
 \renewcommand{\arraystretch}{1.1} % Default value: 1
 
 %Interests/ Keywords/ Summary
-\section{My lab pushes the frontier of nanoscale imaging technologies.}
+\section*{My lab pushes the frontier of nanoscale imaging technologies.}
 The Lew Lab builds computational optical imaging systems to study biological and chemical systems at the nanoscale. Our technology leverages innovations in applied optics, signal and image processing, design optimization, and physical chemistry. We partner with scientists and engineers from all disciplines to develop technologies to solve unmet needs in science, medicine, and society.
 
 %Experience
