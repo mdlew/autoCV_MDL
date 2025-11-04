@@ -19,7 +19,7 @@ jobs:
         with:
           package_file: tl_packages
       - name: cv
-        run: latexmk -pdfxe -xelatex="xelatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
+        run: latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
       - name: move pdf to artifact folder
         run: mkdir -p github_artifacts && mv ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
       - name: Add site files to artifact (index.html, CNAME)
