@@ -27,7 +27,7 @@ jobs:
         run: |
           mkdir -p github_artifacts
           # copy only if present (no failure if missing)
-          for f in index.html CNAME; do
+          for f in index.html CNAME .nojekyll; do
             if [ -f "$f" ]; then
               cp -v "$f" github_artifacts/
             fi
@@ -51,5 +51,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: github_artifacts
