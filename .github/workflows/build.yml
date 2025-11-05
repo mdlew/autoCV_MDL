@@ -18,7 +18,8 @@ jobs:
         uses: zauguin/install-texlive@v4
         with:
           package_file: tl_packages
-      - name: cv
+      - name: Compile cv
+        id: build
         run: latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
       - name: move pdf to artifact folder
         run: mkdir -p github_artifacts && mv ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
@@ -31,30 +32,20 @@ jobs:
               cp -v "$f" github_artifacts/
             fi
           done
-      - name: Upload pdf and site files as artifact
-        uses: actions/upload-artifact@v5
+      - name: Upload pdf and site files for Pages
+        id: deploy
+        uses: actions/upload-pages-artifact@v4
         with:
-          name: site-and-pdf
           path: ./github_artifacts
+
   deploy:
-    needs: [build]
+    needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
+      pages: write
+      id-token: write
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v6
-        with:
-          path: github_artifacts
-      - name: Prepare deploy directory
-        run: |
-          mkdir -p github_deploy
-          mv github_artifacts/* github_deploy || true
-      - name: deploy on orphan branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./github_deploy
-          publish_branch: build
-          force_orphan: true
-          enable_jekyll: false
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
