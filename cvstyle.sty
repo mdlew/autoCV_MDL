@@ -86,29 +86,6 @@
   \fi
 }
 
-% Backwards-compatible job environments (kept for safety)
-\newenvironment{jobshort}[2]
-{
-    \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill &  #2
-    \end{tabularx} \par%
-}
-{
-}
-
-\newenvironment{joblong}[2]
-{
-    \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill & #2
-    \end{tabularx} \par%
-    \begin{minipage}[t]{\linewidth}
-    \begin{itemize}[nosep,after=\strut, leftmargin=1em, itemsep=3pt,label=--]
-}
-{
-\end{itemize}
-\end{minipage}
-}
-
 % activity listing environments (kept)
 \newenvironment{activityshort}[2]
 {
@@ -123,26 +100,6 @@
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
     \textit{#1} & \hfill & #2
     \end{tabularx} \par%
-}
-
-% person macros (kept)
-\newenvironment{personshort}[3][]%
-{%
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    #2%
-    \IfNonEmptyURL{#1}{\href{#1}{\ \small\faGoogleScholar}}%
-    & \hfill & #3
-  \end{tabularx}\par%
-}%
-{}
-
-
-\newcommand{\personnone}[3][]{%
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    #2%
-    \IfNonEmptyURL{#1}{\href{#1}{\ \small\faGoogleScholar}}%
-    & \hfill & #3
-  \end{tabularx} \par%
 }
 
 % typography tweaks for itemize
