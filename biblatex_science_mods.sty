@@ -7,6 +7,16 @@
 
 \RequirePackage{etoolbox}
 
+% NOTE: This package uses the helper macro `\iconlink{<icon>}{<url>}{<text>}` for
+% printing icons with links. The canonical definition lives in `cvstyle.sty`.
+% If `\iconlink` is not yet defined (load-order may put this file earlier),
+% define a small fallback that uses `\href` so things still render.
+% If you want the primary `\iconlink` (with layout/spacing tweaks) to be used,
+% move the `\iconlink` definition in `cvstyle.sty` to appear before:
+%   \RequirePackage{biblatex_science_mods}
+% (i.e., define `\iconlink` earlier in `cvstyle.sty`).
+\providecommand{\iconlink}[3]{\href{#2}{\raisebox{-0.05\height}{#1}\ #3}}
+
 % Count total number of entries in each refsection
 \AtDataInput{%
   \csnumgdef{entrycount:\therefsection}{%
@@ -40,23 +50,23 @@
       % no DOI, no URL -> nothing
     }{%
       % URL but no DOI
-      \hspace{2mm}\href{\thefield{url}}{\small\faArrowUpRightFromSquare}%
+      \hspace{2mm}\iconlink{\small\faArrowUpRightFromSquare}{\thefield{url}}{}%
     }%
   }{%
     % DOI present
-    \hspace{2mm}\href{https://doi.org/\thefield{doi}}{\small\faFileLines \ Article}%
+    \hspace{2mm}\iconlink{\small\faFileLines}{https://doi.org/\thefield{doi}}{Article}%
   }%
   % Cover image icon (if present)
   \iffieldundef{usera}{}{%
-    \hspace{2mm}\href{\thefield{usera}}{\small\faImage \ Cover image}%
+    \hspace{2mm}\iconlink{\small\faImage}{\thefield{usera}}{Cover image}%
   }%
   % Editor's pick icon (if present)
   \iffieldundef{userb}{}{%
-    \hspace{2mm}\href{\thefield{userb}}{\small\faStar}%
+    \hspace{2mm}\iconlink{\small\faStar}{\thefield{userb}}{}%
   }%
   % Correction note (if present)
   \iffieldundef{userc}{}{%
-    \hspace{2mm}\href{\thefield{userc}}{\small\faArrowUpRightFromSquare \ Correction}%
+    \hspace{2mm}\iconlink{\small\faArrowUpRightFromSquare}{\thefield{userc}}{Correction}%
   }%
 }
 
