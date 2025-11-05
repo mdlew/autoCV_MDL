@@ -2,6 +2,11 @@
 % modifications to the standard Science style for my CV
 % Matthew Lew, November 2025
 
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{biblatex_science_mods}[2025/11/04 v1.0 Modifications to biblatex-science for CV]
+
+\RequirePackage{etoolbox}
+
 % Count total number of entries in each refsection
 \AtDataInput{%
   \csnumgdef{entrycount:\therefsection}{%

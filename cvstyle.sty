@@ -1,19 +1,21 @@
-% cvstyle.tex -- shared preamble, macros, and layout for cv.tex
+%% cvstyle.sty -- shared preamble, macros, and layout for cv.tex
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{cvstyle}[2025/11/04 v1.0 MDL CV style]
 
 % -------------------------
 % Packages (grouped & ordered)
 % -------------------------
-\usepackage{url}
-\usepackage{parskip}
+\RequirePackage{url}
+\RequirePackage{parskip}
 
-\usepackage{color}
-\usepackage{graphicx}
-\usepackage[usenames,dvipsnames]{xcolor}
-\usepackage[scale=0.9]{geometry}
+\RequirePackage{color}
+\RequirePackage{graphicx}
+\RequirePackage[usenames,dvipsnames]{xcolor}
+\RequirePackage[scale=0.9]{geometry}
 
 % page numbering / header & footer
-\usepackage{lastpage}
-\usepackage{fancyhdr}
+\RequirePackage{lastpage}
+\RequirePackage{fancyhdr}
 
 % marking section titles for footer
 \makeatletter
@@ -35,18 +37,18 @@
 \AtBeginDocument{\thispagestyle{empty}}
 
 % layout helpers
-\usepackage{tabularx}
+\RequirePackage{tabularx}
 \newcommand{\tablerowskip}{3.75pt}
 
-\usepackage{enumitem}
-\usepackage{etaremune}
-\usepackage{supertabular}
+\RequirePackage{enumitem}
+\RequirePackage{etaremune}
+\RequirePackage{supertabular}
 \newlength{\fullcollw}
 \setlength{\fullcollw}{0.47\textwidth}
 
-\usepackage{titlesec}
-\usepackage{multicol}
-\usepackage{multirow}
+\RequirePackage{titlesec}
+\RequirePackage{multicol}
+\RequirePackage{multirow}
 
 \titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
 \titlespacing{\section}{0pt}{10pt}{10pt}
@@ -54,15 +56,15 @@
 \titlespacing{\subsection}{0pt}{10pt}{\tablerowskip}
 
 % Bibliography
-\usepackage[style=science, maxnames=99, articletitle=true, date=year, isbn=false, eprint=false, url=false]{biblatex}
-\usepackage{biblatex_science_mods}
+\RequirePackage[style=science, maxnames=99, articletitle=true, date=year, isbn=false, eprint=false, url=false]{biblatex}
+\RequirePackage{biblatex_science_mods}
 
 % icons
-\usepackage{fontawesome7}
+\RequirePackage{fontawesome7}
 
 % PDF/A and hyperlinks
-\usepackage[a-2b]{pdfx}
-\usepackage[open]{bookmark}
+\RequirePackage[a-2b]{pdfx}
+\RequirePackage[open]{bookmark}
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}
 \hypersetup{
   draft=false,
@@ -134,6 +136,7 @@
 }%
 {}
 
+
 \newcommand{\personnone}[3][]{%
   \begin{tabularx}{\linewidth}{@{}l X r@{}}
     #2%
@@ -165,7 +168,7 @@
 % -------------------------
 % New, compact macros (recommended)
 % -------------------------
-\usepackage{xparse}
+\RequirePackage{xparse}
 \NewDocumentCommand{\cvcontact}{ m m m }{%
   \begin{tabularx}{\linewidth}{@{} l @{}}
   \Huge{#1} \\[7.5pt]
@@ -190,4 +193,4 @@
   \end{tabularx}\par%
 }
 
-% End of cvstyle.tex
+%% end of cvstyle.sty
