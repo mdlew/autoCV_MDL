@@ -4,11 +4,6 @@
 % Required engine: LuaLaTeX (preferred). The GitHub Action runs:
 % latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=. ./cv.tex
 % The CI installs TeX Live packages listed in tl_packages before building.
-% Manual alternative (LuaLaTeX + biber):
-%     lualatex -shell-escape -interaction=nonstopmode cv.tex
-%     biber cv
-%     lualatex -interaction=nonstopmode cv.tex
-%     lualatex -interaction=nonstopmode cv.tex
 % Notes:
 % - Run commands from repository root (where cv.tex and tl_packages live).
 % - latexmk automates bibliography/toolchain runs; use it to match CI behavior.

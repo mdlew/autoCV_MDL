@@ -173,7 +173,7 @@
 \NewDocumentCommand{\cvperson}{ O{} m m }{%
   \begin{tabularx}{\linewidth}{@{}l X r@{}}
     #2%
-    \IfNonEmptyURL{#1}{\href{#1}{\ \small\faGoogleScholar}}%
+    \IfNonEmptyURL{#1}{\ \iconlink{\small\faGoogleScholar}{#1}{}}%
     & \hfill & #3
   \end{tabularx}\par%
 }
