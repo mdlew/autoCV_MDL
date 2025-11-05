@@ -1,61 +1,94 @@
 # autoCV_MDL
 
-[![XeTeX build](https://github.com/mdlew/autoCV_MDL/actions/workflows/build.yml/badge.svg)](https://github.com/mdlew/autoCV_MDL/actions/workflows/build.yml) [![deployment](https://github.com/mdlew/autoCV_MDL/actions/workflows/pages/pages-build-deployment/badge.svg?branch=build)](https://github.com/mdlew/autoCV_MDL/actions/workflows/pages/pages-build-deployment)
+[![build and deploy](https://github.com/mdlew/autoCV_MDL/actions/workflows/build.yml/badge.svg)](https://github.com/mdlew/autoCV_MDL/actions/workflows/build.yml)
 
-A CV template in LaTeX along with a GitHub action that complies the `*.tex` file and publishes a new PDF version when new changes are pushed to the repo
+A LaTeX-based CV template that automatically builds a PDF via GitHub Actions and can publish site files (PDF, `index.html`, `CNAME`) to GitHub Pages.
 
-Adapted with gratitude from [Jitin's autoCV repository](https://github.com/jitinnair1/autoCV).
+Adapted with gratitude from Jitin Nair's [autoCV repository](https://github.com/jitinnair1/autoCV).
 
-## Template Design
+## Contents
 
-The template is designed to be clean with sections for
+- `cv.tex` — main CV source
+- `cvstyle.sty`, `biblatex_science_mods.sty` — style and bibliographic configuration
+- `*.bib` — bibliographies (e.g., `pubs_journal.bib`, `patents.bib`)
+- `tl_packages` — list of TeX Live packages required by CI
+- `.github/workflows/build.yml` — CI workflow that builds the PDF and deploys site files
 
-- Tabular sections for Work Experience, Education and Projects
-- Support for including a list of publications read from a `*.bib` file
-- Header with Font Awesome icons
+## Quickstart (edit → push → published)
 
-## Quickstart
+- Edit your CV in `cv.tex` (and any supporting `.sty`/`.bib` files).
+- Commit and push changes to GitHub.
+- The GitHub Actions workflow will build `cv.pdf` and upload site files as a Pages artifact.
+- After the workflow completes and Pages deploys, visit `https://<username>.github.io/<repo>/` (or your custom domain).
 
-- Fork this repo (you can use the `Use this template` button)
-- Give the workflow write permissions for your forked repo (Settings -> Actions -> General)
-- Modify the `cv.tex` file and push changes to your repo
-- Set GitHub pages source to build branch (Settings -> Pages)
-- The complied PDF will be available under the `build` branch
+## Prerequisites (for local builds)
 
-You can get a direct link to the generated PDF which you can use on your website, LinkedIn etc. that will always point to the latest version of your CV. Once your site is published, your CV will be accessible at: `https://username.github.io/repo-name/`
+- A LaTeX distribution with `lualatex` and `latexmk`:
+  - TeX Live (Unix/macOS) or MiKTeX (Windows). Ensure required packages from `tl_packages` are installed.
+- `make` is optional (a `Makefile` is provided).
+- Optional: Docker (useful if you don't want to install TeX locally).
 
-NOTE: For the direct link to work, after editing your copy of `cv.tex` and pushing changes to your repo, under Settings -> Pages set your Github Pages source to the `build` directory
+## Build locally
 
-![Set Github Pages source to the build branch](https://i.imgur.com/lwATw1o.png)
+From the repository root.
 
-## This template on Overleaf
+- Direct `latexmk`:
 
-[![Overleaf](https://img.shields.io/badge/Overleaf-47A141.svg?style=for-the-badge&logo=Overleaf&logoColor=white)](https://www.overleaf.com/latex/templates/autocv/scfvqfpxncwb)
+    ```bash
+    latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=. ./cv.tex
+    ```
 
-Also, if you have a premium subscription to Overleaf, you can use Overleaf's GitHub integration to push changes to your GitHub repo directly from Overleaf.
+## What the CI workflow does
 
-## Compiling the CV on your local computer
+See `.github/workflows/build.yml` — summary:
 
-- type `make` in the `autoCV` directory to produce file `cv.pdf`
-- you can optionally type `make clean` or `make distclean` to remove intermediate files
+- Checks out the repository.
+- Installs TeX Live packages listed in `tl_packages`.
+- Builds `cv.tex` with `latexmk` using `lualatex`.
+- Collects the generated `cv.pdf` and site files (`index.html`, `CNAME` if present) into an artifact directory.
+- Uploads those files for GitHub Pages deployment.
 
-## Detailed Instructions
+## Enabling publishing to GitHub Pages
 
-[.. are available here](https://github.com/jitinnair1/autoCV/wiki/How-to-use-autoCV:-Detailed-Instructions)
+1. Ensure the Actions workflow has proper permissions:
+   - Go to **Settings → Actions → General** in your repository.
+   - Under **Workflow permissions**, enable **Read and write permissions** if not already set (this allows the deployment job to publish Pages).
+2. After a successful workflow run, Pages will receive the artifact and publish the site. Check **Settings → Pages** to confirm the published site and URL.
 
-## More options
+Note: This workflow uploads artifacts for Pages and does not require you to manually create a `build` branch.
 
-- If you'd like a custom URL like `cv.name.com` check out [this page](https://github.com/jitinnair1/autoCV/wiki/Custom-URL-for-your-CV)
-- If you want to add use different versions of the CV for different langauges, you can modify the script [as seen here](https://github.com/MateusRosario/myAutoCV/blob/main/.github/workflows/build.yml) (from Mateus Rosario's [fork](https://github.com/MateusRosario/myAutoCV) of this repo)  
+## Custom domain
 
-## Issues
+- Add a `CNAME` file at the repository root that contains your custom domain (for example `cv.example.com`).  
+- The CI copies `CNAME` into the published artifact so Pages will use the custom domain on deployment.
 
-Please start a new discussion or issue if you encounter problems
+## Editing tips
 
-PS: If you liked the template, do star :star: it! Thanks!
+- Main content: `cv.tex`
+- Layout / macros: `cvstyle.sty`, `biblatex_science_mods.sty`
+- Bibliography sources: the `.bib` files in the repository (e.g., `pubs_journal.bib`, `patents.bib`)
+- Icons: Font Awesome usage and setup are configured in the style files (`cvstyle.sty`, `biblatex_science_mods.sty`)
 
-### Also, check out
+## Troubleshooting
 
-- [gradfolio](https://github.com/jitinnair1/gradfolio) - a minimal, quick-setup template for a personal website/portfolio
-- [Tail](https://github.com/jitinnair1/tail) - a minimal, quick-setup template for a blog
-- [snippet-book](https://github.com/jitinnair1/snippet-book) -terminal style, clean Jekyll blog theme with catppuccin colours
+- CI build fails:
+  - Inspect the Actions run logs in the **Actions** tab for the failing step.
+  - Confirm all packages listed in `tl_packages` are available or included by the CI.
+- Site not published:
+  - Confirm the `deploy` job completed successfully and that Pages shows a recent deployment under **Settings → Pages**.
+  - Verify workflow permissions (see "Enabling publishing to GitHub Pages").
+- Local build fails:
+  - Verify `lualatex` and `latexmk` are installed and present on your `PATH`.
+  - Reproduce locally with:
+
+    ```bash
+    latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=. ./cv.tex
+    ```
+
+## License
+
+See `LICENSE` in the repository root.
+
+## Credits
+
+Template adapted from Jitin Nair's [autoCV](https://github.com/jitinnair1/autoCV). Thanks to the original project.
