@@ -1,25 +1,17 @@
-%-----------------------------------------------------------------------------------------------------------------------------------------------%
-%	The MIT License (MIT)
-%
-%	Copyright (c) 2021 Jitin Nair
-%
-%	Permission is hereby granted, free of charge, to any person obtaining a copy
-%	of this software and associated documentation files (the "Software"), to deal
-%	in the Software without restriction, including without limitation the rights
-%	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-%	copies of the Software, and to permit persons to whom the Software is
-%	furnished to do so, subject to the following conditions:
-%	
-%	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-%	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-%	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-%	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-%	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-%	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-%	THE SOFTWARE.
-%	
-%
-%-----------------------------------------------------------------------------------------------------------------------------------------------%
+% License: moved to LICENSE (see repository root)
+
+% Build/engine info — repo CI uses LuaLaTeX via latexmk (see .github/workflows/build.yml)
+% Required engine: LuaLaTeX (preferred). The GitHub Action runs:
+% latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=. ./cv.tex
+% The CI installs TeX Live packages listed in tl_packages before building.
+% Manual alternative (LuaLaTeX + biber):
+%     lualatex -shell-escape -interaction=nonstopmode cv.tex
+%     biber cv
+%     lualatex -interaction=nonstopmode cv.tex
+%     lualatex -interaction=nonstopmode cv.tex
+% Notes:
+% - Run commands from repository root (where cv.tex and tl_packages live).
+% - latexmk automates bibliography/toolchain runs; use it to match CI behavior.
 
 %----------------------------------------------------------------------------------------
 %	DOCUMENT DEFINITION
@@ -55,7 +47,7 @@
 %	TITLE / CONTACT
 %----------------------------------------------------------------------------------------
 
-\cvcontact{Matthew Duk-Ying Lew}{MSC 1042-207-1101, One Brookings Drive, St. Louis, MO 63130 \ $|$ \ \href{mailto:mdlew@wustl.edu}{\raisebox{-0.05\height}\faEnvelope \ mdlew@wustl.edu}\ $|$ \ \href{tel:+13149356790}{\raisebox{-0.05\height}\faPhone \ +1.314.935.6790}}{\href{https://lewlab.wustl.edu}{\raisebox{-0.05\height}\faGlobe \ lewlab.wustl.edu} \ $|$ \ \href{https://orcid.org/0000-0002-5614-3292}{\raisebox{-0.05\height}\faOrcid \ 0000-0002-5614-3292} \ $|$ \ \href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\raisebox{-0.05\height}\faGoogleScholar \ Google Scholar} \ $|$ \ \href{https://www.webofscience.com/wos/author/record/D-6270-2012}{\raisebox{-0.05\height}\faArrowUpRightFromSquare \ Web of Science} \ $|$ \ \href{https://github.com/Lew-Lab/}{\raisebox{-0.05\height}\faGithub \ Lew-Lab}}
+\cvcontact{Matthew Duk-Ying Lew}{MSC 1042-207-1101, One Brookings Drive, St. Louis, MO 63130 \ $|$ \ \iconlink{\faEnvelope}{mailto:mdlew@wustl.edu}{mdlew@wustl.edu} \ $|$ \ \iconlink{\faPhone}{tel:+13149356790}{+1.314.935.6790}}{\iconlink{\faGlobe}{https://lewlab.wustl.edu}{lewlab.wustl.edu} \ $|$ \ \iconlink{\faOrcid}{https://orcid.org/0000-0002-5614-3292}{0000-0002-5614-3292} \ $|$ \ \iconlink{\faGoogleScholar}{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{Google Scholar} \ $|$ \ \iconlink{\faArrowUpRightFromSquare}{https://www.webofscience.com/wos/author/record/D-6270-2012}{Web of Science} \ $|$ \ \iconlink{\faGithub}{https://github.com/Lew-Lab/}{Lew-Lab}}
 
 %----------------------------------------------------------------------------------------
 % EXPERIENCE SECTIONS
@@ -99,7 +91,7 @@ The Lew Lab builds computational optical imaging systems to study biological and
 \section{Education}
 \begin{tabularx}{\linewidth}{@{}l X@{}}	
 2008 -- 2015 & \textbf{Ph.D.\ in Electrical Engineering} at Stanford University \hfill \normalsize (GPA: 4.0/4.0) \\
-    & Engineering New Capabilities into Optical Microscopes: Toward Measuring the Three-Dimensional Position and Orientation of Single Molecules in Living Cells \href{https://searchworks.stanford.edu/view/10636571}{\ \faFileLines} \\
+    & Engineering New Capabilities into Optical Microscopes: Toward Measuring the Three-Dimensional Position and Orientation of Single Molecules in Living Cells \iconlink{\faFileLines}{https://searchworks.stanford.edu/view/10636571}{} \\
     & Research Advisor: \href{https://web.stanford.edu/group/moerner/}{W.\ E.\ Moerner} \\[\tablerowskip]
 
 2008 -- 2010 & \textbf{M.S.\ in Electrical Engineering} at Stanford University \hfill \normalsize (GPA: 3.9/4.0) \\[\tablerowskip]
@@ -147,7 +139,7 @@ National Merit Scholarship & 2004 \\
 %----------------------------------------------------------------------------------------
 %	PUBLICATIONS
 %----------------------------------------------------------------------------------------
-\section[Publications]{Publications \small{ \href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\faGoogleScholar \ h-index: 31, i10-index: 46}}\ $|$ \ \href{https://lewlab.wustl.edu/pages/publications.html}{\faArrowUpRightFromSquare \ journal covers, citation \& attention metrics}}
+\section[Publications]{Publications \small{ \iconlink{\faGoogleScholar}{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{h-index: 31, i10-index: 46}}\ $|$ \ \iconlink{\faArrowUpRightFromSquare}{https://lewlab.wustl.edu/pages/publications.html}{journal covers, citation \& attention metrics}}
 \faImage \ cover article \ $|$ \ \faStar \ editor’s pick/hot paper \ $|$ \ *equal contribution \ $|$ \ $^+$co-corresponding authors
 
 \subsection{Refereed Articles}
@@ -209,19 +201,19 @@ National Merit Scholarship & 2004 \\
 \item \cvperson[https://scholar.google.com/citations?hl=en\&user=7-YE318AAAAJ]{Yuanxin Qiu, Imaging Science}{(current)}
 
 \item \cvperson[https://scholar.google.com/citations?hl=en\&user=Bp7Cif0AAAAJ]{Dr.\ Tingting Wu, Imaging Science}{2023}
-Information-Rich 6D Single-Molecule Imaging Design Using Optimization \href{https://doi.org/10.7936/kq2q-jp12}{\ \small\faFileLines} \\
+Information-Rich 6D Single-Molecule Imaging Design Using Optimization \iconlink{\small\faFileLines}{https://doi.org/10.7936/kq2q-jp12}{} \\
 Senior Imaging Quality Engineer, metalenz
 
 \item \cvperson[https://scholar.google.com/citations?user=TjMoTKsAAAAJ\&hl=en]{Prof.\ Oumeng Zhang, Electrical Engineering}{2022}
-Multi-Dimensional Single-Molecule Nanoscopy: Fundamental Limits and Novel Approaches \href{https://doi.org/10.7936/kyz7-kw50}{\ \small\faFileLines} \\
+Multi-Dimensional Single-Molecule Nanoscopy: Fundamental Limits and Novel Approaches \iconlink{\small\faFileLines}{https://doi.org/10.7936/kyz7-kw50}{} \\
 Assistant Professor, Department of Physics \& Astronomy, Texas A\&M University
 
 \item \cvperson[https://scholar.google.com/citations?user=ObVTKmUAAAAJ\&hl=en]{Prof.\ Tianben Ding, Electrical Engineering}{2020}
-Structural Organization and Chemical Activity Revealed by New Developments in Single-Molecule Fluorescence and Orientation Imaging \href{https://doi.org/10.7936/qq7n-e207}{\ \small\faFileLines} \\
+Structural Organization and Chemical Activity Revealed by New Developments in Single-Molecule Fluorescence and Orientation Imaging \iconlink{\small\faFileLines}{https://doi.org/10.7936/qq7n-e207}{} \\
 Assistant Professor, Department of Chemistry, University of Tokyo
 
 \item \cvperson[https://scholar.google.com/citations?user=pBlqrm8AAAAJ\&hl=en]{Dr.\ Hesam Mazidisharfabadi, Electrical Engineering (co-advised with Arye Nehorai)}{2020}
-Convex Relaxations for Particle-Gradient Flow with Applications in Super-Resolution Single-Molecule Localization Microscopy \href{https://doi.org/10.7936/6054-tr98}{\ \small\faFileLines} \\
+Convex Relaxations for Particle-Gradient Flow with Applications in Super-Resolution Single-Molecule Localization Microscopy \iconlink{\small\faFileLines}{https://doi.org/10.7936/6054-tr98}{} \\
 Vice President, MUFG Securities Americas
 
 \end{etaremune}
@@ -230,22 +222,22 @@ Vice President, MUFG Securities Americas
 \begin{etaremune}
 
 \item \cvperson{Ziyi Hu, Biomedical Engineering}{2023}
-Single-Molecule Super-Resolution Imaging of Geobacter sulfurreducens under Anaerobic Conditions \href{https://doi.org/10.7936/r8cg-3z04}{\ \small\faFileLines} \\
+Single-Molecule Super-Resolution Imaging of Geobacter sulfurreducens under Anaerobic Conditions \iconlink{\small\faFileLines}{https://doi.org/10.7936/r8cg-3z04}{} \\
 Placement: WashU BME Ph.D. Program
 
 \item \cvperson{Tristan Carlson, Electrical Engineering}{2022}
-Design of an Offner-Chrisp Imaging Spectrometer for a Planetary Fluorescence Instrument \href{https://doi.org/10.7936/q24e-bh48}{\ \small\faFileLines} \\
+Design of an Offner-Chrisp Imaging Spectrometer for a Planetary Fluorescence Instrument \iconlink{\small\faFileLines}{https://doi.org/10.7936/q24e-bh48}{} \\
 Optical/Electronics Engineer, MIT Lincoln Laboratory
 
 \item \cvperson{Jackson Hyde, Electrical Engineering}{2020}
-Data Processing Electronics for an Ultra-Fast Single-Photon Counting Camera \href{https://doi.org/10.7936/nk7z-0p22}{\ \small\faFileLines} \\
+Data Processing Electronics for an Ultra-Fast Single-Photon Counting Camera \iconlink{\small\faFileLines}{https://doi.org/10.7936/nk7z-0p22}{} \\
 Hardware Engineer, IMC Trading     
 
 \item \cvperson{Weiran Wang, Electrical Engineering}{2019}
-Three-dimensional Point Spread Function Engineering for High Axial Localization Precision \href{https://doi.org/10.7936/856m-dx73}{\ \small\faFileLines}   
+Three-dimensional Point Spread Function Engineering for High Axial Localization Precision \iconlink{\small\faFileLines}{https://doi.org/10.7936/856m-dx73}{}   
 
 \item \cvperson[https://scholar.google.com/citations?user=TjMoTKsAAAAJ\&hl=en]{Prof.\ Oumeng Zhang, Electrical Engineering}{2017}
-Measuring Molecular Orientation and Rotational Mobility Using a Tri-spot Point Spread Function \href{https://doi.org/10.7936/K7ZP44J5}{\faFileLines} \\
+Measuring Molecular Orientation and Rotational Mobility Using a Tri-spot Point Spread Function \iconlink{\faFileLines}{https://doi.org/10.7936/K7ZP44J5}{} \\
 Placement: WashU EE Ph.D. Program
 
 \end{etaremune}
@@ -261,7 +253,7 @@ Placement: WashU EE Ph.D. Program
 \item \cvperson{Sam Kang, Electrical Engineering}{2024}
 
 \item \cvperson[https://scholar.google.com/citations?user=77rs9mIAAAAJ\&hl=en]{Jasmine Cheng, Electrical Engineering}{2024}
-Robust 6D Fluorescence Microscopy \href{https://openscholarship.wustl.edu/eseundergraduate_research/19}{\small\faFileLines}
+Robust 6D Fluorescence Microscopy \iconlink{\small\faFileLines}{https://openscholarship.wustl.edu/eseundergraduate_research/19}{} 
     
 \item \cvperson[https://scholar.google.com/citations?user=orwPCzQAAAAJ\&hl=en]{Brian Sun, Electrical Engineering}{2023}
 
