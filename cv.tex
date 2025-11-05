@@ -36,284 +36,44 @@
 % article class because we want to fully customize the page and not use a cv template
 \documentclass[letter,11pt]{article}
 
-%----------------------------------------------------------------------------------------
-%	FONT
-%----------------------------------------------------------------------------------------
-
+% Font package kept here (not moved to cvstyle)
 \usepackage[stixtwo]{fontsetup}
-% % fontspec allows you to use TTF/OTF fonts directly
-% \usepackage{fontspec}
-% \defaultfontfeatures{Ligatures=TeX}
+% (optional fontspec commented configuration left as-is)
 
-% % modified for ShareLaTeX use
-% \setmainfont[
-% SmallCapsFont = Fontin-SmallCaps.otf,
-% BoldFont = Fontin-Bold.otf,
-% ItalicFont = Fontin-Italic.otf
-% ]
-% {Fontin.otf}
+% Input the shared style (packages, macros, layout)
+\input{cvstyle.tex}
 
-%----------------------------------------------------------------------------------------
-%	PACKAGES
-%----------------------------------------------------------------------------------------
-\usepackage{url}
-\usepackage{parskip} 	
-
-%other packages for formatting
-\RequirePackage{color}
-\RequirePackage{graphicx}
-\usepackage[usenames,dvipsnames]{xcolor}
-\usepackage[scale=0.9]{geometry}
-
-% Suppress numbering for ALL levels (chapters, sections, subsections, ...)
+% suppress numbering for all section levels (kept)
 \setcounter{secnumdepth}{-1}
-
-%fancy footer
-\usepackage{lastpage}
-\usepackage{fancyhdr}
-
-% Ensure the section "mark" contains ONLY the section title (no number)
-% --- Marks: keep the most recent of section/subsection in \rightmark ---
-\makeatletter
-% Always update the "right mark" from sections and subsections
-\renewcommand{\sectionmark}[1]{\markright{#1}}
-\renewcommand{\subsectionmark}[1]{\markright{#1}}
-\makeatother
-
-\pagestyle{fancy}
-\renewcommand{\headrulewidth}{0pt}
-\fancyhf{} % clear existing header/footer entries
-\fancyfoot[L]{\footnotesize MDL CV -- \nouppercase{\rightmark}}
-\fancyfoot[R]{\footnotesize \thepage\ of \pageref{LastPage}}
-\fancypagestyle{plain}{%
-  \renewcommand{\headrulewidth}{0pt}%
-  \fancyhf{}%
-  \fancyfoot[L]{\footnotesize MDL CV -- \nouppercase{\rightmark}}
-  \fancyfoot[R]{\footnotesize \thepage\ of \pageref{LastPage}}
-}
-
-% --- Hide header/footer on the FIRST page only ---
-\AtBeginDocument{\thispagestyle{empty}}
-
-%tabularx environment
-\usepackage{tabularx}
-% Global spacing (you can tweak these)
-\newcommand{\tablerowskip}{3.75pt}   % space after each entry
-
-%for lists within experience section
-\usepackage{enumitem}
-%reverse-ordered lists
-\usepackage{etaremune}
-
-%to prevent spillover of tabular into next pages
-\usepackage{supertabular}
-\newlength{\fullcollw}
-\setlength{\fullcollw}{0.47\textwidth}
-
-%custom \section
-\usepackage{titlesec}				
-\usepackage{multicol}
-\usepackage{multirow}
-
-%CV Sections inspired by: 
-%http://stefano.italians.nl/archives/26
-\titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
-\titlespacing{\section}{0pt}{10pt}{10pt}
-
-\titleformat{\subsection}{\bfseries\raggedright}{}{0em}{}
-\titlespacing{\subsection}{0pt}{10pt}{\tablerowskip}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%for publications
-% \usepackage[style=authoryear,sorting=ynt, maxbibnames=2]{biblatex}
-% \usepackage[style=ieee, maxnames=99]{biblatex}
-\usepackage[style=science, maxnames=99, articletitle=true, date=year, isbn=false, eprint=false, url=false]{biblatex}
-
-\usepackage{biblatex_science_mods}
-
-
-%for social icons
-% \usepackage{fontawesome5}
-\usepackage{fontawesome7}
-
-%debug page outer frames
-%\usepackage{showframe}
-
-
-%Setup hyperref package, and colours for links
-% \usepackage[unicode, draft=false]{hyperref}
-% PDF/A-2b compliance
-\usepackage[a-2b]{pdfx} 
-%fix bookmarks
-\usepackage[open]{bookmark}
-
-\definecolor{linkcolour}{rgb}{0,0.2,0.6}
-\hypersetup{
-draft=false,
-colorlinks,
-breaklinks,
-urlcolor=linkcolour,
-linkcolor=linkcolour
-}
-
-%\addbibresource{citations.bib}
-\setlength\bibitemsep{1em}
-
-% Put this in your preamble once
-\newcommand{\IfNonEmptyURL}[2]{%
-  % #1 = URL, #2 = content to typeset if URL is non-empty
-  \if\relax\detokenize{#1}\relax
-    % URL empty: do nothing
-  \else
-    #2%
-  \fi
-}
-
-% job listing environments
-\newenvironment{jobshort}[2]
-{
-    \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill &  #2 
-    \end{tabularx} \par%
-}
-{
-}
-
-\newenvironment{joblong}[2]
-{
-    \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill & #2 
-    \end{tabularx} \par%
-    \begin{minipage}[t]{\linewidth}
-    \begin{itemize}[nosep,after=\strut, leftmargin=1em, itemsep=3pt,label=--]
-}
-{
-\end{itemize}
-\end{minipage}    
-}
-
-% activity listing environments
-\newenvironment{activityshort}[2]
-{
-    \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textit{#1} & \hfill & #2 
-    \end{tabularx} \par%
-}
-{
-}
-
-\newcommand{\activitynone}[2][]{%
-    \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textit{#1} & \hfill & #2 
-    \end{tabularx} \par%
-}
-
-% Optional first argument [URL], then {Name}{Right-side}
-\newenvironment{personshort}[3][]%
-{%
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    #2%
-    \IfNonEmptyURL{#1}{\href{#1}{\ \small\faGoogleScholar}}%
-    & \hfill & #3
-  \end{tabularx}\par%
-}%
-{}
-
-% Optional first argument [URL], then {Name}{Right-side}
-\newcommand{\personnone}[3][]{%
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    #2%
-    \IfNonEmptyURL{#1}{\href{#1}{\ \small\faGoogleScholar}}%
-    & \hfill & #3
-  \end{tabularx} \par%
-}
-
-
-% Remove bullets and indentation for itemize
-\renewcommand{\labelitemi}{} % hides bullet
-% Apply only to itemize, first level
-\setlist[itemize,1]{leftmargin=0pt}
-% Set spacing between items
-\setlength{\itemsep}{\tablerowskip}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%for teaching
-% Wide left column; compact right column
-\newcolumntype{Y}{>{\raggedright\arraybackslash}p{0.53\textwidth}}
-\newcolumntype{Z}{>{\raggedleft\arraybackslash}X}
-% \setlength{\tabcolsep}{6pt} % optional
-
-% Institution header: bold, spans both columns, simple spacing
-\newcommand{\teachinstitution}[1]{%
-  \multicolumn{2}{l}{\textbf{#1}}\\[\tablerowskip]%
-}
-
-% Entry:
-%   #1 = course number+title, incl. (UG)/(GR) — fully italicized
-%   #2 = role (free text; include any notes here)
-%   #3 = terms1 (first line, right column)
-%   #4 = terms2 (second line, right column) — pass {} to omit
-\newcommand{\teachentry}[4]{%
-  % Left cell (two lines)
-  \emph{#1}
-  % Right cell (one or two lines)
-  & #3 \\%
-  #2 &%
-  \if\relax\detokenize{#4}\relax\else#4\fi%
-  \\[\tablerowskip]%
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %----------------------------------------------------------------------------------------
 %	BEGIN DOCUMENT
 %----------------------------------------------------------------------------------------
 \begin{document}
 
-% non-numbered pages
-% \pagestyle{empty} 
-
 %----------------------------------------------------------------------------------------
-%	TITLE
+%	TITLE / CONTACT
 %----------------------------------------------------------------------------------------
 
-% \begin{tabularx}{\linewidth}{ @{}X X@{} }
-% \huge{Your Name}\vspace{2pt} & \hfill \emoji{incoming-envelope} email@email.com \\
-% \raisebox{-0.05\height}\faGithub\ username \ | \
-% \raisebox{-0.00\height}\faLinkedin\ username \ | \ \raisebox{-0.05\height}\faGlobe \ mysite.com  & \hfill \emoji{calling} number
-% \end{tabularx}
-
-\begin{tabularx}{\linewidth}{@{} l @{}}
-\Huge{Matthew Duk-Ying Lew} \\[7.5pt]
-MSC 1042-207-1101, One Brookings Drive, St. Louis, MO 63130\ $|$ \ 
-\href{mailto:mdlew@wustl.edu}{\raisebox{-0.05\height}\faEnvelope \ mdlew@wustl.edu} \ $|$ \ 
-\href{tel:+13149356790}{\raisebox{-0.05\height}\faPhone \ +1.314.935.6790} \\
-\href{https://lewlab.wustl.edu}{\raisebox{-0.05\height}\faGlobe \ lewlab.wustl.edu} \ $|$ \ 
-\href{https://orcid.org/0000-0002-5614-3292}{\raisebox{-0.05\height}\faOrcid \ 0000-0002-5614-3292} \ $|$ \ 
-\href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\raisebox{-0.05\height} \faGoogleScholar \ Google Scholar} \ $|$ \ 
-\href{https://www.webofscience.com/wos/author/record/D-6270-2012}{\raisebox{-0.05\height}\faArrowUpRightFromSquare \ Web of Science} \ $|$ \ 
-\href{https://github.com/Lew-Lab/}{\raisebox{-0.05\height}\faGithub \ Lew-Lab} 
-\\
-\end{tabularx}
+\cvcontact{Matthew Duk-Ying Lew}{MSC 1042-207-1101, One Brookings Drive, St. Louis, MO 63130 \ $|$ \ \href{tel:+13149356790}{\raisebox{-0.05\height}\faPhone \ +1.314.935.6790} \ $|$ \ \href{https://lewlab.wustl.edu}{\raisebox{-0.05\height}\faGlobe \ lewlab.wustl.edu} \ $|$ \ \href{https://orcid.org/0000-0002-5614-3292}{\raisebox{-0.05\height}\faOrcid \ 0000-0002-5614-3292} \ $|$ \ \href{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{\raisebox{-0.05\height}\faGoogleScholar \ Google Scholar} \ $|$ \ \href{https://www.webofscience.com/wos/author/record/D-6270-2012}{\raisebox{-0.05\height}\faArrowUpRightFromSquare \ Web of Science} \ $|$ \ \href{https://github.com/Lew-Lab/}{\raisebox{-0.05\height}\faGithub \ Lew-Lab}}{mdlew@wustl.edu}
 
 %----------------------------------------------------------------------------------------
 % EXPERIENCE SECTIONS
 %----------------------------------------------------------------------------------------
-%Increase spacing between rows of tables
-\renewcommand{\arraystretch}{1.1} % Default value: 1
+\renewcommand{\arraystretch}{1.1} % Increase spacing between rows of tables
 
-%Interests/ Keywords/ Summary
 \section*{My lab pushes the frontier of nanoscale imaging technologies.}
 The Lew Lab builds computational optical imaging systems to study biological and chemical systems at the nanoscale. Our technology leverages innovations in applied optics, signal and image processing, design optimization, and physical chemistry. We partner with scientists and engineers from all disciplines to develop technologies to solve unmet needs in science, medicine, and society.
 
-%Experience
 \section{Appointments and Experience}
 
-\begin{joblong}{Associate Professor, Washington University in St. Louis}{Jul 2022 -- present}
-\item \href{https://ese.washu.edu}{Preston M.\ Green Department of Electrical and Systems Engineering}
-\item Affiliate of the \href{https://bme.washu.edu}{Department of Biomedical Engineering}; the \href{https://dbbs.wustl.edu/programs/biochemistry-biophysics-structural-biology/}{DBBS Biochemistry, Biophysics, and Structural Biology Program}; and the \href{https://imse.washu.edu}{Institute of Materials Science \& Engineering}.
-\item Member of the \href{https://condensates.wustl.edu}{Center for Biomolecular Condensates} and the \href{https://quantumleaps.wustl.edu/}{Center for Quantum Leaps}.
-\end{joblong}
+\cvjob{Associate Professor, Washington University in St. Louis}{Jul 2022 -- present}[{%
+\begin{itemize}[nosep,after=\strut,leftmargin=1em,itemsep=3pt,label=--]
+  \item \href{https://ese.washu.edu}{Preston M.\ Green Department of Electrical and Systems Engineering}
+  \item Affiliate of the \href{https://bme.wustl.edu}{Department of Biomedical Engineering}; the \href{https://dbbs.wustl.edu/programs/biochemistry-biophysics-structural-biology/}{DBBS Biochemistry, Biophysics, and Structural Biology Program}; and the \href{https://imse.washu.edu}{Institute of Materials Science \& Engineering}.
+  \item Member of the \href{https://condensates.wustl.edu}{Center for Biomolecular Condensates} and the \href{https://quantumleaps.wustl.edu/}{Center for Quantum Leaps}.
+\end{itemize}
+}]
 
 \begin{jobshort}{Associate Chair for Academic Programs, Washington University in St. Louis}{Jul 2022 -- present}
 Preston M. Green Department of Electrical and Systems Engineering
@@ -324,7 +84,7 @@ Preston M. Green Department of Electrical and Systems Engineering
 \end{jobshort}
 
 \begin{jobshort}{Postdoctoral Scholar, Stanford University School of Medicine}{Nov 2014 -- Jun 2015}
-Department of Structural Biology \\
+Department of Structural Biology \\ 
 Research Advisor: \href{https://med.stanford.edu/delazerda.html}{Adam de la Zerda}
 \end{jobshort}
 
