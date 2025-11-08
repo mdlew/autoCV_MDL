@@ -64,21 +64,29 @@
 \titlespacing{\subsection}{0pt}{10pt}{\tablerowskip}
 
 % Icon + link helper
-% Usage: \iconlink{<icon macro>}{<url>}{<text>}
-\newcommand{\iconlink}[3]{\href{#2}{\raisebox{-0.05\height}{#1}\ #3}}
+% \iconlink[<anything>]{<icon>}{<target URL>}{<label>}
+% If [] is present, label is typeset with \nolinkurl; else plain.
+% \nolinkurl allows hyperref to break visible text like a url
+\NewDocumentCommand{\iconlink}{o m m m}{%
+  \IfNoValueTF{#1}
+    {\href{#3}{\raisebox{-0.05\height}{#2}~#4}}%
+    {\href{#3}{\raisebox{-0.05\height}{#2}~\nolinkurl{#4}}}%
+}
+% Optional to keep the font consistent:
+\urlstyle{same}
 
 % -------------------------
 % Bibliography
 % -------------------------
 % Keep the 'science' style and local modifications package
-\RequirePackage[style=science, maxnames=99, articletitle=true, date=year, isbn=false, eprint=false, url=false]{biblatex}
+\RequirePackage[style=science, datamodel=article-pmcid, maxnames=99, articletitle=true, date=year, isbn=false, eprint=false, url=false]{biblatex}
 \RequirePackage{biblatex_science_mods}
 
 % -------------------------
 % Icons, PDF/A and hyperlinks
 % -------------------------
 \RequirePackage{fontawesome7}
-\RequirePackage[a-2b]{pdfx}
+\RequirePackage[a-2b]{pdfx}  % loads hyperref
 \RequirePackage[open]{bookmark}
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}
 \hypersetup{

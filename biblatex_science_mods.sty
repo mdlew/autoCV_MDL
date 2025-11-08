@@ -37,6 +37,8 @@
     {\textbf{#1}}
     {#1}}
 
+% modify article style to include pmcid
+\DeclareFieldFormat[article]{pmcid}{#1}
 
 % Add DOI/URL and cover-image icons at the end of each entry
 % usera = URL for cover image link
@@ -50,19 +52,23 @@
       % no DOI, no URL -> nothing
     }{%
       % URL but no DOI
-      \hspace{2mm}\iconlink{\small\faArrowUpRightFromSquare}{\thefield{url}}{}%
+      \hspace{2mm}\iconlink[url]{\small\faArrowUpRightFromSquare}{\thefield{url}}{}%
     }%
   }{%
     % DOI present
-    \hspace{2mm}\iconlink{\small\faFileLines}{https://doi.org/\thefield{doi}}{Article}%
+    \hspace{2mm}\iconlink[url]{\small\faFileLines}{https://doi.org/\thefield{doi}}{\thefield{doi}}%
+  }%
+  % PMCID (if present)
+  \iffieldundef{pmcid}{}{%
+    \hspace{2mm}\iconlink[url]{\small\faFileLines}{https://pmc.ncbi.nlm.nih.gov/articles/\thefield{pmcid}/}{\thefield{pmcid}}%
   }%
   % Cover image icon (if present)
   \iffieldundef{usera}{}{%
-    \hspace{2mm}\iconlink{\small\faImage}{\thefield{usera}}{Cover image}%
+    \hspace{2mm}\iconlink{\small\faImage}{\thefield{usera}}{Cover}%
   }%
   % Editor's pick icon (if present)
   \iffieldundef{userb}{}{%
-    \hspace{2mm}\iconlink{\small\faStar}{\thefield{userb}}{}%
+    \hspace{2mm}\iconlink[url]{\small\faStar}{\thefield{userb}}{}%
   }%
   % Correction note (if present)
   \iffieldundef{userc}{}{%
