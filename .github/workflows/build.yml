@@ -21,8 +21,8 @@ jobs:
       - name: Compile cv
         id: build
         run: latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
-      - name: move pdf to artifact folder
-        run: mkdir -p github_artifacts && mv ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
+      - name: Copy pdf to artifact folder
+        run: mkdir -p github_artifacts && cp -v ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
       - name: Add site files to artifact (index.html, CNAME)
         run: |
           mkdir -p github_artifacts
@@ -37,10 +37,10 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./github_artifacts
-      - name: Copy pdf to dist folder for Cloudflare Pages
+      - name: Move pdf to dist folder for Cloudflare Pages
         run: |
           mkdir -p ${{ env.DIR }}/dist
-          cp -v ${{ env.DIR }}/${{ env.FILE }}.pdf ${{ env.DIR }}/dist/
+          mv -v ${{ env.DIR }}/${{ env.FILE }}.pdf ${{ env.DIR }}/dist/
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v3
         with:
