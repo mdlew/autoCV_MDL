@@ -49,6 +49,7 @@ jobs:
             ${{ env.DIR }}/dist/
 
   deploy-Cloudflare:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
