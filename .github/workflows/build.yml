@@ -21,24 +21,61 @@ jobs:
       - name: Compile cv
         id: build
         run: latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
-      - name: move pdf to artifact folder
-        run: mkdir -p github_artifacts && mv ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
+      - name: Copy pdf to artifact folder
+        run: mkdir -p github_artifacts && cp -v ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
       - name: Add site files to artifact (index.html, CNAME)
         run: |
           mkdir -p github_artifacts
           # copy only if present (no failure if missing)
-          for f in index.html CNAME .nojekyll; do
+          for f in ${{ env.DIR }}/dist/index.html ${{ env.DIR }}/src/CNAME ${{ env.DIR }}/src/.nojekyll; do
             if [ -f "$f" ]; then
               cp -v "$f" github_artifacts/
             fi
           done
-      - name: Upload pdf and site files for Pages
-        id: deploy
+      - name: Upload pdf and site files for Github Pages
+        id: deploy-GitHub
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./github_artifacts
+      - name: Move pdf to dist folder for Cloudflare Pages
+        run: |
+          mkdir -p ${{ env.DIR }}/dist
+          mv -v ${{ env.DIR }}/${{ env.FILE }}.pdf ${{ env.DIR }}/dist/
+      - name: Upload pdf and site files for Cloudflare Pages
+        uses: actions/upload-artifact@v5
+        with:
+          name: cloudflare-artifact
+          path: |
+            ${{ env.DIR }}/dist/
 
-  deploy:
+  deploy-Cloudflare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+          run_install: |
+            - recursive: true
+              args: [--force, --fix-lockfile, --no-frozen-lockfile]
+            - args: [--global, typescript]
+      - name: Download artifact
+        uses: actions/download-artifact@v6
+        with:
+          name: cloudflare-artifact
+      - name: Generate types
+        run: pnpm run generate-types
+      - name: Build
+        run: pnpm run build
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          packageManager: pnpm
+
+  deploy-GitHub:
     needs: build
     runs-on: ubuntu-latest
     permissions:

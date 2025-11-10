@@ -1,0 +1,18 @@
+{
+	"name": "autocv",
+	"version": "0.1.0",
+	"description": "AutoCV",
+	"main": "src/index.js",
+	"scripts": {
+		"build": "tsc",
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"generate-types": "wrangler types"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "latest",
+		"typescript": "latest",
+		"wrangler": "latest"
+	}
+}
