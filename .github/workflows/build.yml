@@ -65,6 +65,7 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: cloudflare-artifact
+          path: ./dist
       - name: Generate types
         run: pnpm run generate-types
       - name: Build
