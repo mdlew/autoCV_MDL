@@ -27,18 +27,27 @@ jobs:
         run: |
           mkdir -p github_artifacts
           # copy only if present (no failure if missing)
-          for f in index.html CNAME .nojekyll; do
+          for f in ${{ env.DIR }}/dist/index.html ${{ env.DIR }}/src/CNAME ${{ env.DIR }}/src/.nojekyll; do
             if [ -f "$f" ]; then
               cp -v "$f" github_artifacts/
             fi
           done
-      - name: Upload pdf and site files for Pages
+      - name: Upload pdf and site files for Github Pages
         id: deploy
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./github_artifacts
+      - name: Copy pdf to dist folder for Cloudflare Pages
+        run: |
+          mkdir -p ${{ env.DIR }}/dist
+          cp -v ${{ env.DIR }}/${{ env.FILE }}.pdf ${{ env.DIR }}/dist/
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-  deploy:
+  deploy-GitHub:
     needs: build
     runs-on: ubuntu-latest
     permissions:
