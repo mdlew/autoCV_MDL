@@ -102,6 +102,10 @@
 % -------------------------
 % Small utility macros
 % -------------------------
+
+% for custom macros
+\RequirePackage{xparse}
+
 % If-non-empty helper specifically for optional URL arguments
 \newcommand{\IfNonEmptyURL}[2]{%
   \if\relax\detokenize{#1}\relax
@@ -124,6 +128,29 @@
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
     \textit{#1} & \hfill & #2
     \end{tabularx} \par%
+}
+
+% list activity as row in table instead
+\newcommand{\activityrow}[4][]{%
+  % #1 = optional URL (may be empty)
+  % #2 = title
+  % #3 = organization (may be empty)
+  % #4 = year(s)
+  % Title with optional link:
+  \if\relax\detokenize{#1}\relax
+    % No URL provided
+    #2%
+  \else
+    % URL provided
+    \href{#1}{#2}%
+  \fi
+  % Optional org (adds comma only if non-empty):
+  \if\relax\detokenize{#3}\relax
+    % Org empty: print nothing
+  \else
+    , \textit{#3}%
+  \fi
+  \space & #4 \\%
 }
 
 % typography tweaks for itemize
@@ -149,7 +176,6 @@
 % -------------------------
 % New, compact macros (public API)
 % -------------------------
-\RequirePackage{xparse}
 
 % \cvcontact{<Name>}{<address/contact line>}{<links line>}
 %   #1: full name (printed large)
