@@ -225,4 +225,27 @@
   \end{tabularx}\par%
 }
 
+\NewDocumentCommand{\cvproject}{ o m m o m m m }{%
+  % #1 (optional) = Project URL (hyperlinks the title)
+  % #2 = Project title (left)
+  % #3 = Dates (right)
+  % #4 (optional) = Agency URL (hyperlinks agency+grant)
+  % #5 = Agency + grant number (plain text if #4 not given)
+  % #6 = Amount of award (right column in the agency row)
+  % #7 = Role (left column in the role row)
+  \begin{minipage}[t]{\linewidth}%
+      \begin{tabularx}{\linewidth}{@{}l X r@{}}%
+        % Row 1: Title (hyperlinked if #1) + Dates
+        \parbox[t]{0.76\linewidth}{\raggedright
+          \IfNoValueTF{#1}{\textit{#2}}{\href{#1}{\textit{#2}}}%
+        } & \hfill & #3 
+      \end{tabularx}\par%
+      % Row 2: Agency (+ grant), optionally hyperlinked, and amount on the right
+      \IfNoValueTF{#4}{#5}{\href{#4}{#5}} \hfill #6 \\%
+      % Row 3: Role (left)
+      #7 %
+  \end{minipage}%
+}
+
+
 %% end of cvstyle.sty
