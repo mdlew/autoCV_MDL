@@ -239,7 +239,7 @@
         \parbox[t]{0.76\linewidth}{\raggedright
           \IfNoValueTF{#1}{\textit{#2}}{\href{#1}{\textit{#2}}}%
         } & \hfill & #3 
-      \end{tabularx}\par%
+      \end{tabularx} \par \vspace{\tablerowskip}%
       % Row 2: Agency (+ grant), optionally hyperlinked, and amount on the right
       \IfNoValueTF{#4}{#5}{\href{#4}{#5}} \hfill #6 \\%
       % Row 3: Role (left)
