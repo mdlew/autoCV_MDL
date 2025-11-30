@@ -12,7 +12,7 @@
 % Graphics & color (use xcolor; do not load `color` separately)
 \RequirePackage{graphicx}
 \RequirePackage[usenames,dvipsnames]{xcolor}
-\RequirePackage[scale=0.9]{geometry}
+\RequirePackage[letterpaper,scale=0.9]{geometry}
 
 % Page numbering / header & footer
 \RequirePackage{lastpage}
@@ -158,7 +158,7 @@
   \else
     , \textit{#3}%
   \fi
-  \space & #4 \\%
+  \space & #4 \\[\tablerowskip]%
 }
 
 % typography tweaks for itemize
