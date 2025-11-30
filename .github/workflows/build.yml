@@ -24,13 +24,16 @@ jobs:
       - name: Compile cv
         id: build
         run: latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
-      - name: Copy pdf to artifact folder
-        run: mkdir -p github_artifacts && cp -v ${{ env.DIR }}/${{ env.FILE }}.pdf ./github_artifacts/
-      - name: Add site files to artifact (index.html, CNAME)
+      - name: Move pdf to dist folder
+        run: |
+          mkdir -p ${{ env.DIR }}/dist
+          mv -v ${{ env.DIR }}/${{ env.FILE }}.pdf ${{ env.DIR }}/dist/
+      - name: Add site files to artifact (e.g., /dist/, CNAME)
         run: |
           mkdir -p github_artifacts
+          cp -v -R ${{ env.DIR }}/dist/* github_artifacts/
           # copy only if present (no failure if missing)
-          for f in ${{ env.DIR }}/dist/index.html ${{ env.DIR }}/src/CNAME ${{ env.DIR }}/src/.nojekyll; do
+          for f in ${{ env.DIR }}/src/CNAME ${{ env.DIR }}/src/.nojekyll; do
             if [ -f "$f" ]; then
               cp -v "$f" github_artifacts/
             fi
@@ -40,10 +43,6 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./github_artifacts
-      - name: Move pdf to dist folder for Cloudflare Pages
-        run: |
-          mkdir -p ${{ env.DIR }}/dist
-          mv -v ${{ env.DIR }}/${{ env.FILE }}.pdf ${{ env.DIR }}/dist/
       - name: Upload pdf and site files for Cloudflare Pages
         uses: actions/upload-artifact@v5
         with:
