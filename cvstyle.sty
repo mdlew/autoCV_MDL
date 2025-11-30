@@ -47,8 +47,8 @@
 \newcommand{\tablerowskip}{3.75pt}
 
 % Lists, enumerations, and reverse enumerations
-\RequirePackage{enumitem}
 \RequirePackage{etaremune}
+\RequirePackage{enumitem} % make sure enumitem understands etaremune lists
 
 % Small length used in a few places
 \newlength{\fullcollw}
@@ -105,7 +105,7 @@
   linkcolor=linkcolour
 }
 
-\setlength\bibitemsep{1em}
+\setlength\bibitemsep{\tablerowskip}
 
 % -------------------------
 % Small utility macros
@@ -161,10 +161,11 @@
   \space & #4 \\[\tablerowskip]%
 }
 
+% set spacing for all lists
+\setlist{itemsep=\tablerowskip, topsep=0pt, parsep=0pt}
 % typography tweaks for itemize
 \renewcommand{\labelitemi}{}
 \setlist[itemize,1]{leftmargin=0pt}
-\setlength{\itemsep}{\tablerowskip}
 
 % teaching column types
 \newcolumntype{Y}{>{\raggedright\arraybackslash}p{0.53\textwidth}}
