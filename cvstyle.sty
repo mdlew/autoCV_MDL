@@ -167,7 +167,7 @@
 \renewcommand{\labelitemi}{}
 \setlist[itemize,1]{leftmargin=0pt}
 
-% teaching column types
+% teaching, service column types
 \newcolumntype{Y}{>{\raggedright\arraybackslash}p{0.53\textwidth}}
 \newcolumntype{Z}{>{\raggedleft\arraybackslash}X}
 
@@ -209,21 +209,27 @@
   \IfValueT{#3}{\begin{minipage}[t]{\linewidth}#3\end{minipage}}%
 }
 
-% \cvperson[<url>]{<name>}{<affiliation/status>}
-%   Optional argument: URL (e.g., Google Scholar profile). If provided, a small icon link is added.
-%   #2: name/title
-%   #3: right-aligned text (dates, current position, etc.)
-\newcommand{\cvperson}[3][]{%
+% Arguments:
+% #1 (optional): Google Scholar URL
+% #2 (required): Name and field
+% #3 (required): Year
+% #4 (optional): Thesis title
+% #5 (optional): Thesis/DOI URL
+% #6 (optional): Current position
+\NewDocumentCommand{\cvperson}{ o m m o o o }{%
   \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    % Left cell: name/title plus an optional icon link if URL is non-empty
-    #2%
-    \if\relax\detokenize{#1}\relax
-      % URL empty: no icon
-    \else
-      \ \iconlink{\small\faGoogleScholar}{#1}{}%
-    \fi
-    & \hfill & #3
-  \end{tabularx}\par%
+    % Left cell: stacked content
+    \raggedright #2%
+    \IfValueT{#1}{\ \iconlink{\small\faGoogleScholar}{#1}{}}
+    & \hfill &
+    % Right cell: year (top-aligned, dynamic width)
+    #3
+  \end{tabularx}
+  \IfValueT{#4}{\\[\tablerowskip]\begin{minipage}[t]{\linewidth}
+    #4%
+    \IfValueT{#5}{\ \iconlink{\small\faFileLines}{#5}{}}
+    \IfValueT{#6}{\\[\tablerowskip] #6}
+  \end{minipage}}{\par}
 }
 
 \NewDocumentCommand{\cvproject}{ o m m o m m m }{%
@@ -234,18 +240,16 @@
   % #5 = Agency + grant number (plain text if #4 not given)
   % #6 = Amount of award (right column in the agency row)
   % #7 = Role (left column in the role row)
-  \begin{minipage}[t]{\linewidth}%
-      \begin{tabularx}{\linewidth}{@{}l X r@{}}%
-        % Row 1: Title (hyperlinked if #1) + Dates
-        \parbox[t]{0.76\linewidth}{\raggedright
-          \IfNoValueTF{#1}{\textit{#2}}{\href{#1}{\textit{#2}}}%
-        } & \hfill & #3 
-      \end{tabularx} \par \vspace{\tablerowskip}%
-      % Row 2: Agency (+ grant), optionally hyperlinked, and amount on the right
-      \IfNoValueTF{#4}{#5}{\href{#4}{#5}} \hfill #6 \\%
-      % Row 3: Role (left)
-      #7 %
-  \end{minipage}%
+  \begin{tabularx}{\linewidth}{@{}l X r@{}}%
+    % Row 1: Title (hyperlinked if #1) + Dates
+    \parbox[t]{0.76\linewidth}{\raggedright
+      \IfNoValueTF{#1}{\textit{#2}}{\href{#1}{\textit{#2}}}%
+    } & \hfill & #3 
+  \end{tabularx} \\[\tablerowskip]%
+  % Row 2: Agency (+ grant), optionally hyperlinked, and amount on the right
+  \IfNoValueTF{#4}{#5}{\href{#4}{#5}} \hfill #6 \\[\tablerowskip]%
+  % Row 3: Role (left)
+  #7 %
 }
 
 
