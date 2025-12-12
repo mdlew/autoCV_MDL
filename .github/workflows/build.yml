@@ -7,6 +7,11 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**/*.json'
+      - '**/*.jsonc'
+      - '**/*.yaml'
+      - '**/*.yml'
 jobs:
   build:
     runs-on: ubuntu-latest
