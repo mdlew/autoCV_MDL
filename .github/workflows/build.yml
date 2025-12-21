@@ -49,7 +49,7 @@ jobs:
         with:
           path: ./github_artifacts
       - name: Upload pdf and site files for Cloudflare Pages
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: cloudflare-artifact
           path: |
@@ -84,7 +84,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           packageManager: pnpm
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: build
           path: |
