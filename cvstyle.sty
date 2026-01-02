@@ -57,6 +57,8 @@
 % Section formatting and multi-column layout
 \RequirePackage{titlesec}
 \RequirePackage{multicol}
+\RequirePackage{needspace} % to make sure some headings stay with the following text
+\RequirePackage{ragged2e}   % for \RaggedRight (better than \raggedright)
 
 \titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
 \titlespacing{\section}{0pt}{10pt}{10pt}
