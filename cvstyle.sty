@@ -1,6 +1,6 @@
 %% cvstyle.sty -- shared preamble, macros, and layout for cv.tex
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{cvstyle}[2025/11/04 v1.1 MDL CV style]
+\ProvidesPackage{cvstyle}[2026/01/28 v1.2 MDL CV style]
 
 % -------------------------
 % Packages (grouped & ordered)
@@ -43,14 +43,21 @@
 % -------------------------
 % Layout helpers
 % -------------------------
-\RequirePackage{tabularx}
+% \RequirePackage{tabularx}
+\RequirePackage{array}
+\RequirePackage{ltablex}
+\keepXColumns % preserves X column behavior across pages
 \newcommand{\tablerowskip}{3.75pt}
+% width holder for the right column in \cvperson
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{\tablerowskip}
 
 % Lists, enumerations, and reverse enumerations
 \RequirePackage{etaremune}
 \RequirePackage{enumitem} % make sure enumitem understands etaremune lists
 
 % Small length used in a few places
+\newlength{\cvpersonRightWidth} % renamed: no @ needed
 \newlength{\fullcollw}
 \setlength{\fullcollw}{0.47\textwidth}
 
@@ -193,11 +200,12 @@
 %   #2: address/contact (single line)
 %   #3: extra links (ORCID, website, scholar, etc.)
 \newcommand{\cvcontact}[3]{%
-  \begin{tabularx}{\linewidth}{@{} l @{}}
-    \Huge{#1} \\[7.5pt]
-    #2 \\
-    #3 \\
-  \end{tabularx}%
+  \noindent
+  \begin{minipage}{\linewidth}
+    {\Huge #1\par\vspace{\tablerowskip}}%
+    \RaggedRight #2\par
+    \RaggedRight #3\par
+  \end{minipage}%
 }
 
 % \cvjob{<title>}{<dates>}[<optional content>]
@@ -205,53 +213,91 @@
 %   #2: dates (string)
 %   [#3]: optional content token (often an itemize or description block)
 \NewDocumentCommand{\cvjob}{ m m o }{%
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textbf{#1} & \hfill & #2
-  \end{tabularx}\par%
-  \IfValueT{#3}{\begin{minipage}[t]{\linewidth}#3\end{minipage}}%
+  \begin{tabularx}{\linewidth}{@{}l X r@{}}%
+    \textbf{#1} & \hfill & #2%
+  \end{tabularx}%
+  % --- Remove extra blank line between Row 1 and Row 2 ---
+  \IfValueT{#3}{%
+    \vspace{-\parskip}%
+    \noindent\begin{minipage}[t]{\linewidth}%
+      #3%
+    \end{minipage}%
+  }%
+  \par\vspace{\tablerowskip}%
 }
 
-% Arguments:
-% #1 (optional): Google Scholar URL
-% #2 (required): Name and field
-% #3 (required): Year
-% #4 (optional): Thesis title
-% #5 (optional): Thesis/DOI URL
-% #6 (optional): Current position
 \NewDocumentCommand{\cvperson}{ o m m o o o }{%
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    % Left cell: stacked content
-    \raggedright #2%
-    \IfValueT{#1}{\ \iconlink{\small\faGoogleScholar}{#1}{}}
-    & \hfill &
-    % Right cell: year (top-aligned, dynamic width)
-    #3
-  \end{tabularx}
-  \IfValueT{#4}{\\[\tablerowskip]\begin{minipage}[t]{\linewidth}
-    #4%
-    \IfValueT{#5}{\ \iconlink{\small\faFileLines}{#5}{}}
-    \IfValueT{#6}{\\[\tablerowskip] #6}
-  \end{minipage}}{\par}
+  % #1 (opt) Google Scholar URL (adds icon after name)
+  % #2 Name + affiliation (left)
+  % #3 Year/status (right)
+  % #4 (opt) Secondary line (e.g., thesis/dissertation title)
+  % #5 (opt) Link for #4 (adds icon)
+  % #6 (opt) Tertiary line (e.g., current position)
+  \begingroup
+    \setlength{\tabcolsep}{0pt}%
+    \renewcommand{\arraystretch}{1}%
+
+    % Measure the natural width of the right cell (#3)
+    \settowidth{\cvpersonRightWidth}{\strut #3}%
+    % Clamp to avoid negative p{...} when #3 is too wide
+    \ifdim\cvpersonRightWidth>.45\linewidth
+      \setlength{\cvpersonRightWidth}{.45\linewidth}%
+    \fi
+
+    \begin{tabular}[t]{@{}p{\dimexpr\linewidth-\cvpersonRightWidth\relax}r@{}}%
+      % Row 1: Name/Affiliation — Year/Status
+      {\raggedright
+        #2%
+        \IfValueT{#1}{\ \iconlink{\small\faGoogleScholar}{#1}{}}%
+      } & #3%
+      % Row 2: Only if any of #4–#6 are present
+      \IfNoValueTF{#4}{%
+        \IfNoValueTF{#5}{%
+          \IfNoValueTF{#6}{%
+            % none present -> no second row
+          }{%
+            \\[\tablerowskip]%
+            \multicolumn{2}{@{}p{\linewidth}@{}}{#6}%
+          }%
+        }{%
+          \\[\tablerowskip]%
+          \multicolumn{2}{@{}p{\linewidth}@{}}{%
+            \iconlink{\small\faFileLines}{#5}{}%
+            \IfValueT{#6}{\par\addvspace{\tablerowskip}#6}%
+          }%
+        }%
+      }{%
+        \\[\tablerowskip]%
+        \multicolumn{2}{@{}p{\linewidth}@{}}{%
+          #4%
+          \IfValueT{#5}{\ \iconlink{\small\faFileLines}{#5}{}}%
+          \IfValueT{#6}{\par\addvspace{\tablerowskip}#6}%
+        }%
+      }%
+      \\% final row end
+    \end{tabular}%
+  \endgroup
 }
 
 \NewDocumentCommand{\cvproject}{ o m m o m m m }{%
-  % #1 (optional) = Project URL (hyperlinks the title)
-  % #2 = Project title (left)
-  % #3 = Dates (right)
-  % #4 (optional) = Agency URL (hyperlinks agency+grant)
-  % #5 = Agency + grant number (plain text if #4 not given)
-  % #6 = Amount of award (right column in the agency row)
-  % #7 = Role (left column in the role row)
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}%
-    % Row 1: Title (hyperlinked if #1) + Dates
-    \parbox[t]{0.76\linewidth}{\raggedright
+  % #1 (optional) Project URL (hyperlinks the title)
+  % #2 Project title (left)
+  % #3 Dates (right)
+  % #4 (optional) Agency URL (hyperlinks agency+grant)
+  % #5 Agency + grant number (plain if #4 absent)
+  % #6 Amount (right, in row 2)
+  % #7 Role (left, in row 3)
+  \begin{tabularx}{\linewidth}{@{}X r@{}}%
+    % Row 1: Title — Dates
+    {\raggedright
       \IfNoValueTF{#1}{\textit{#2}}{\href{#1}{\textit{#2}}}%
-    } & \hfill & #3 
-  \end{tabularx} \\[\tablerowskip]%
-  % Row 2: Agency (+ grant), optionally hyperlinked, and amount on the right
-  \IfNoValueTF{#4}{#5}{\href{#4}{#5}} \hfill #6 \\[\tablerowskip]%
-  % Row 3: Role (left)
-  #7 %
+    } & #3\\[\tablerowskip]
+    % Row 2: Agency (+ grant) — Amount
+    \IfNoValueTF{#4}{#5}{\href{#4}{#5}} & #6\\[\tablerowskip]
+    % Row 3: Role — (empty right cell)
+    #7 & \\
+  \end{tabularx}%
+  \par%
 }
 
 

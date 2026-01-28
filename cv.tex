@@ -12,6 +12,10 @@
 %	DOCUMENT DEFINITION
 %----------------------------------------------------------------------------------------
 
+% article class because we want to fully customize the page and not use a cv template
+\documentclass[11pt]{article}
+
+% \usepackage{filecontents}
 % define metadata for PDF/A
 \begin{filecontents}[force]{\jobname.xmpdata}
 \Title{Matthew D. Lew, Associate Professor, Washington University in St. Louis}
@@ -20,9 +24,6 @@
 \Language{en-US}
 \Subject{Curriculum Vitae}
 \end{filecontents}
-
-% article class because we want to fully customize the page and not use a cv template
-\documentclass[11pt]{article}
 
 % Font package kept here (not moved to cvstyle)
 \usepackage[stixtwo]{fontsetup}
