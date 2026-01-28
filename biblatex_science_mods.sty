@@ -252,3 +252,49 @@
   \usebibmacro{doi+eprint+url}%
   \usebibmacro{finentry}%
 }
+
+% Modified @online driver:
+% --- @online customizations: upright title, italic organization, no URL, no publisher,
+%     and NO spurious newlines (map \newblock to inline punctuation) -------------
+
+% Title upright
+\DeclareFieldFormat[online]{title}{\normalfont#1}
+
+% Organization italic — the driver prints it with \printlist
+\DeclareListFormat[online]{organization}{\mkbibemph{#1}}
+% (Harmless if the style ever uses \printfield for organization)
+\DeclareFieldFormat[online]{organization}{\mkbibemph{#1}}
+
+% Do not print URL/eprint/DOI for @online, but keep the data intact
+\AtEveryBibitem{%
+  \ifentrytype{online}{%
+    \renewbibmacro*{url+urldate}{}%
+    \renewbibmacro*{doi+eprint+url}{}%
+  }{}%
+}
+
+% Driver with inline separators:
+% Output: Author, Title, Organization (Year).
+\DeclareBibliographyDriver{online}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  % Locally neutralize Science’s block separator to avoid line breaks
+  \begingroup
+    \renewcommand*{\newblock}{\addcomma\space}%
+    \renewcommand*{\newunitpunct}{\addcomma\space}%
+    % Names
+    \usebibmacro{author/translator+others}%
+    \setunit{\addcomma\space}%
+    % Title (upright via field format)
+    \usebibmacro{title}%
+    % Organization (italic via LIST format)
+    \setunit{\addcomma\space}%
+    \printlist{organization}%
+    % Year at the end (you load biblatex with date=year, so this prints just the year)
+    \setunit{\addspace}%
+    \nopunct
+    \printtext[parens]{\usebibmacro{date}}%
+  \endgroup
+  \usebibmacro{finentry}%
+}
+% -------------------------------------------------------------------------------
