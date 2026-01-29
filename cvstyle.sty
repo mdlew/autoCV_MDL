@@ -340,7 +340,7 @@
     #3\par
     \if\relax\detokenize{#4}\relax\else#4\fi
   }%
-  \\[\dimexpr4\tablerowskip\relax]%
+  \\[\dimexpr4.5\tablerowskip\relax]%
 }
 
 % ========================================================================
@@ -416,7 +416,7 @@
       #3%
     \end{minipage}%
   }%
-  \par\vspace{\tablerowskip}%
+  \par\vspace{\dimexpr1.5\tablerowskip\relax}%
 }
 
 % -------------------------
@@ -431,7 +431,8 @@
 %   #3 (required): Year or status (right-aligned, e.g., "2023", "In Progress")
 %   [#4] (optional): Secondary line (e.g., thesis/dissertation title)
 %   [#5] (optional): URL for thesis/dissertation (adds document icon)
-%   [#6] (optional): Tertiary line (e.g., "Currently: Assistant Professor at...")
+%   [#6] (optional): Text to include alongside document icon for URL link
+%   [#7] (optional): Tertiary line (e.g., "Currently: Assistant Professor at...")
 %
 % USAGE:
 %   % PhD student with thesis and current position
@@ -450,7 +451,7 @@
 %   - Dynamically calculates column widths based on year/status text
 %   - Two-column tabular layout with secondary/tertiary info in full-width rows
 %   - Google Scholar and document icons use FontAwesome via \iconlink
-\NewDocumentCommand{\cvperson}{ o m m o o o }{%
+\NewDocumentCommand{\cvperson}{ o m m o o o o }{%
   \begingroup
     \setlength{\tabcolsep}{0pt}%
     \renewcommand{\arraystretch}{1}%
@@ -490,8 +491,15 @@
         \\[\tablerowskip]%
         \multicolumn{2}{@{}p{\linewidth}@{}}{%
           #4%
-          \IfValueT{#5}{\ \iconlink{\small\faFileLines}{#5}{}}%
-          \IfValueT{#6}{\par\addvspace{\tablerowskip}#6}%
+          \IfValueT{#5}{%
+            \IfNoValueTF{#6}{%
+            % no text to accompany document icon
+            \ \iconlink{\small\faFileLines}{#5}{}
+            }{%
+            \ \iconlink{\small\faFileLines}{#5}{#6}
+            }%
+          }%
+          \IfValueT{#7}{\par\addvspace{\tablerowskip}#7}%
         }%
       }%
       \\% final row end
