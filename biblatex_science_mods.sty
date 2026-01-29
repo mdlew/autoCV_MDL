@@ -31,9 +31,10 @@
 %     • cvstyle.sty (defines \iconlink macro required by this package)
 %
 %   LOAD ORDER:
-%     This package must be loaded AFTER biblatex and cvstyle.sty.
-%     cvstyle.sty defines the \iconlink command that this package uses.
-%     The typical load order is: biblatex → cvstyle.sty → biblatex_science_mods.sty
+%     This package is loaded automatically by cvstyle.sty. 
+%     cvstyle.sty first defines \iconlink, loads biblatex, then loads this package.
+%     Typical load order: cvstyle.sty → (defines \iconlink) → biblatex → biblatex_science_mods.sty
+%     Users normally just load cvstyle.sty; it handles the dependencies automatically.
 %
 %===============================================================================
 % TABLE OF CONTENTS:
@@ -66,7 +67,7 @@
 %   Helper macro for printing icons with hyperlinks in bibliography entries.
 %
 %   DEFINITION:
-%     The \iconlink command is defined in cvstyle.sty, which loads this package.
+%     The \iconlink command is defined in cvstyle.sty before this package is loaded.
 %     This package uses the 4-argument version provided by cvstyle.sty:
 %       • [#1] (optional): If present, enables \nolinkurl formatting for #4
 %       • #2: Icon command (e.g., \faArrowUpRightFromSquare from fontawesome7)
@@ -78,8 +79,8 @@
 %     line breaking in URLs. See \addicon helper macro below for usage pattern.
 %
 %   NOTE:
-%     This package does NOT define \iconlink itself - it relies on cvstyle.sty
-%     to provide the definition. Ensure cvstyle.sty is loaded before this package.
+%     This package is automatically loaded by cvstyle.sty, which defines \iconlink first.
+%     For standalone usage, ensure cvstyle.sty (or a compatible \iconlink definition) is loaded first.
 
 
 %===============================================================================
@@ -517,10 +518,10 @@
 %   • Run: biber --validate-datamodel cv.bcf to check for data errors
 %
 % LOAD ORDER CONFLICTS:
-%   • This package must load AFTER both biblatex and cvstyle.sty
-%   • cvstyle.sty defines \iconlink (4-argument version) which this package requires
-%   • If cvstyle.sty is not loaded before this package, you'll get "undefined command" errors
-%   • Typical load order: biblatex → cvstyle.sty → biblatex_science_mods.sty
+%   • In typical usage, cvstyle.sty loads both biblatex and this package automatically
+%   • cvstyle.sty defines \iconlink (4-argument version) before loading this package
+%   • For standalone usage, ensure \iconlink is defined before loading this package
+%   • Load order handled by cvstyle.sty: (define \iconlink) → biblatex → biblatex_science_mods
 %
 % CUSTOM FIELDS NOT WORKING (usera, userb, userc):
 %   • These fields store URLs for cover/editor's pick/correction links
