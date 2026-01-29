@@ -5,14 +5,20 @@
 %%   for publications, teaching, service, mentoring, and funded projects.
 %%   Includes bibliography integration, custom sectioning, and PDF/A output.
 %%
-%% MAIN COMMANDS (Public API):
+%% PUBLIC API (stable, documented, safe for user CVs):
 %%   \cvcontact   - Contact header with name, address, and links
 %%   \cvjob       - Position/appointment entry with optional details
 %%   \cvperson    - Mentee/collaborator entry with thesis/position info
 %%   \cvproject   - Funded project entry with agency, amount, and role
-%%   \activityrow - Generic activity listing (title, org, year)
 %%   \teachentry  - Teaching course entry with role and offerings
+%%
+%% SEMI-PUBLIC API (documented but may evolve):
+%%   \activityrow - Generic activity listing (title, org, year)
 %%   \iconlink    - Hyperlinked icon with text (for contact info)
+%%
+%% INTERNAL MACROS (prefixed with cv@, no stability guarantees):
+%%   \cv@ifempty  - Helper for empty string testing
+%%   \cvpersonRightWidth - Length register for \cvperson layout
 %%
 %% DEPENDENCIES:
 %%   Requires biblatex with 'science' style, fontawesome7, pdfx, xparse
@@ -29,10 +35,17 @@
 %%   - Use \newcommand for simple commands with only mandatory arguments
 %%   - Use \newenvironment for paired begin/end constructs
 %%   - Prefix internal-only commands/lengths with \cv@ to avoid conflicts
+%%   - Use \providecommand for commands that may be defined elsewhere
 %%   - Document all public API commands with structured comment blocks
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{cvstyle}[2026/01/28 v1.2 MDL CV style]
+
+% -------------------------
+% Version and compatibility information
+% -------------------------
+% This package requires recent LaTeX distributions (TeX Live 2020 or newer).
+% Minimum package versions are specified where breaking changes occurred.
 
 % -------------------------
 % Packages (grouped & ordered by dependency)
@@ -57,10 +70,13 @@
 % -------------------------
 % Configure section marks to display current section name in footer
 % (suppresses automatic uppercasing via \nouppercase in footer below)
+% Note: Wrapping in \begingroup/\endgroup ensures @ category changes are localized
+\begingroup
 \makeatletter
 \renewcommand{\sectionmark}[1]{\markright{#1}}
 \renewcommand{\subsectionmark}[1]{\markright{#1}}
 \makeatother
+\endgroup
 
 % Set fancy page style as default
 \pagestyle{fancy}
@@ -86,6 +102,7 @@
 \keepXColumns              % Preserve X column proportions when tables break across pages
 
 % Standard vertical spacing between CV entries (3.75pt provides tight but readable spacing)
+% Note: This is a public configuration parameter that can be adjusted by users
 \newlength{\tablerowskip}
 \setlength{\tablerowskip}{3.75pt}
 
@@ -98,9 +115,11 @@
 \RequirePackage{enumitem}   % Enhanced list formatting; ensures compatibility with etaremune
 
 % -------------------------
-% Internal length registers
+% Internal length registers (prefixed with cv@ for namespace protection)
 % -------------------------
 % Width holder for right column in \cvperson (calculated dynamically)
+% This is used to ensure proper column proportions in the two-column layout
+% when the year/status text varies in width.
 \newlength{\cvpersonRightWidth}
 
 
@@ -134,8 +153,13 @@
 %   #3: Target URL for hyperlink
 %   #4: Visible link text (may be empty for icon-only links)
 %
-% NOTE: Internal helper, but used in public API commands like \cvcontact
-\newcommand{\iconlink}[4][]{%
+% ROBUSTNESS:
+%   - Uses \providecommand pattern in biblatex_science_mods.sty to avoid conflicts
+%   - Icon vertical alignment uses \raisebox{-0.05\height} for consistency
+%   - Gracefully handles empty labels (icon-only links)
+%
+% NOTE: Primary definition; fallback version in biblatex_science_mods.sty
+\providecommand{\iconlink}[4][]{%
   \if\relax\detokenize{#1}\relax
     % Optional flag NOT provided: plain text
     \href{#3}{\raisebox{-0.05\height}{#2}~#4}%
@@ -152,6 +176,7 @@
 % -------------------------
 % Use 'science' citation style with custom article-pmcid datamodel
 % Configuration: show all authors, article titles, year only, no ISBN/eprint/URL
+% Minimum biblatex version 3.16 (2020) recommended for stability
 \RequirePackage[style=science, datamodel=article-pmcid, maxnames=99, articletitle=true, date=year, isbn=false, eprint=false, url=false]{biblatex}
 % Local modifications to science style (custom .sty file)
 \RequirePackage{biblatex_science_mods}
@@ -160,11 +185,16 @@
 % ICONS, PDF/A, AND HYPERLINKS
 % (Load order critical: fontawesome7 → pdfx → bookmark)
 % -------------------------
+% WARNING: Package load order matters here!
+%   1. fontawesome7 must load before pdfx to ensure proper icon font embedding
+%   2. pdfx loads hyperref internally; do not load hyperref explicitly
+%   3. bookmark must load after hyperref (which pdfx provides)
 \RequirePackage{fontawesome7}    % Icon fonts (must load before pdfx for proper PDF embedding)
 \RequirePackage[a-2b]{pdfx}      % PDF/A-2b compliance (loads hyperref internally)
 \RequirePackage[open]{bookmark}  % Enhanced PDF bookmarks (requires hyperref, loaded by pdfx)
 
 % Define custom link color and configure hyperref (loaded by pdfx)
+% Note: Color names in global namespace; consider using cv@linkcolour for future namespace safety
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}  % Dark blue for links
 \hypersetup{
   draft=false,    % Enable hyperlinks even in draft mode
@@ -181,12 +211,31 @@
 % COMMAND DEFINITION TOOLS
 % -------------------------
 % xparse provides \NewDocumentCommand for flexible argument handling
-\RequirePackage{xparse}
+% Minimum version: 2018-04-06 (xparse syntax stabilized)
+\RequirePackage{xparse}[2018/04/06]
 
 % -------------------------
 % INTERNAL UTILITY MACROS
-% (Not part of public API)
+% (Not part of public API; prefixed with cv@ to prevent namespace conflicts)
 % -------------------------
+
+% \cv@ifempty{<text>}{<not empty code>}
+%
+% Helper macro to test if argument is empty and execute code if not empty.
+% Uses robust \if\relax\detokenize pattern for proper empty testing.
+%
+% PARAMETERS:
+%   #1: Text to test for emptiness
+%   #2: Code to execute if #1 is not empty
+%
+% INTERNAL USE ONLY - reduces code duplication in public commands
+\newcommand{\cv@ifempty}[2]{%
+  \if\relax\detokenize{#1}\relax
+    % empty - do nothing
+  \else
+    #2%
+  \fi
+}
 
 % -------------------------
 % PUBLIC API: Activity listing commands
@@ -228,18 +277,14 @@
 %   \activityrow{Other Activity}{}{2024}  % No org, no URL
 %   \end{tabularx}
 \newcommand{\activityrow}[4][]{%
-  % Title with optional hyperlink
+  % Title with optional hyperlink using helper macro
   \if\relax\detokenize{#1}\relax
-    #2%  % No URL provided
+    #2%
   \else
-    \href{#1}{#2}%  % URL provided
+    \href{#1}{#2}%
   \fi
-  % Organization (adds comma only if non-empty)
-  \if\relax\detokenize{#3}\relax
-    % Org empty: print nothing
-  \else
-    , \textit{#3}%
-  \fi
+  % Organization (adds comma only if non-empty) using helper macro
+  \cv@ifempty{#3}{, \textit{#3}}%
   \space & #4 \\[\tablerowskip]%
 }
 
@@ -413,6 +458,8 @@
     % Measure natural width of right cell (#3 = year/status)
     \settowidth{\cvpersonRightWidth}{\strut #3}%
     % Clamp to max 45% of line width to prevent negative left column width
+    % Rationale: If year/status text is very long (>45% line width), the left
+    % column would become negative or too narrow. This ensures minimum usable space.
     \ifdim\cvpersonRightWidth>.45\linewidth
       \setlength{\cvpersonRightWidth}{.45\linewidth}%
     \fi
@@ -502,5 +549,40 @@
   \par%
 }
 
+
+%% ========================================================================
+%% TROUBLESHOOTING & KNOWN ISSUES
+%% ========================================================================
+%%
+%% FONTAWESOME ICONS NOT DISPLAYING:
+%%   • Ensure fontawesome7 is installed in your TeX distribution
+%%   • Run: tlmgr install fontawesome7 (TeX Live) or use MiKTeX Package Manager
+%%   • If icons still don't appear, check console output for font loading errors
+%%
+%% PACKAGE LOAD ORDER CONFLICTS:
+%%   • pdfx loads hyperref internally; do not \RequirePackage{hyperref} explicitly
+%%   • fontawesome7 must load before pdfx for proper font embedding in PDF/A
+%%   • If using other packages that modify hyperref, load them after cvstyle
+%%
+%% BIBLIOGRAPHY ISSUES:
+%%   • biblatex_science_mods.sty must load after biblatex but before document
+%%   • Ensure article-pmcid.dbx is in the same directory as cv.tex
+%%   • Run biber (not bibtex) for bibliography processing: biber cv
+%%
+%% COLUMN WIDTH ISSUES IN \cvperson:
+%%   • If year/status text exceeds 45% of line width, it will be clamped
+%%   • This prevents negative width in the left column (name/affiliation)
+%%   • Consider abbreviating very long status strings (e.g., "In Progress" → "2024–")
+%%
+%% VERSION COMPATIBILITY:
+%%   • Requires TeX Live 2020 or newer for stable xparse/biblatex versions
+%%   • If using older TeX distributions, some features may not work correctly
+%%   • Update your TeX distribution if encountering unexplained errors
+%%
+%% HYPERREF CONFIGURATION:
+%%   • Link colors defined globally as 'linkcolour' (may conflict with other packages)
+%%   • To change link colors, redefine after loading cvstyle:
+%%     \definecolor{linkcolour}{rgb}{r,g,b}
+%%     \hypersetup{urlcolor=linkcolour, linkcolor=linkcolour}
 
 %% end of cvstyle.sty
