@@ -17,7 +17,8 @@
 %%   \iconlink    - Hyperlinked icon with text (for contact info)
 %%
 %% INTERNAL MACROS (prefixed with cv@, no stability guarantees):
-%%   \cv@ifempty  - Helper for empty string testing
+%%   \cv@ifempty     - Helper for empty string testing (executes code if not empty)
+%%   \cv@ifemptyelse - Helper for empty string testing (with both branches)
 %%   \cvpersonRightWidth - Length register for \cvperson layout
 %%
 %% DEPENDENCIES:
@@ -160,13 +161,13 @@
 %
 % NOTE: This is the canonical definition; biblatex_science_mods.sty uses this command
 \providecommand{\iconlink}[4][]{%
-  \if\relax\detokenize{#1}\relax
+  \cv@ifemptyelse{#1}{%
     % Optional flag NOT provided: plain text
     \href{#3}{\raisebox{-0.05\height}{#2}~#4}%
-  \else
+  }{%
     % Optional flag provided: use \nolinkurl for breakable text
     \href{#3}{\raisebox{-0.05\height}{#2}~\nolinkurl{#4}}%
-  \fi
+  }%
 }
 % Keep URL font consistent with surrounding text
 \urlstyle{same}
@@ -237,6 +238,25 @@
   \fi
 }
 
+% \cv@ifemptyelse{<text>}{<empty code>}{<not empty code>}
+%
+% Helper macro to test if argument is empty and execute appropriate code branch.
+% Uses robust \if\relax\detokenize pattern for proper empty testing.
+%
+% PARAMETERS:
+%   #1: Text to test for emptiness
+%   #2: Code to execute if #1 is empty
+%   #3: Code to execute if #1 is not empty
+%
+% INTERNAL USE ONLY - reduces code duplication in public commands
+\newcommand{\cv@ifemptyelse}[3]{%
+  \if\relax\detokenize{#1}\relax
+    #2% empty branch
+  \else
+    #3% not empty branch
+  \fi
+}
+
 % -------------------------
 % PUBLIC API: Activity listing commands
 % -------------------------
@@ -278,11 +298,11 @@
 %   \end{tabularx}
 \newcommand{\activityrow}[4][]{%
   % Title with optional hyperlink using helper macro
-  \if\relax\detokenize{#1}\relax
+  \cv@ifemptyelse{#1}{%
     #2%
-  \else
+  }{%
     \href{#1}{#2}%
-  \fi
+  }%
   % Organization (adds comma only if non-empty) using helper macro
   \cv@ifempty{#3}{, \textit{#3}}%
   \space & #4 \\[\tablerowskip]%
@@ -338,7 +358,7 @@
   \parbox[t]{\hsize}{%
     \raggedleft
     #3\par
-    \if\relax\detokenize{#4}\relax\else#4\fi
+    \cv@ifempty{#4}{#4}%
   }%
   \\[\dimexpr4.5\tablerowskip\relax]%
 }
