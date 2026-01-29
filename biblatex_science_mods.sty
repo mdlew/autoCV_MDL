@@ -28,12 +28,12 @@
 %   RECOMMENDED:
 %     • fontawesome7 (for \faArrowUpRightFromSquare, \faFileLines, \faImage, \faStar)
 %       Note: fontawesome5 is also compatible but deprecated. Use fontawesome7 for consistency with cvstyle.sty.
-%     • cvstyle.sty (defines primary \iconlink macro with layout tweaks)
+%     • cvstyle.sty (defines \iconlink macro required by this package)
 %
 %   LOAD ORDER:
-%     This package must be loaded AFTER biblatex but ideally BEFORE cvstyle.sty
-%     if you want the enhanced \iconlink from cvstyle to override the fallback
-%     defined herein. See the \iconlink note below.
+%     This package must be loaded AFTER biblatex and cvstyle.sty.
+%     cvstyle.sty defines the \iconlink command that this package uses.
+%     The typical load order is: biblatex → cvstyle.sty → biblatex_science_mods.sty
 %
 %===============================================================================
 % TABLE OF CONTENTS:
@@ -62,32 +62,24 @@
 % 1. AUXILIARY MACROS & SETUP
 %===============================================================================
 
-% MACRO: \iconlink{<icon>}{<url>}{<text>}
+% MACRO: \iconlink[<flag>]{<icon>}{<url>}{<text>}
 %   Helper macro for printing icons with hyperlinks in bibliography entries.
 %
-%   CANONICAL DEFINITION:
-%     The primary definition (with layout/spacing tweaks) lives in cvstyle.sty.
-%     To use the enhanced version, ensure cvstyle.sty loads this package
-%     (place \RequirePackage{biblatex_science_mods} after \iconlink is defined).
+%   DEFINITION:
+%     The \iconlink command is defined in cvstyle.sty, which loads this package.
+%     This package uses the 4-argument version provided by cvstyle.sty:
+%       • [#1] (optional): If present, enables \nolinkurl formatting for #4
+%       • #2: Icon command (e.g., \faArrowUpRightFromSquare from fontawesome7)
+%       • #3: URL to link to (e.g., https://doi.org/10.1234/...)
+%       • #4: Display text after icon (optional; often empty for icon-only links)
 %
-%   FALLBACK:
-%     If \iconlink is not yet defined at load time, we define a minimal version
-%     here using \href so icons render immediately. This fallback:
-%       • Raises the icon by –0.05×height to vertically align with text
-%       • Adds a small space between icon and text
-%       • Uses \href{#2} to make the link active
-%     Using \providecommand ensures no conflict if cvstyle.sty loads first.
+%   USAGE:
+%     This package calls \iconlink with the optional [url] flag to enable proper
+%     line breaking in URLs. See \addicon helper macro below for usage pattern.
 %
-%   PARAMETERS:
-%     #1  Icon command (e.g., \faArrowUpRightFromSquare from fontawesome7)
-%     #2  URL to link to (e.g., https://doi.org/10.1234/...)
-%     #3  Display text after icon (optional; often empty for icon-only links)
-%
-%   ROBUSTNESS:
-%     - \providecommand only defines if not already defined (prevents conflicts)
-%     - Compatible with both 3-argument (here) and 4-argument (cvstyle) versions
-%
-\providecommand{\iconlink}[3]{\href{#2}{\raisebox{-0.05\height}{#1}\ #3}}
+%   NOTE:
+%     This package does NOT define \iconlink itself - it relies on cvstyle.sty
+%     to provide the definition. Ensure cvstyle.sty is loaded before this package.
 
 
 %===============================================================================
@@ -525,10 +517,10 @@
 %   • Run: biber --validate-datamodel cv.bcf to check for data errors
 %
 % LOAD ORDER CONFLICTS:
-%   • This package must load AFTER biblatex but BEFORE \begin{document}
-%   • If cvstyle.sty also loads biblatex, ensure consistent options
-%   • \iconlink conflicts: this uses 3-arg version, cvstyle uses 4-arg version
-%     Both use \providecommand to coexist; last loaded wins
+%   • This package must load AFTER both biblatex and cvstyle.sty
+%   • cvstyle.sty defines \iconlink (4-argument version) which this package requires
+%   • If cvstyle.sty is not loaded before this package, you'll get "undefined command" errors
+%   • Typical load order: biblatex → cvstyle.sty → biblatex_science_mods.sty
 %
 % CUSTOM FIELDS NOT WORKING (usera, userb, userc):
 %   • These fields store URLs for cover/editor's pick/correction links
