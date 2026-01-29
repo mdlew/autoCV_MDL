@@ -19,6 +19,7 @@ Live demo: [cv.matthewlew.info](https://cv.matthewlew.info)
 - Repository layout
 - Package scripts
 - Custom domain
+- Style file documentation
 - Troubleshooting
 - License and credits
 
@@ -82,6 +83,25 @@ pnpm deploy   # publish to Cloudflare Workers
 - `pnpm dev` — local Worker dev server (`wrangler dev`).
 - `pnpm deploy` — deploy Worker (`wrangler deploy`).
 - `pnpm generate-types` — fetch Cloudflare Worker types.
+
+## Style file documentation
+
+The CV styling is implemented in two custom LaTeX packages:
+
+- **`cvstyle.sty`** — Main style package with CV entry commands, page layout, and bibliography configuration
+- **`biblatex_science_mods.sty`** — Customizations to the biblatex-science citation style
+
+Both files follow LaTeX best practices for robustness and maintainability. See [REFACTORING.md](REFACTORING.md) for:
+- Detailed documentation of improvements and best practices applied
+- API stability guidelines (public vs. internal commands)
+- Troubleshooting guide for common issues
+- Migration guide for custom style files
+
+Key features:
+- Namespace protection with `cv@` prefix for internal commands
+- Version requirements for critical packages
+- Comprehensive troubleshooting sections in comments
+- Defensive programming patterns for robustness
 
 ## Custom domain
 

@@ -26,7 +26,8 @@
 %     • hyperref (for \href)
 %
 %   RECOMMENDED:
-%     • fontawesome5 (for \faArrowUpRightFromSquare, \faFileLines, \faImage, \faStar)
+%     • fontawesome7 (for \faArrowUpRightFromSquare, \faFileLines, \faImage, \faStar)
+%       Note: fontawesome5 is also compatible but deprecated. Use fontawesome7 for consistency with cvstyle.sty.
 %     • cvstyle.sty (defines primary \iconlink macro with layout tweaks)
 %
 %   LOAD ORDER:
@@ -53,7 +54,9 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{biblatex_science_mods}[2025/11/04 v1.0 Modifications to biblatex-science for CV]
 
-\RequirePackage{etoolbox}
+% Require minimum package versions for stability
+% etoolbox 2.5 (2011) provides \csnumgdef and \AtDataInput
+\RequirePackage{etoolbox}[2011/01/03]
 
 %===============================================================================
 % 1. AUXILIARY MACROS & SETUP
@@ -73,11 +76,16 @@
 %       • Raises the icon by –0.05×height to vertically align with text
 %       • Adds a small space between icon and text
 %       • Uses \href{#2} to make the link active
+%     Using \providecommand ensures no conflict if cvstyle.sty loads first.
 %
 %   PARAMETERS:
-%     #1  Icon command (e.g., \faArrowUpRightFromSquare from fontawesome5)
+%     #1  Icon command (e.g., \faArrowUpRightFromSquare from fontawesome7)
 %     #2  URL to link to (e.g., https://doi.org/10.1234/...)
 %     #3  Display text after icon (optional; often empty for icon-only links)
+%
+%   ROBUSTNESS:
+%     - \providecommand only defines if not already defined (prevents conflicts)
+%     - Compatible with both 3-argument (here) and 4-argument (cvstyle) versions
 %
 \providecommand{\iconlink}[3]{\href{#2}{\raisebox{-0.05\height}{#1}\ #3}}
 
@@ -501,3 +509,38 @@
 %   * Improved field formatting for conference proceedings (no spurious commas)
 %   * Helper macro \addicon for consistent icon spacing
 %   * Comprehensive documentation and section organization
+
+%===============================================================================
+% TROUBLESHOOTING & KNOWN ISSUES
+%===============================================================================
+%
+% ICONS NOT DISPLAYING IN BIBLIOGRAPHY:
+%   • Ensure fontawesome7 (or fontawesome5) is installed: tlmgr install fontawesome7
+%   • Check that icon commands exist: \faFileLines, \faArrowUpRightFromSquare, etc.
+%   • Verify cvstyle.sty or this package loads before \begin{document}
+%
+% REVERSE NUMBERING INCORRECT:
+%   • Counter increments via \AtDataInput on each bibliography entry
+%   • If entries appear out of order, check .bib file sorting or biblatex sorting options
+%   • Run: biber --validate-datamodel cv.bcf to check for data errors
+%
+% LOAD ORDER CONFLICTS:
+%   • This package must load AFTER biblatex but BEFORE \begin{document}
+%   • If cvstyle.sty also loads biblatex, ensure consistent options
+%   • \iconlink conflicts: this uses 3-arg version, cvstyle uses 4-arg version
+%     Both use \providecommand to coexist; last loaded wins
+%
+% CUSTOM FIELDS NOT WORKING (usera, userb, userc):
+%   • These fields store URLs for cover/editor's pick/correction links
+%   • Ensure fields are defined in your .bib entries, e.g.: usera = {https://...}
+%   • If icons still don't appear, verify field names match exactly (case-sensitive)
+%
+% AUTHOR HIGHLIGHTING NOT WORKING:
+%   • Add annotation=highlight to target author in .bib file
+%   • Example: author = {Smith, J. and {Lew, Matthew and[annotation=highlight]} and Doe, J.}
+%   • Or use biblatex's built-in annotation mechanism if supported by your .bib editor
+%
+% COMPATIBILITY WITH OLDER BIBLATEX VERSIONS:
+%   • Requires biblatex 3.16+ (2020) for stable \IfEntryType and \iffieldundef
+%   • If using older versions, some conditionals may fail silently
+%   • Update your TeX distribution: tlmgr update --self --all
