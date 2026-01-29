@@ -1,137 +1,207 @@
-%% cvstyle.sty -- shared preamble, macros, and layout for cv.tex
+%% cvstyle.sty -- Curriculum Vitae Style Package
+%%
+%% DESCRIPTION:
+%%   Provides a complete styling framework for academic CVs with support
+%%   for publications, teaching, service, mentoring, and funded projects.
+%%   Includes bibliography integration, custom sectioning, and PDF/A output.
+%%
+%% MAIN COMMANDS (Public API):
+%%   \cvcontact   - Contact header with name, address, and links
+%%   \cvjob       - Position/appointment entry with optional details
+%%   \cvperson    - Mentee/collaborator entry with thesis/position info
+%%   \cvproject   - Funded project entry with agency, amount, and role
+%%   \activityrow - Generic activity listing (title, org, year)
+%%   \teachentry  - Teaching course entry with role and offerings
+%%   \iconlink    - Hyperlinked icon with text (for contact info)
+%%
+%% DEPENDENCIES:
+%%   Requires biblatex with 'science' style, fontawesome7, pdfx, xparse
+%%   Custom datamodel: article-pmcid.dbx
+%%   Custom biblatex mods: biblatex_science_mods.sty
+%%
+%% VERSION HISTORY:
+%%   v1.2 (2026-01-28): Comprehensive documentation and best practices update
+%%   v1.1 (prior):      Initial structured release
+%%
+%% CODING CONVENTIONS:
+%%   - Use \NewDocumentCommand for commands with optional arguments
+%%     or complex patterns (provides better error handling via xparse)
+%%   - Use \newcommand for simple commands with only mandatory arguments
+%%   - Use \newenvironment for paired begin/end constructs
+%%   - Prefix internal-only commands/lengths with \cv@ to avoid conflicts
+%%   - Document all public API commands with structured comment blocks
+
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{cvstyle}[2026/01/28 v1.2 MDL CV style]
 
 % -------------------------
-% Packages (grouped & ordered)
+% Packages (grouped & ordered by dependency)
 % -------------------------
-% Basic helpers: URL handling, paragraph spacing
+% BASIC TEXT & LAYOUT (load first)
+% URL typesetting and paragraph spacing control
 \RequirePackage{url}
 \RequirePackage{parskip}
 
-% Graphics & color (use xcolor; do not load `color` separately)
+% GRAPHICS & COLOR (load before packages that use color)
 \RequirePackage{graphicx}
-\RequirePackage[usenames,dvipsnames]{xcolor}
+\RequirePackage[usenames,dvipsnames]{xcolor}  % Must use xcolor, not color package
+% Reduce margins to 10% on all sides for more content space
 \RequirePackage[letterpaper,scale=0.9]{geometry}
 
-% Page numbering / header & footer
-\RequirePackage{lastpage}
-\RequirePackage{fancyhdr}
+% PAGE LAYOUT: Headers, footers, and page numbers
+\RequirePackage{lastpage}   % For "page X of Y" in footer
+\RequirePackage{fancyhdr}   % Custom headers and footers
 
 % -------------------------
 % Header/footer behavior
 % -------------------------
-% Mark section titles for footer
+% Configure section marks to display current section name in footer
+% (suppresses automatic uppercasing via \nouppercase in footer below)
 \makeatletter
 \renewcommand{\sectionmark}[1]{\markright{#1}}
 \renewcommand{\subsectionmark}[1]{\markright{#1}}
 \makeatother
 
+% Set fancy page style as default
 \pagestyle{fancy}
-\renewcommand{\headrulewidth}{0pt}
-\fancyhf{}
-\fancyfoot[L]{\footnotesize MDL CV -- \nouppercase{\rightmark}}
-\fancyfoot[R]{\footnotesize \thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0pt}  % No horizontal rule in header
+\fancyhf{}  % Clear all header and footer fields
+\fancyfoot[L]{\footnotesize MDL CV -- \nouppercase{\rightmark}}  % Left: "MDL CV -- Section Name"
+\fancyfoot[R]{\footnotesize \thepage\ of \pageref{LastPage}}     % Right: "page X of Y"
+% Also apply same footer to 'plain' style (used by \maketitle, \chapter, etc.)
 \fancypagestyle{plain}{%
   \renewcommand{\headrulewidth}{0pt}%
   \fancyhf{}%
   \fancyfoot[L]{\footnotesize MDL CV -- \nouppercase{\rightmark}}%
   \fancyfoot[R]{\footnotesize \thepage\ of \pageref{LastPage}}%
 }
+% First page should have no header or footer
 \AtBeginDocument{\thispagestyle{empty}}
 
 % -------------------------
-% Layout helpers
+% TABLE & COLUMN LAYOUT
 % -------------------------
-% \RequirePackage{tabularx}
-\RequirePackage{array}
-\RequirePackage{ltablex}
-\keepXColumns % preserves X column behavior across pages
-\newcommand{\tablerowskip}{3.75pt}
-% width holder for the right column in \cvperson
+\RequirePackage{array}     % Extended column types for tabular environments
+\RequirePackage{ltablex}   % Combines longtable + tabularx for page-breaking tables
+\keepXColumns              % Preserve X column proportions when tables break across pages
+
+% Standard vertical spacing between CV entries (3.75pt provides tight but readable spacing)
+\newlength{\tablerowskip}
+\setlength{\tablerowskip}{3.75pt}
+
+% Suppress extra space before/after longtable environments
 \setlength{\LTpre}{0pt}
 \setlength{\LTpost}{\tablerowskip}
 
-% Lists, enumerations, and reverse enumerations
-\RequirePackage{etaremune}
-\RequirePackage{enumitem} % make sure enumitem understands etaremune lists
+% LISTS & ENUMERATIONS
+\RequirePackage{etaremune}  % Reverse-numbered lists (for publications)
+\RequirePackage{enumitem}   % Enhanced list formatting; ensures compatibility with etaremune
 
-% Small length used in a few places
-\newlength{\cvpersonRightWidth} % renamed: no @ needed
-\newlength{\fullcollw}
-\setlength{\fullcollw}{0.47\textwidth}
+% -------------------------
+% Internal length registers
+% -------------------------
+% Width holder for right column in \cvperson (calculated dynamically)
+\newlength{\cvpersonRightWidth}
 
-% Section formatting and multi-column layout
-\RequirePackage{titlesec}
-\RequirePackage{multicol}
-\RequirePackage{needspace} % to make sure some headings stay with the following text
-\RequirePackage{ragged2e}   % for \RaggedRight (better than \raggedright)
 
+% -------------------------
+% SECTION FORMATTING & LAYOUT
+% -------------------------
+\RequirePackage{titlesec}   % Custom section/subsection formatting
+\RequirePackage{multicol}   % Multi-column layout support
+\RequirePackage{needspace}  % Prevent page breaks between heading and following text
+\RequirePackage{ragged2e}   % Provides \RaggedRight (better hyphenation than \raggedright)
+
+% Section: Large small-caps with horizontal rule below
 \titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
 \titlespacing{\section}{0pt}{10pt}{10pt}
+% Subsection: Bold, no rule
 \titleformat{\subsection}{\bfseries\raggedright}{}{0em}{}
 \titlespacing{\subsection}{0pt}{10pt}{\tablerowskip}
 
-% Icon + link helper
+% -------------------------
+% INTERNAL HELPER: Icon + link typesetting
+% -------------------------
 % \iconlink[<anything>]{<icon>}{<target URL>}{<label>}
-% If [] is present, label is typeset with \nolinkurl; else plain.
-% \nolinkurl allows hyperref to break visible text like a url
+%
+% Creates a hyperlink with an icon (e.g., FontAwesome) preceding the text.
+% If optional argument is present, typesets label with \nolinkurl to allow
+% line breaks at appropriate points (useful for email addresses, URLs).
+%
+% PARAMETERS:
+%   [#1] (optional): If present, enables \nolinkurl formatting for #4
+%   #2: Icon command (e.g., \small\faGoogleScholar, \faEnvelope)
+%   #3: Target URL for hyperlink
+%   #4: Visible link text (may be empty for icon-only links)
+%
+% NOTE: Internal helper, but used in public API commands like \cvcontact
 \newcommand{\iconlink}[4][]{%
-  % #1 = optional flag (when present, #4 is typeset with \nolinkurl)
-  % #2 = icon or small graphic (e.g., \small\faGoogleScholar)
-  % #3 = URL
-  % #4 = visible text (may be empty)
   \if\relax\detokenize{#1}\relax
-    % Optional flag NOT provided
+    % Optional flag NOT provided: plain text
     \href{#3}{\raisebox{-0.05\height}{#2}~#4}%
   \else
-    % Optional flag provided
+    % Optional flag provided: use \nolinkurl for breakable text
     \href{#3}{\raisebox{-0.05\height}{#2}~\nolinkurl{#4}}%
   \fi
 }
-% Optional to keep the font consistent:
+% Keep URL font consistent with surrounding text
 \urlstyle{same}
 
 % -------------------------
-% Bibliography
+% BIBLIOGRAPHY CONFIGURATION
 % -------------------------
-% Keep the 'science' style and local modifications package
+% Use 'science' citation style with custom article-pmcid datamodel
+% Configuration: show all authors, article titles, year only, no ISBN/eprint/URL
 \RequirePackage[style=science, datamodel=article-pmcid, maxnames=99, articletitle=true, date=year, isbn=false, eprint=false, url=false]{biblatex}
+% Local modifications to science style (custom .sty file)
 \RequirePackage{biblatex_science_mods}
 
 % -------------------------
-% Icons, PDF/A and hyperlinks
+% ICONS, PDF/A, AND HYPERLINKS
+% (Load order critical: fontawesome7 → pdfx → bookmark)
 % -------------------------
-\RequirePackage{fontawesome7}
-\RequirePackage[a-2b]{pdfx}  % loads hyperref
-\RequirePackage[open]{bookmark}
-\definecolor{linkcolour}{rgb}{0,0.2,0.6}
+\RequirePackage{fontawesome7}    % Icon fonts (must load before pdfx for proper PDF embedding)
+\RequirePackage[a-2b]{pdfx}      % PDF/A-2b compliance (loads hyperref internally)
+\RequirePackage[open]{bookmark}  % Enhanced PDF bookmarks (requires hyperref, loaded by pdfx)
+
+% Define custom link color and configure hyperref (loaded by pdfx)
+\definecolor{linkcolour}{rgb}{0,0.2,0.6}  % Dark blue for links
 \hypersetup{
-  draft=false,
-  colorlinks,
-  breaklinks,
+  draft=false,    % Enable hyperlinks even in draft mode
+  colorlinks,     % Use colored text for links (not boxes)
+  breaklinks,     % Allow links to break across lines
   urlcolor=linkcolour,
   linkcolor=linkcolour
 }
 
+% Vertical spacing between bibliography entries
 \setlength\bibitemsep{\tablerowskip}
 
 % -------------------------
-% Small utility macros
+% COMMAND DEFINITION TOOLS
 % -------------------------
-
-% for custom macros
+% xparse provides \NewDocumentCommand for flexible argument handling
 \RequirePackage{xparse}
 
-% If-non-empty helper specifically for optional URL arguments
-\newcommand{\IfNonEmptyURL}[2]{%
-  \if\relax\detokenize{#1}\relax
-  \else
-    #2%
-  \fi
-}
+% -------------------------
+% INTERNAL UTILITY MACROS
+% (Not part of public API)
+% -------------------------
 
-% activity listing environment
+% -------------------------
+% PUBLIC API: Activity listing commands
+% -------------------------
+
+% \begin{activityshort}{<activity>}{<year>} ... \end{activityshort}
+%
+% Simple environment for short activity descriptions.
+% Creates a three-column row: activity (italic) — (space) — year
+%
+% PARAMETERS:
+%   #1: Activity name (typeset in italics)
+%   #2: Year or date range
+%
+% NOTE: Environment body is currently empty; content goes in parameters
 \newenvironment{activityshort}[2]
 {
     \begin{tabularx}{\linewidth}{@{}l X r@{}}
@@ -141,27 +211,30 @@
 {
 }
 
-\newcommand{\activitynone}[2][]{%
-    \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textit{#1} & \hfill & #2
-    \end{tabularx} \par%
-}
-
-% list activity as row in table instead
+% \activityrow[<url>]{<title>}{<organization>}{<year>}
+%
+% Generic activity listing as table row (for use within tabularx environment).
+% Title is hyperlinked if URL provided; organization shown in italics with comma.
+%
+% PARAMETERS:
+%   [#1] (optional): URL to hyperlink the title
+%   #2: Activity title
+%   #3: Organization name (may be empty; omits comma if empty)
+%   #4: Year or date range
+%
+% USAGE:
+%   \begin{tabularx}{\linewidth}{X r}
+%   \activityrow[https://...]{Conference Talk}{Org Name}{2025}
+%   \activityrow{Other Activity}{}{2024}  % No org, no URL
+%   \end{tabularx}
 \newcommand{\activityrow}[4][]{%
-  % #1 = optional URL (may be empty)
-  % #2 = title
-  % #3 = organization (may be empty)
-  % #4 = year(s)
-  % Title with optional link:
+  % Title with optional hyperlink
   \if\relax\detokenize{#1}\relax
-    % No URL provided
-    #2%
+    #2%  % No URL provided
   \else
-    % URL provided
-    \href{#1}{#2}%
+    \href{#1}{#2}%  % URL provided
   \fi
-  % Optional org (adds comma only if non-empty):
+  % Organization (adds comma only if non-empty)
   \if\relax\detokenize{#3}\relax
     % Org empty: print nothing
   \else
@@ -170,35 +243,88 @@
   \space & #4 \\[\tablerowskip]%
 }
 
-% set spacing for all lists
+% -------------------------
+% LIST FORMATTING DEFAULTS
+% -------------------------
+% Remove default spacing above lists; use consistent \tablerowskip between items
 \setlist{itemsep=\tablerowskip, topsep=0pt, parsep=0pt}
-% typography tweaks for itemize
+% Remove bullets from first-level itemize (for CV entries that appear as lists)
 \renewcommand{\labelitemi}{}
 \setlist[itemize,1]{leftmargin=0pt}
 
-% teaching, service column types
-\newcolumntype{Y}{>{\raggedright\arraybackslash}p{0.53\textwidth}}
+% -------------------------
+% CUSTOM COLUMN TYPES
+% -------------------------
+% Z column: right-aligned X column (for tabularx environments)
 \newcolumntype{Z}{>{\raggedleft\arraybackslash}X}
 
-\newcommand{\teachinstitution}[1]{%
-  \multicolumn{2}{l}{\textbf{#1}}\\[\tablerowskip]%
-}
+% -------------------------
+% PUBLIC API: Teaching entry command
+% -------------------------
 
+% \teachentry{<course>}{<role>}{<offerings1>}{<offerings2>}
+%
+% Typesets a teaching entry in two columns within a tabularx environment.
+% Left column shows course name (italic) and role; right column shows
+% offering details (up to two lines, right-aligned).
+%
+% PARAMETERS:
+%   #1: Course name (typeset in italics)
+%   #2: Role (e.g., "Instructor", "Teaching Assistant")
+%   #3: First line of offerings (e.g., "Fall 2024, Spring 2025")
+%   #4: Second line of offerings (optional; omit or leave empty for single line)
+%
+% USAGE:
+%   \begin{tabularx}{\linewidth}{X Z}
+%   \teachentry{Advanced Algorithms}{Instructor}{Fall 2024}{Spring 2025}
+%   \teachentry{Data Structures}{TA}{Spring 2024}{}
+%   \end{tabularx}
+%
+% NOTE: Uses 4× \tablerowskip vertical spacing after entry for visual separation
 \newcommand{\teachentry}[4]{%
-  \emph{#1} & #3 \\%
-  #2 &%
-  \if\relax\detokenize{#4}\relax\else#4\fi%
-  \\[\tablerowskip]%
+  % Left cell (course + role). Use \hsize for width in X columns.
+  \parbox[t]{\hsize}{%
+    \raggedright
+    \emph{#1}\par
+    #2%
+  }%
+  &%
+  % Right cell (offerings, possibly two lines)
+  \parbox[t]{\hsize}{%
+    \raggedleft
+    #3\par
+    \if\relax\detokenize{#4}\relax\else#4\fi
+  }%
+  \\[\dimexpr4\tablerowskip\relax]%
 }
 
-% -------------------------
-% New, compact macros (public API)
-% -------------------------
+% ========================================================================
+% PUBLIC API: Main CV Entry Commands
+% ========================================================================
+% The following commands form the primary interface for creating CV content.
+% All are designed for consistent spacing (\tablerowskip) and support
+% optional hyperlinks where appropriate.
 
+% -------------------------
 % \cvcontact{<Name>}{<address/contact line>}{<links line>}
-%   #1: full name (printed large)
-%   #2: address/contact (single line)
-%   #3: extra links (ORCID, website, scholar, etc.)
+% -------------------------
+% Creates the contact header at the top of the CV with name, address, and links.
+%
+% PARAMETERS:
+%   #1: Full name (typeset in \Huge size)
+%   #2: Address and contact info (single line, e.g., email, phone)
+%   #3: Professional links (ORCID, website, Google Scholar, etc.)
+%       Use \iconlink for each link with appropriate FontAwesome icons
+%
+% USAGE:
+%   \cvcontact{Jane Q. Researcher}{
+%     Department of Science, University Name \textbar\ 
+%     \iconlink[*]{\faEnvelope}{mailto:jane@uni.edu}{jane@uni.edu} \textbar\ 
+%     \iconlink{\faPhone}{tel:+15551234567}{+1 (555) 123-4567}
+%   }{
+%     \iconlink{\faOrcid}{https://orcid.org/0000-0001-2345-6789}{0000-0001-2345-6789} \textbar\ 
+%     \iconlink{\faGlobe}{https://janedoe.com}{janedoe.com}
+%   }
 \newcommand{\cvcontact}[3]{%
   \noindent
   \begin{minipage}{\linewidth}
@@ -208,17 +334,39 @@
   \end{minipage}%
 }
 
+% -------------------------
 % \cvjob{<title>}{<dates>}[<optional content>]
-%   #1: job title / appointment text
-%   #2: dates (string)
-%   [#3]: optional content token (often an itemize or description block)
+% -------------------------
+% Typesets a job or appointment entry with title and dates on first line,
+% followed by optional detailed content (responsibilities, achievements, etc.).
+%
+% PARAMETERS:
+%   #1 (required): Job title or appointment text (typeset in bold)
+%   #2 (required): Date range string (e.g., "2020--Present", "Jan 2018--Dec 2020")
+%   [#3] (optional): Additional content block (itemize, description, paragraph, etc.)
+%
+% USAGE:
+%   \cvjob{Assistant Professor}{2020--Present}[
+%     \begin{itemize}
+%       \item Research in computational biology and machine learning
+%       \item Teaching undergraduate and graduate courses
+%       \item Supervising 3 PhD students and 2 postdocs
+%     \end{itemize}
+%   ]
+%
+%   \cvjob{Postdoctoral Researcher}{2017--2020}  % No optional content
+%
+% NOTES:
+%   - Uses tabularx for title/date alignment
+%   - Optional content appears in full-width minipage
+%   - Negative \vspace compensates for \parskip to avoid extra blank line
 \NewDocumentCommand{\cvjob}{ m m o }{%
   \begin{tabularx}{\linewidth}{@{}l X r@{}}%
     \textbf{#1} & \hfill & #2%
   \end{tabularx}%
-  % --- Remove extra blank line between Row 1 and Row 2 ---
+  % Add optional content block if provided
   \IfValueT{#3}{%
-    \vspace{-\parskip}%
+    \vspace{-\parskip}%  % Remove extra blank line between title row and content
     \noindent\begin{minipage}[t]{\linewidth}%
       #3%
     \end{minipage}%
@@ -226,20 +374,45 @@
   \par\vspace{\tablerowskip}%
 }
 
+% -------------------------
+% \cvperson[<scholar URL>]{<name+affil>}{<year>}[<thesis>][<thesis URL>][<position>]
+% -------------------------
+% Typesets a mentee, collaborator, or student entry with name, affiliation,
+% year/status, optional thesis title and link, and optional current position.
+%
+% PARAMETERS:
+%   [#1] (optional): Google Scholar URL (adds scholar icon after name)
+%   #2 (required): Name and affiliation (left-aligned)
+%   #3 (required): Year or status (right-aligned, e.g., "2023", "In Progress")
+%   [#4] (optional): Secondary line (e.g., thesis/dissertation title)
+%   [#5] (optional): URL for thesis/dissertation (adds document icon)
+%   [#6] (optional): Tertiary line (e.g., "Currently: Assistant Professor at...")
+%
+% USAGE:
+%   % PhD student with thesis and current position
+%   \cvperson[https://scholar.google.com/...]{%
+%     John Smith, PhD \\ University of Example
+%   }{2023}[%
+%     Dissertation: Machine Learning Applications in Genomics
+%   ][https://example.edu/thesis/smith2023.pdf][%
+%     Currently: Postdoctoral Fellow, MIT
+%   ]
+%
+%   % Simple entry without optional fields
+%   \cvperson{Jane Doe, MS \\ University of Example}{2024}
+%
+% NOTES:
+%   - Dynamically calculates column widths based on year/status text
+%   - Two-column tabular layout with secondary/tertiary info in full-width rows
+%   - Google Scholar and document icons use FontAwesome via \iconlink
 \NewDocumentCommand{\cvperson}{ o m m o o o }{%
-  % #1 (opt) Google Scholar URL (adds icon after name)
-  % #2 Name + affiliation (left)
-  % #3 Year/status (right)
-  % #4 (opt) Secondary line (e.g., thesis/dissertation title)
-  % #5 (opt) Link for #4 (adds icon)
-  % #6 (opt) Tertiary line (e.g., current position)
   \begingroup
     \setlength{\tabcolsep}{0pt}%
     \renewcommand{\arraystretch}{1}%
 
-    % Measure the natural width of the right cell (#3)
+    % Measure natural width of right cell (#3 = year/status)
     \settowidth{\cvpersonRightWidth}{\strut #3}%
-    % Clamp to avoid negative p{...} when #3 is too wide
+    % Clamp to max 45% of line width to prevent negative left column width
     \ifdim\cvpersonRightWidth>.45\linewidth
       \setlength{\cvpersonRightWidth}{.45\linewidth}%
     \fi
@@ -279,14 +452,43 @@
   \endgroup
 }
 
+% -------------------------
+% \cvproject[<proj URL>]{<title>}{<dates>}[<agency URL>]{<agency+grant>}{<amount>}{<role>}
+% -------------------------
+% Typesets a funded research project entry with title, dates, funding agency,
+% grant number, award amount, and investigator role.
+%
+% PARAMETERS:
+%   [#1] (optional): Project website URL (hyperlinks the title)
+%   #2 (required): Project title (typeset in italics)
+%   #3 (required): Date range (e.g., "2022--2025")
+%   [#4] (optional): Agency website URL (hyperlinks agency+grant)
+%   #5 (required): Funding agency and grant number
+%   #6 (required): Award amount (e.g., "$500,000")
+%   #7 (required): Role (e.g., "Principal Investigator", "Co-PI")
+%
+% USAGE:
+%   \cvproject[https://project-site.org]{%
+%     Computational Approaches to Genome Assembly
+%   }{2022--2025}[https://nsf.gov/awardsearch/showAward?AWD_ID=1234567]{%
+%     National Science Foundation, Award \#1234567
+%   }{\$500,000}{%
+%     Principal Investigator
+%   }
+%
+%   % Without optional URLs
+%   \cvproject{%
+%     Novel Methods for Data Analysis
+%   }{2023--2024}{%
+%     Internal University Grant
+%   }{\$25,000}{%
+%     Co-Investigator
+%   }
+%
+% NOTES:
+%   - Three-row tabularx layout: Title—Dates / Agency—Amount / Role—(empty)
+%   - Title and agency/grant are hyperlinked if corresponding URLs provided
 \NewDocumentCommand{\cvproject}{ o m m o m m m }{%
-  % #1 (optional) Project URL (hyperlinks the title)
-  % #2 Project title (left)
-  % #3 Dates (right)
-  % #4 (optional) Agency URL (hyperlinks agency+grant)
-  % #5 Agency + grant number (plain if #4 absent)
-  % #6 Amount (right, in row 2)
-  % #7 Role (left, in row 3)
   \begin{tabularx}{\linewidth}{@{}X r@{}}%
     % Row 1: Title — Dates
     {\raggedright

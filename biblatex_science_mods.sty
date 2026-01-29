@@ -1,21 +1,98 @@
+%===============================================================================
 % biblatex_science_mods.sty
-% modifications to the standard Science style for my CV
-% Matthew Lew, November 2025
+%
+% DESCRIPTION:
+%   Modifications and customizations to the biblatex-science style for use in
+%   an academic CV. This package handles entry type customizations (article,
+%   patent, incollection, inproceedings, misc, online), implements reverse-order
+%   numbering for publications, adds icon links to DOI/URL/PMCID/cover images,
+%   and highlights selected authors.
+%
+% AUTHOR:
+%   Matthew Lew
+%
+% VERSION & DATE:
+%   v1.0 – 2025/11/04 (Initial release)
+%
+% LICENSE:
+%   (Specify your license here, e.g., MIT, CC BY 4.0, etc.)
+%
+%===============================================================================
+% DEPENDENCIES:
+%
+%   REQUIRED:
+%     • biblatex (core functionality)
+%     • etoolbox (for \AtDataInput, \csnumgdef, etc.)
+%     • hyperref (for \href)
+%
+%   RECOMMENDED:
+%     • fontawesome5 (for \faArrowUpRightFromSquare, \faFileLines, \faImage, \faStar)
+%     • cvstyle.sty (defines primary \iconlink macro with layout tweaks)
+%
+%   LOAD ORDER:
+%     This package must be loaded AFTER biblatex but ideally BEFORE cvstyle.sty
+%     if you want the enhanced \iconlink from cvstyle to override the fallback
+%     defined herein. See the \iconlink note below.
+%
+%===============================================================================
+% TABLE OF CONTENTS:
+%
+%   1. Auxiliary Macros & Setup
+%   2. Entry Count & Reverse Numbering System
+%   3. Author Highlighting
+%   4. Generic Field Formats (article, patent)
+%   5. Icons & Links in Bibliography Entries
+%   6. Entry Type Drivers: @article (patent) – Title included
+%   7. Entry Type Drivers: @incollection – Chapter title before booktitle
+%   8. Entry Type Drivers: @inproceedings – Custom field formats & driver
+%   9. Entry Type Drivers: @misc – For talks/presentations
+%  10. Entry Type Drivers: @online – Org in italics, no URL display
+%
+%===============================================================================
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{biblatex_science_mods}[2025/11/04 v1.0 Modifications to biblatex-science for CV]
 
 \RequirePackage{etoolbox}
 
-% NOTE: This package uses the helper macro `\iconlink{<icon>}{<url>}{<text>}` for
-% printing icons with links. The canonical definition lives in `cvstyle.sty`.
-% If `\iconlink` is not yet defined (load-order may put this file earlier),
-% define a small fallback that uses `\href` so things still render.
-% If you want the primary `\iconlink` (with layout/spacing tweaks) to be used,
-% move the `\iconlink` definition in `cvstyle.sty` to appear before:
-%   \RequirePackage{biblatex_science_mods}
-% (i.e., define `\iconlink` earlier in `cvstyle.sty`).
+%===============================================================================
+% 1. AUXILIARY MACROS & SETUP
+%===============================================================================
+
+% MACRO: \iconlink{<icon>}{<url>}{<text>}
+%   Helper macro for printing icons with hyperlinks in bibliography entries.
+%
+%   CANONICAL DEFINITION:
+%     The primary definition (with layout/spacing tweaks) lives in cvstyle.sty.
+%     To use the enhanced version, ensure cvstyle.sty loads this package
+%     (place \RequirePackage{biblatex_science_mods} after \iconlink is defined).
+%
+%   FALLBACK:
+%     If \iconlink is not yet defined at load time, we define a minimal version
+%     here using \href so icons render immediately. This fallback:
+%       • Raises the icon by –0.05×height to vertically align with text
+%       • Adds a small space between icon and text
+%       • Uses \href{#2} to make the link active
+%
+%   PARAMETERS:
+%     #1  Icon command (e.g., \faArrowUpRightFromSquare from fontawesome5)
+%     #2  URL to link to (e.g., https://doi.org/10.1234/...)
+%     #3  Display text after icon (optional; often empty for icon-only links)
+%
 \providecommand{\iconlink}[3]{\href{#2}{\raisebox{-0.05\height}{#1}\ #3}}
+
+
+%===============================================================================
+% 2. ENTRY COUNT & REVERSE NUMBERING SYSTEM
+%===============================================================================
+% This system implements reverse numbering for publications (most recent first).
+% E.g., if there are 5 entries, the 1st is labeled [5], 2nd is [4], ..., 5th is [1].
+%
+% MECHANISM:
+%   • \AtDataInput: Increments counter for current refsection as data is read
+%   • \mkbibdesc: Computes label as (total entries) + 1 − (actual label)
+%   This requires entries to be processed in forward order; sorting must happen
+%   in the .bib file or via biblatex sorting options.
 
 % Count total number of entries in each refsection
 \AtDataInput{%
@@ -27,7 +104,16 @@
 \newrobustcmd*{\mkbibdesc}[1]{%
   \number\numexpr\csuse{entrycount:\therefsection}+1-#1\relax}
 
-% set up author highlighting
+%===============================================================================
+% 3. AUTHOR HIGHLIGHTING
+%===============================================================================
+% Allows selective highlighting of authors (e.g., to highlight yourself in
+% publication lists). To enable, add annotation=highlight to the author entry
+% in your .bib file, e.g.:
+%   author = {Smith, John and \textbf{Lew, Matthew} and Brown, Jane}
+%
+% Or use biblatex's annotation key if your .bib parser supports it.
+
 \renewcommand*{\mkbibnamegiven}[1]{%
   \ifitemannotation{highlight}
     {\textbf{#1}}
@@ -37,47 +123,96 @@
     {\textbf{#1}}
     {#1}}
 
-% modify article style to include pmcid
+%===============================================================================
+% 4. GENERIC FIELD FORMATS (Used by multiple entry types)
+%===============================================================================
+
+% Article: support for PMCID field (NIH PubMed Central ID)
+% Format: store the raw PMCID value for later use in entry drivers
 \DeclareFieldFormat[article]{pmcid}{#1}
 
-% Add DOI/URL and cover-image icons at the end of each entry
-% usera = URL for cover image link
-% userb = URL for editor's pick link
+%===============================================================================
+% 5. ICONS & LINKS IN BIBLIOGRAPHY ENTRIES
+%===============================================================================
+% This section customizes the final entry output to include icon links for:
+%   • DOI (preferred) or URL (fallback)
+%   • PMCID (NIH PubMed Central ID)
+%   • Cover image (stored in usera field)
+%   • Editor's pick badge (stored in userb field)
+%   • Correction note (stored in userc field)
+%
+% All icons use the \iconlink macro and are separated by \hspace{2mm} (2 millimeters)
+% for readability.
+%
+% SPACING RATIONALE:
+%   2mm spacing (≈ 0.08 inches) balances visual separation without excessive gaps
+%   and aligns well with typical font sizes (10–12pt for CV).
+%
+% FIELD MAPPING:
+%   usera  → URL for cover image link (displayed as "Cover" icon link)
+%   userb  → URL for editor's pick link (displayed as ★ star icon)
+%   userc  → URL for correction note (displayed as link text "Correction")
+
+%---- Helper macro for conditional icon insertion ----
+% Usage: \addicon{<icon>}{<url>}{<text>}
+%   Adds a left-aligned icon link with \hspace{2mm} separator
+\newcommand*{\addicon}[3]{\hspace{2mm}\iconlink[url]{#1}{#2}{#3}}
+
+% Modified \finentry: add icons after the standard entry closes
 \renewbibmacro*{finentry}{%
-  % Close the entry first, then add icons
+  % Close the entry first
   \finentry%
-  % DOI vs URL icon
+  %
+  % —— DOI or URL (DOI preferred) ——
   \iffieldundef{doi}{%
+    % No DOI: check for URL
     \iffieldundef{url}{%
-      % no DOI, no URL -> nothing
+      % No DOI and no URL: nothing to link
     }{%
-      % URL but no DOI
-      \hspace{2mm}\iconlink[url]{\small\faArrowUpRightFromSquare}{\thefield{url}}{}%
+      % URL present but no DOI
+      \addicon{\small\faArrowUpRightFromSquare}{\thefield{url}}{}%
     }%
   }{%
-    % DOI present
-    \hspace{2mm}\iconlink[url]{\small\faFileLines}{https://doi.org/\thefield{doi}}{\thefield{doi}}%
+    % DOI is present: create DOI link
+    \addicon{\small\faFileLines}{https://doi.org/\thefield{doi}}{\thefield{doi}}%
   }%
-  % PMCID (if present)
+  %
+  % —— PMCID (if present) ——
   \iffieldundef{pmcid}{}{%
-    \hspace{2mm}\iconlink[url]{\small\faFileLines}{https://pmc.ncbi.nlm.nih.gov/articles/\thefield{pmcid}/}{\thefield{pmcid}}%
+    \addicon{\small\faFileLines}{https://pmc.ncbi.nlm.nih.gov/articles/\thefield{pmcid}/}{\thefield{pmcid}}%
   }%
-  % Cover image icon (if present)
+  %
+  % —— Cover image (if present, stored in usera) ——
   \iffieldundef{usera}{}{%
-    \hspace{2mm}\iconlink{\small\faImage}{\thefield{usera}}{Cover}%
+    \addicon{\small\faImage}{\thefield{usera}}{Cover}%
   }%
-  % Editor's pick icon (if present)
+  %
+  % —— Editor's pick (if present, stored in userb) ——
   \iffieldundef{userb}{}{%
-    \hspace{2mm}\iconlink[url]{\small\faStar}{\thefield{userb}}{}%
+    \addicon{\small\faStar}{\thefield{userb}}{}%
   }%
-  % Correction note (if present)
+  %
+  % —— Correction note (if present, stored in userc) ——
   \iffieldundef{userc}{}{%
-    \hspace{2mm}\iconlink{\small\faArrowUpRightFromSquare}{\thefield{userc}}{Correction}%
+    \addicon{\small\faArrowUpRightFromSquare}{\thefield{userc}}{Correction}%
   }%
 }
 
-% modify patent style to include title
-% Ensure quotes for patent titles via a field format:
+%===============================================================================
+% 6. ENTRY TYPE DRIVERS: @article (via @patent in this file)
+%===============================================================================
+% DESCRIPTION:
+%   Customized @patent entry type driver to handle patent bibliographies.
+%   Modified from Science default to include the patent title.
+%
+% FIELD FORMATS & OUTPUT ORDER:
+%   author, type, number, title, DOI/URL, year, addendum/pubstate
+%
+% RATIONALE:
+%   Patents are legally identified by (author, number, year), so we preserve
+%   this while adding the descriptive title for readability in CVs.
+
+% Patent title field format (plain, no quotes)
 \DeclareFieldFormat[patent]{title}{#1}
 
 \DeclareBibliographyDriver{patent}{%
@@ -89,12 +224,13 @@
   \newunit\newblock
   \usebibmacro{byauthor}%
   \newunit\newblock
-  % Title via the standard title macro (uses the field format above)
+  % Title (uses field format defined above)
   \usebibmacro{title}%
   \newunit\newblock
   \printfield{type}%
   \newunit
   \printfield{number}%
+  % Commented out: location field (uncomment if needed for specific use cases)
   %\iflistundef{location}{}{%
   %  \setunit*{\addspace}%
   %  \printtext[parens]{%
@@ -115,7 +251,20 @@
   \usebibmacro{finentry}%
 }
 
-% modify incollection style to include chapter title
+%===============================================================================
+% 7. ENTRY TYPE DRIVERS: @incollection
+%===============================================================================
+% DESCRIPTION:
+%   Customized @incollection driver (book chapter) that includes the chapter
+%   title before the "In:" booktitle section.
+%
+% MODIFICATION FROM Science DEFAULT:
+%   • Adds chapter title immediately after author list (before "In:")
+%   • Improves readability for CV entries where chapter title is descriptive
+%
+% OUTPUT STRUCTURE:
+%   Author, Chapter Title, In: Book Title (Editor), Publisher, Year
+
 \DeclareBibliographyDriver{incollection}{%
   \usebibmacro{bibindex}%
   \usebibmacro{begentry}%
@@ -125,10 +274,10 @@
   \newunit\newblock
   \usebibmacro{byauthor}%
   \newunit\newblock
-  % === INSERTED: print the chapter title before the “In:” block ===
+  % CUSTOM: Print chapter title before the "In:" block
   \printtext{\printfield[titlecase]{title}}%
   \newunit\newblock
-  % ===============================================================
+  % Proceed with standard incollection fields
   \usebibmacro{in:}%
   \usebibmacro{maintitle+booktitle}%
   \newunit\newblock
@@ -157,18 +306,30 @@
 }
 
 % --- Field formats (inproceedings only) ---
-\DeclareFieldFormat[inproceedings]{title}{#1}     % title without quotes after authors
-\DeclareFieldFormat[inproceedings]{booktitle}{\mkbibemph{#1}}   % Proc. SPIE in italics
+\DeclareFieldFormat[inproceedings]{title}{#1}     % plain, no quotes
+\DeclareFieldFormat[inproceedings]{booktitle}{\mkbibemph{#1}}   % italic
 \DeclareFieldFormat[inproceedings]{pages}{#1}                  % no "p." / "pp."
-\DeclareFieldFormat[inproceedings]{volume}{\mkbibbold{#1}}     % bold volume, no "vol."
-\DeclareFieldFormat[inproceedings]{volumes}{\mkbibbold{#1}}    % bold volumes (plural), no "vols."
+\DeclareFieldFormat[inproceedings]{volume}{\mkbibbold{#1}}     % bold, no "vol."
+\DeclareFieldFormat[inproceedings]{volumes}{\mkbibbold{#1}}    % bold, no "vols."
 
-% --- Driver override for @inproceedings ---
-% Edits vs Science default:
-%   • insert title right after author list
-%   • remove "presented at the" (no leading prefix before booktitle)
-%   • move volume next to booktitle with NO comma between them
-%   • add (Year) at the very end
+%===============================================================================
+% 8. ENTRY TYPE DRIVERS: @inproceedings
+%===============================================================================
+% DESCRIPTION:
+%   Customized @inproceedings driver for conference proceedings (e.g., SPIE).
+%   Heavily modified from Science default to improve CV readability.
+%
+% MODIFICATIONS FROM Science DEFAULT:
+%   1. Title inserted immediately after author list (not buried later)
+%   2. No "presented at the" prefix before booktitle
+%   3. Volume placed directly after booktitle with no comma between them
+%      → Result: "Proc. SPIE 12853" not "Proc. SPIE, 12853"
+%   4. Year in parentheses at the very end
+%
+% OUTPUT STRUCTURE:
+%   Author, Title, Booktitle Volume (Conference, Venue, Date), Pages (Year)
+
+% Driver for @inproceedings
 \DeclareBibliographyDriver{inproceedings}{%
   \usebibmacro{bibindex}%
   \usebibmacro{begentry}%
@@ -178,27 +339,26 @@
   \newunit\newblock
   \usebibmacro{byauthor}%
   \newunit\newblock
-  % === NEW: Title immediately after the author list ===
+  % CUSTOM: Title immediately after author list
   \usebibmacro{title}%
   \newunit\newblock
-  % ================================================
-  % No "presented at the": go straight to booktitle
-  % Locally suppress the Science comma between units:
+  % CUSTOM: No "presented at the" prefix; go straight to booktitle
+  %         Locally suppress Science comma between units to avoid "Proc. SPIE, 12853"
   \begingroup
-    \renewcommand*{\newunitpunct}{\addspace}% ensures "Proc. SPIE 12853" (no comma)
+    \renewcommand*{\newunitpunct}{\addspace}%
     \usebibmacro{maintitle+booktitle}%
     \setunit*{\addspace}%
-    \printfield{volume}% bold via field format above
+    \printfield{volume}%
     \printfield{part}%
   \endgroup
   \newunit\newblock
-  \printfield{volumes}% bold (plural) if present
+  \printfield{volumes}%
   \newunit\newblock
   \printfield{note}%
   \newunit\newblock
   \usebibmacro{event+venue+date}%
   \newunit\newblock
-  % Pages without "p./pp."
+  % Pages without "p." or "pp." prefix
   \usebibmacro{chapter+pages}%
   \newunit\newblock
   \iftoggle{bbx:isbn}{\printfield{isbn}}{}%
@@ -209,7 +369,7 @@
   \setunit{\bibpagerefpunct}\newblock
   \usebibmacro{pageref}%
   \newunit\newblock
-  % Year at the end, in parentheses
+  % CUSTOM: Year at the end, in parentheses
   \nopunct
   \printtext[parens]{\usebibmacro{date}}%
   \newunit\newblock
@@ -217,21 +377,34 @@
   \usebibmacro{finentry}%
 }
 
-% --- @misc customizations for biblatex-science (used for talks/presentations) --------------------------
-% Field formats
+%===============================================================================
+% 9. ENTRY TYPE DRIVERS: @misc
+%===============================================================================
+% DESCRIPTION:
+%   Customized @misc driver for talks and presentations. This driver formats
+%   entries to display as: Title, Venue (italics), Location, (Date).
+%
+% FIELD MAPPING:
+%   title        → Name of the talk or presentation
+%   howpublished → Venue/conference/event (printed in italics)
+%   location     → City/institution where presented
+%   month, year  → Date of presentation
+%
+% NOTES:
+%   • Inline formatting prevents spurious line breaks
+%   • Date is always in parentheses at the end
+%   • All fields are optional; missing fields are skipped transparently
+
+% Field formats for @misc
 \DeclareFieldFormat[misc]{title}{#1}
 \DeclareFieldFormat[misc]{howpublished}{\mkbibemph{#1}}
 
-% Month+Year macro
+% Month+Year helper macro (combines month and year, or just year if month absent)
 \newbibmacro*{month+year}{%
   \iffieldundef{year}{}{%
     \iffieldundef{month}{\printfield{year}}{\printfield{month}\space\printfield{year}}}}
 
-% Modified @misc driver:
-% - Title followed by comma
-% - howpublished in italics, followed by comma
-% - location (if present) separated by comma; otherwise just space
-% - Date in parentheses with NO preceding comma
+% Driver for @misc
 \DeclareBibliographyDriver{misc}{%
   \usebibmacro{bibindex}%
   \usebibmacro{begentry}%
@@ -253,19 +426,39 @@
   \usebibmacro{finentry}%
 }
 
-% Modified @online driver:
-% --- @online customizations: upright title, italic organization, no URL, no publisher,
-%     and NO spurious newlines (map \newblock to inline punctuation) -------------
+%===============================================================================
+% 10. ENTRY TYPE DRIVERS: @online
+%===============================================================================
+% DESCRIPTION:
+%   Customized @online driver for web resources. Formats entries as:
+%   Author, Title, Organization (Year).
+%
+% FIELD MAPPING:
+%   author/editor → Who created/maintains the resource
+%   title        → Name of the resource (plain text, not linked)
+%   organization → Organization hosting the resource (italic)
+%   year         → Publication/access year
+%
+% MODIFICATIONS FROM Science DEFAULT:
+%   • Title is upright (normal font), not italic
+%   • Organization is italic (emphasizes the provider)
+%   • URL is NOT displayed (kept in data but not shown)
+%   • DOI/eprint are NOT displayed
+%   • Uses inline punctuation; no spurious line breaks
+%
+% RATIONALE:
+%   CVs typically don't need full URLs for web resources, focusing instead on
+%   the organization and resource name. This keeps entries concise while remaining
+%   informative. The URL is available in the .bib file if needed.
 
-% Title upright
-\DeclareFieldFormat[online]{title}{\normalfont#1}
+% Field formats for @online
+\DeclareFieldFormat[online]{title}{\normalfont#1}  % upright, not italic
 
-% Organization italic — the driver prints it with \printlist
+% Organization formatting: italic (both as \printlist and as \printfield)
 \DeclareListFormat[online]{organization}{\mkbibemph{#1}}
-% (Harmless if the style ever uses \printfield for organization)
 \DeclareFieldFormat[online]{organization}{\mkbibemph{#1}}
 
-% Do not print URL/eprint/DOI for @online, but keep the data intact
+% Suppress URL/eprint/DOI for @online entries (keep data intact, just don't display)
 \AtEveryBibitem{%
   \ifentrytype{online}{%
     \renewbibmacro*{url+urldate}{}%
@@ -273,8 +466,7 @@
   }{}%
 }
 
-% Driver with inline separators:
-% Output: Author, Title, Organization (Year).
+% Driver for @online
 \DeclareBibliographyDriver{online}{%
   \usebibmacro{bibindex}%
   \usebibmacro{begentry}%
@@ -282,19 +474,30 @@
   \begingroup
     \renewcommand*{\newblock}{\addcomma\space}%
     \renewcommand*{\newunitpunct}{\addcomma\space}%
-    % Names
+    % Author/editor
     \usebibmacro{author/translator+others}%
     \setunit{\addcomma\space}%
     % Title (upright via field format)
     \usebibmacro{title}%
-    % Organization (italic via LIST format)
+    % Organization (italic via field format)
     \setunit{\addcomma\space}%
     \printlist{organization}%
-    % Year at the end (you load biblatex with date=year, so this prints just the year)
+    % Year at the end (assumed date=year option in biblatex)
     \setunit{\addspace}%
     \nopunct
     \printtext[parens]{\usebibmacro{date}}%
   \endgroup
   \usebibmacro{finentry}%
 }
-% -------------------------------------------------------------------------------
+
+%===============================================================================
+% VERSION HISTORY
+%===============================================================================
+% v1.0 (2025/11/04) - Initial release
+%   * Reverse numbering system for publications (most recent first)
+%   * Author highlighting support (via annotation=highlight)
+%   * Icon links for DOI, PMCID, cover images, editor's picks, corrections
+%   * Custom drivers for: @patent, @incollection, @inproceedings, @misc, @online
+%   * Improved field formatting for conference proceedings (no spurious commas)
+%   * Helper macro \addicon for consistent icon spacing
+%   * Comprehensive documentation and section organization
