@@ -154,11 +154,11 @@
 %   #4: Visible link text (may be empty for icon-only links)
 %
 % ROBUSTNESS:
-%   - Uses \providecommand pattern in biblatex_science_mods.sty to avoid conflicts
+%   - Uses \providecommand to allow other packages to define first if needed
 %   - Icon vertical alignment uses \raisebox{-0.05\height} for consistency
 %   - Gracefully handles empty labels (icon-only links)
 %
-% NOTE: Primary definition; fallback version in biblatex_science_mods.sty
+% NOTE: This is the canonical definition; biblatex_science_mods.sty uses this command
 \providecommand{\iconlink}[4][]{%
   \if\relax\detokenize{#1}\relax
     % Optional flag NOT provided: plain text
