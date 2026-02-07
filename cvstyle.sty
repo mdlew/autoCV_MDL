@@ -17,7 +17,7 @@
 %%   \iconlink    - Hyperlinked icon with text (for contact info)
 %%
 %% INTERNAL MACROS (prefixed with cv@, no stability guarantees):
-%%   \cv@ifempty     - Helper for empty string testing (executes code if not empty)
+%%   \cv@ifnotempty     - Helper for empty string testing (executes code if not empty)
 %%   \cv@ifemptyelse - Helper for empty string testing (with both branches)
 %%   \cvpersonRightWidth - Length register for \cvperson layout
 %%
@@ -220,7 +220,7 @@
 % (Not part of public API; prefixed with cv@ to prevent namespace conflicts)
 % -------------------------
 
-% \cv@ifempty{<text>}{<not empty code>}
+% \cv@ifnotempty{<text>}{<not empty code>}
 %
 % Helper macro to test if argument is empty and execute code if not empty.
 % Uses robust \if\relax\detokenize pattern for proper empty testing.
@@ -230,7 +230,7 @@
 %   #2: Code to execute if #1 is not empty
 %
 % INTERNAL USE ONLY - reduces code duplication in public commands
-\newcommand{\cv@ifempty}[2]{%
+\newcommand{\cv@ifnotempty}[2]{%
   \if\relax\detokenize{#1}\relax
     % empty - do nothing
   \else
@@ -304,7 +304,7 @@
     \href{#1}{#2}%
   }%
   % Organization (adds comma only if non-empty) using helper macro
-  \cv@ifempty{#3}{, \textit{#3}}%
+  \cv@ifnotempty{#3}{, \textit{#3}}%
   \space & #4 \\[\tablerowskip]%
 }
 
@@ -358,7 +358,7 @@
   \parbox[t]{\hsize}{%
     \raggedleft
     #3\par
-    \cv@ifempty{#4}{#4}%
+    \cv@ifnotempty{#4}{#4}%
   }%
   \\[\dimexpr4.5\tablerowskip\relax]%
 }
