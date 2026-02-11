@@ -144,7 +144,6 @@ Implement the optimized tl_packages to reduce package count by ~85-90% while mai
 
 ## Files Created  
 - `tl_packages.backup` - Backup of original tl_packages
-- `tl_packages_optimized` - Optimized package list (now applied to tl_packages)
 - `PACKAGE_OPTIMIZATION.md` - This analysis document
 
 ## References
