@@ -1,0 +1,72 @@
+# Optimized TeX Live packages for autoCV_MDL
+# 
+# OPTIMIZATION STRATEGY:
+# - Keep essential base collections (latex, latexrecommended)
+# - Keep LuaTeX collection (engine requirement)
+# - REMOVE collection-latexextra (~800+ packages) → replace with individual packages
+# - REMOVE collection-fontsextra (~500+ fonts) → use fontsrecommended only
+# - REMOVE collection-bibtexextra → use individual biblatex packages
+# 
+# This reduces installation from ~2000+ packages to ~200-300 packages
+# while maintaining all functionality needed for cv.tex compilation.
+
+# ===== BASE LATEX (keep - essential core) =====
+collection-latex
+collection-latexrecommended
+
+# ===== LUATEX ENGINE (keep - required for compilation) =====
+collection-luatex
+
+# ===== FONTS (optimized - removed fontsextra) =====
+collection-fontsrecommended
+# Provides Latin Modern, essential Type1 fonts
+# Removed: collection-fontsextra (500+ fonts, mostly unused)
+
+# Individual font packages needed:
+fontawesome5
+fontawesome7
+stix2-otf
+fontsetup
+
+# ===== BUILD TOOL =====
+latexmk
+
+# ===== BIBLIOGRAPHY (individual packages instead of collection) =====
+# Removed: collection-bibtexextra (50+ packages)
+# Using only what's needed:
+biblatex
+biber
+biblatex-science
+logreq
+
+# ===== ADDITIONAL PACKAGES NOT IN BASE COLLECTIONS =====
+# These are required by cvstyle.sty but not in latex/latexrecommended
+
+# Layout and formatting:
+geometry
+fancyhdr
+lastpage
+titlesec
+parskip
+
+# Tables and lists:
+ltablex
+etaremune
+needspace
+
+# Text and typography:
+ragged2e
+multicol
+
+# PDF features:
+pdfx
+bookmark
+
+# Programming:
+xparse
+l3packages
+etoolbox
+
+# Graphics (if not in base):
+graphicx
+xcolor
