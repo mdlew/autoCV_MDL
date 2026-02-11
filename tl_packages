@@ -38,8 +38,8 @@ biber
 biblatex-science
 logreq
 
-# ===== ADDITIONAL PACKAGES NOT IN BASE COLLECTIONS =====
-# These are required by cvstyle.sty but not in latex/latexrecommended
+# ===== ADDITIONAL PACKAGES USED BY CVSTYLE.STY =====
+# Packages that may not be in base collections or need explicit installation
 # 
 # NOTE: Some packages like graphicx (graphics bundle), multicol (tools bundle)
 # are already provided by collection-latexrecommended and should NOT be listed
