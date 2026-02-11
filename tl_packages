@@ -23,7 +23,6 @@ collection-fontsrecommended
 # Removed: collection-fontsextra (500+ fonts, mostly unused)
 
 # Individual font packages needed:
-fontawesome5
 fontawesome7
 stix2-otf
 fontsetup

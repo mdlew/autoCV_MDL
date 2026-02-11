@@ -60,7 +60,7 @@ latexmk                             # Build tool
 
 ### Recommended Optimization
 
-See `tl_packages_optimized` for the optimized package list.
+See `tl_packages` for the optimized package list used in CI.
 
 #### Strategy:
 1. **Keep essential collections:**
@@ -76,7 +76,7 @@ See `tl_packages_optimized` for the optimized package list.
 
 3. **Add individual packages as needed:**
    - Bibliography: biblatex, biber, biblatex-science
-   - Fonts: fontawesome5, fontawesome7, stix2-otf, fontsetup
+   - Fonts: fontawesome7, stix2-otf, fontsetup
    - Layout: geometry, fancyhdr, lastpage, titlesec, parskip
    - Tables: ltablex, etaremune
    - Text: ragged2e, needspace, multicol
@@ -133,10 +133,10 @@ git commit -am "Rollback to original tl_packages"
 Implement the optimized tl_packages to reduce package count by ~85-90% while maintaining full functionality.
 
 **Next Steps:**
-1. Test tl_packages_optimized in CI
-2. Add any missing packages discovered during testing
-3. Replace original tl_packages once verified
-4. Document the optimization in REFACTORING.md
+1. Validate CI/builds using the optimized `tl_packages`
+2. Add any missing TeX Live packages discovered from CI failures or build logs
+3. Keep `tl_packages.backup` available for rollback if critical issues are found
+4. Document the optimization and validation process in `REFACTORING.md`
 
 ## Files Modified
 - `cvstyle.sty` - Removed commented afterpage line (line 68)
