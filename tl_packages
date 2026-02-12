@@ -54,6 +54,7 @@ parskip
 
 # Tables and lists:
 ltablex
+enumitem
 etaremune
 needspace
 
