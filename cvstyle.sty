@@ -445,12 +445,11 @@
       \setlength{\cvpersonRightWidth}{.45\linewidth}%
     \fi
 
-    \begin{tabular}[t]{@{}p{\dimexpr\linewidth-\cvpersonRightWidth-1em\relax}r@{}}%
+    \begin{tabular}[t]{@{}>{\RaggedRight\arraybackslash}p{\dimexpr\linewidth-\cvpersonRightWidth-1em\relax}r@{}}%
       % Row 1: Name/Affiliation — Year/Status
-      {\raggedright
-        #2%
+       #2%
         \IfValueT{#1}{\ \iconlink{\small\faGoogleScholar}{#1}{}}%
-      } & #3\\
+       & #3\\
       % Row 2: Thesis (if any) — confined to left cell; right cell intentionally blank
       \IfNoValueTF{#4}{%
         % no thesis text provided
@@ -462,8 +461,6 @@
         }%
       }{%
         % thesis text provided
-        \begingroup
-          \raggedright
           #4%
           \IfValueT{#5}{%
             \IfNoValueTF{#6}{%
@@ -472,7 +469,6 @@
               \ \iconlink{\small\faFileLines}{#5}{#6}%
             }%
           }%
-        \endgroup
         & \\%
       }%
       % Row 3: Position (if any) — confined to left cell; right cell intentionally blank
