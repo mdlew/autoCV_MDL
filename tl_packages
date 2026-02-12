@@ -63,6 +63,7 @@ ragged2e
 
 # PDF features:
 pdfx
+xmpincl
 bookmark
 
 # Programming:
