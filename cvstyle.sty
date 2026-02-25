@@ -339,19 +339,8 @@
 % NOTE: Uses 4× \tablerowskip vertical spacing after entry for visual separation
 \newcommand{\teachentry}[4]{%
   % Left cell (course + role). Use \hsize for width in X columns.
-  \parbox[t]{\hsize}{%
-    \raggedright
-    \emph{#1}\par
-    #2%
-  }%
-  &%
-  % Right cell (offerings, possibly two lines)
-  \parbox[t]{\hsize}{%
-    \raggedleft
-    #3\par
-    \cv@ifnotempty{#4}{#4}%
-  }%
-  \\[\dimexpr4.5\tablerowskip\relax]%
+  \emph{#1} & #3 \\%
+  #2 & \cv@ifnotempty{#4}{#4} \\[\tablerowskip]%
 }
 
 % ========================================================================
@@ -431,15 +420,15 @@
 }
 
 % -------------------------
-% \cvperson[<scholar URL>]{<name+affil>}{<year>}[<thesis>][<thesis URL>][<text next to thesis icon>][<position>]
+% \cvperson[<scholar URL>]{<name>}{<affil>}{<year>}[<thesis>][<thesis URL>][<text next to thesis icon>][<position>]
 % -------------------------
-\NewDocumentCommand{\cvperson}{ o m m o o o o }{%
+\NewDocumentCommand{\cvperson}{ o m m m o o o o }{%
   \begingroup
     \setlength{\tabcolsep}{0.5em}%
     \renewcommand{\arraystretch}{1}%
 
     % Measure natural width of right cell (#3 = year/status)
-    \settowidth{\cvpersonRightWidth}{\strut #3}%
+    \settowidth{\cvpersonRightWidth}{\strut #4}%
     % Clamp to max 45% of line width to prevent negative left column width
     \ifdim\cvpersonRightWidth>.45\linewidth
       \setlength{\cvpersonRightWidth}{.45\linewidth}%
@@ -447,33 +436,33 @@
 
     \begin{tabular}[t]{@{}>{\RaggedRight\arraybackslash}p{\dimexpr\linewidth-\cvpersonRightWidth-1em\relax}r@{}}%
       % Row 1: Name/Affiliation — Year/Status
-       #2%
+       #2, \textit{#3}%
         \IfValueT{#1}{\ \iconlink{\small\faGoogleScholar}{#1}{}}%
-       & #3\\
+       & #4\\
       % Row 2: Thesis (if any) — confined to left cell; right cell intentionally blank
-      \IfNoValueTF{#4}{%
+      \IfNoValueTF{#5}{%
         % no thesis text provided
-        \IfNoValueTF{#5}{%
+        \IfNoValueTF{#6}{%
           % no thesis URL either -> nothing on row 2
         }{%
           % URL provided without thesis text: show just the icon link on its own line
-          \iconlink{\small\faFileLines}{#5}{} & \\%
+          \iconlink{\small\faFileLines}{#6}{} & \\%
         }%
       }{%
         % thesis text provided
-          #4%
-          \IfValueT{#5}{%
-            \IfNoValueTF{#6}{%
-              \ \iconlink{\small\faFileLines}{#5}{}%
+          #5%
+          \IfValueT{#6}{%
+            \IfNoValueTF{#7}{%
+              \ \iconlink{\small\faFileLines}{#6}{}%
             }{%
-              \ \iconlink{\small\faFileLines}{#5}{#6}%
+              \ \iconlink{\small\faFileLines}{#6}{#7}%
             }%
           }%
         & \\%
       }%
       % Row 3: Position (if any) — confined to left cell; right cell intentionally blank
-      \IfValueT{#7}{%
-        #7 & \\%
+      \IfValueT{#8}{%
+        #8 & \\%
       }%
     \end{tabular}%
   \endgroup
