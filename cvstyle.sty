@@ -53,8 +53,43 @@
 % -------------------------
 % BASIC TEXT & LAYOUT (load first)
 % URL typesetting and paragraph spacing control
-\RequirePackage{url}
+% ---- URL handling ----
+% microtype improves spacing, but URL line breaking is handled by xurl/url.
+% We also keep URL styling consistent with body text for a cleaner CV look.
+\RequirePackage{xurl} % smarter breaks for long URLs
 \RequirePackage{parskip}
+
+% ---- Micro-typography: best-practice defaults for CVs ----
+% - High-quality justification with subtle expansion
+% - Optical punctuation protrusion
+% - Tracking for small caps/headings
+% - Safer interword spacing
+% - Keep monospace/URLs from expanding (stability)
+%
+% Note: microtype is fully supported in LuaLaTeX.
+\RequirePackage[
+  final,
+  tracking=true,
+  % spacing=true, only works with pdftex 1.40
+  % kerning=true, only works with pdftex 1.40
+  protrusion=true,
+  expansion=true
+]{microtype}
+% Keep expansion conservative & avoid expansion for teletype (URLs/code)
+% 'sloppy*' avoids over-aggressive expansion in difficult lines.
+\microtypecontext{expansion=sloppy*}
+\SetExpansion
+  [ context = {text,display} ]
+  { encoding = *, family = tt* }{ } % Disable expansion for tt/monospace
+% Small caps tracking (CV-friendly polish). Adjust 30–50 to taste.
+\DeclareMicrotypeSet*[tracking]{smallcaps}{ encoding = *, shape = sc }
+\SetTracking{ encoding = *, shape = sc }{40}
+% ---- Paragraph shaping aids that pair well with microtype ----
+% These reduce overfulls without airy spacing; adjust conservatively if needed.
+\emergencystretch=3em
+\pretolerance=2000
+\tolerance=3000
+\hfuzz=0.2pt
 
 % GRAPHICS & COLOR (load before packages that use color)
 \RequirePackage{graphicx}
