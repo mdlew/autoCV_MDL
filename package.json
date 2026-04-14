@@ -3,6 +3,7 @@
 	"version": "0.1.0",
 	"description": "AutoCV",
 	"main": "src/index.js",
+	"packageManager": "pnpm@11",
 	"scripts": {
 		"build": "tsc",
 		"deploy": "wrangler deploy",
@@ -14,5 +15,12 @@
 		"@cloudflare/workers-types": "latest",
 		"typescript": "latest",
 		"wrangler": "latest"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild",
+			"sharp",
+			"workerd"
+		]
 	}
 }
