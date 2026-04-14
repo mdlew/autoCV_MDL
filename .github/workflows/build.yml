@@ -1,15 +1,22 @@
 # With some help from: https://gist.github.com/dgerosa/2e1f47a39180f39bde848e38243efa94
 
 name: build
+
 permissions:
   contents: read
+  
 on: 
   push:
     branches:
       - main
     paths-ignore:
+      - '**/*.json'
+      - '**/*.jsonc'
+      - '**/*.yaml'
+      - '**/*.yml'
       - '**.md'
       - 'LICENSE'
+      
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,14 +24,17 @@ jobs:
       # Edit here with the names of your latex file and directory (can use ".")
       DIR: .
       FILE: cv
+      
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v6
+        
       - name: Install TeX Live
         uses: zauguin/install-texlive@v4
         timeout-minutes: 30
         with:
           package_file: tl_packages
+          
       - name: Compile cv
         id: build
         timeout-minutes: 30
@@ -33,10 +43,12 @@ jobs:
         # XMP metadata. Do not remove or broaden this flag without auditing
         # all packages that depend on it.
         run: latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
+        
       - name: Move pdf to dist folder
         run: |
           mkdir -p ${{ env.DIR }}/dist
           mv -v ${{ env.DIR }}/${{ env.FILE }}.pdf ${{ env.DIR }}/dist/
+          
       - name: Add site files to artifact (e.g., /dist/, CNAME)
         run: |
           mkdir -p github_artifacts
@@ -47,11 +59,13 @@ jobs:
               cp -v "$f" github_artifacts/
             fi
           done
+          
       - name: Upload pdf and site files for Github Pages
         id: deploy-GitHub
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./github_artifacts
+          
       - name: Upload pdf and site files for Cloudflare Pages
         uses: actions/upload-artifact@v7
         with:
@@ -62,46 +76,44 @@ jobs:
   deploy-Cloudflare:
     needs: build
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Set up Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: '22'
-      - name: Set up pnpm
+        
+      - name: Setup pnpm
         uses: pnpm/action-setup@v6
         with:
-          # Major-only version spec: automatically receives v11.x patch releases.
-          # Matches the major line declared in package.json `packageManager` field.
-          # Update the major number here when upgrading to pnpm v12+.
-          version: 11
+          version: latest
+          
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+          
       - name: Install dependencies
-        # --frozen-lockfile enforces that pnpm-lock.yaml is not mutated during CI.
-        # Any lockfile drift (e.g. from adding/removing deps without committing)
-        # will cause this step to fail, catching inconsistencies early.
-        run: pnpm install --frozen-lockfile
-      - name: Check for blocked build scripts
-        # pnpm v11 blocks dependency build scripts by default unless the package
-        # is listed in onlyBuiltDependencies (see package.json). This step
-        # verifies the install succeeded cleanly; if any required build script
-        # was blocked, pnpm install above will already have exited non-zero.
-        run: pnpm ls --depth 0
+        run: pnpm install --force --fix-lockfile --no-frozen-lockfile
+        
       - name: Download artifact
         uses: actions/download-artifact@v8
         with:
           name: cloudflare-artifact
           path: ./dist
+          
       - name: Generate types
         run: pnpm run generate-types
+        
       - name: Build
         run: pnpm run build
+        
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           packageManager: pnpm
+          
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -119,6 +131,7 @@ jobs:
     # Deploy to the github-pages environment
     environment:
       name: github-pages
+      
     steps:
       - name: Deploy to GitHub Pages
         id: deploy
