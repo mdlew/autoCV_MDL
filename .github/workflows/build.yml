@@ -14,7 +14,7 @@ on:
       - '**/*.jsonc'
       - '**/*.yaml'
       - '**/*.yml'
-      - '**.md'
+      - '**/*.md'
       - 'LICENSE'
       
 jobs:
