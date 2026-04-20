@@ -62,7 +62,7 @@ jobs:
           
       - name: Upload pdf and site files for Github Pages
         id: deploy-GitHub
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./github_artifacts
           
