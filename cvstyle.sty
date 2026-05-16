@@ -131,17 +131,12 @@
 % TABLE & COLUMN LAYOUT
 % -------------------------
 \RequirePackage{array}     % Extended column types for tabular environments
-\RequirePackage{ltablex}   % Combines longtable + tabularx for page-breaking tables
-\keepXColumns              % Preserve X column proportions when tables break across pages
+\RequirePackage{tabularx}  % Flexible-width tables with X columns
 
 % Standard vertical spacing between CV entries (3.75pt provides tight but readable spacing)
 % Note: This is a public configuration parameter that can be adjusted by users
 \newlength{\tablerowskip}
 \setlength{\tablerowskip}{3.75pt}
-
-% Suppress extra space before/after longtable environments
-\setlength{\LTpre}{0pt}
-\setlength{\LTpost}{\tablerowskip}
 
 % LISTS & ENUMERATIONS
 \RequirePackage{enumitem}   % Enhanced list formatting; ensures compatibility with etaremune
@@ -439,11 +434,11 @@
 % NOTES:
 %   - Uses tabularx for title/date alignment
 %   - Optional content appears in full-width minipage
-%   - Negative \vspace compensates for \parskip to avoid extra blank line
 \NewDocumentCommand{\cvjob}{ m m o }{%
   \begin{tabularx}{\linewidth}{@{}l X r@{}}%
     \textbf{#1} & \hfill & #2%
   \end{tabularx}%
+
   % Add optional content block if provided
   \IfValueT{#3}{%
     \vspace{-\parskip}%  % Remove extra blank line between title row and content
@@ -451,7 +446,8 @@
       #3%
     \end{minipage}%
   }%
-  \par\vspace{\dimexpr1.5\tablerowskip\relax}%
+  
+  % \par\vspace{\dimexpr1.5\tablerowskip\relax}%
 }
 
 % -------------------------
@@ -550,7 +546,8 @@
     % Row 3: Role — (empty right cell)
     #7 & \\[\tablerowskip]
   \end{tabularx}%
-  \par%
+  
+  % \par%
 }
 
 

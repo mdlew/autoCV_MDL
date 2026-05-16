@@ -41,9 +41,10 @@ logreq
 # ===== ADDITIONAL PACKAGES USED BY CVSTYLE.STY =====
 # Packages that may not be in base collections or need explicit installation
 # 
-# NOTE: Some packages like graphicx (graphics bundle), multicol (tools bundle)
-# are already provided by collection-latexrecommended and should NOT be listed
-# individually. xparse is part of l3packages (listed below).
+# NOTE: Some packages like graphicx (graphics bundle), tabularx and multicol
+# (tools bundle) are already provided by collection-latexrecommended and
+# should NOT be listed individually. xparse is part of l3packages (listed
+# below).
 
 # Layout and formatting:
 geometry
@@ -53,7 +54,6 @@ titlesec
 parskip
 
 # Tables and lists:
-ltablex
 enumitem
 etaremune
 needspace
