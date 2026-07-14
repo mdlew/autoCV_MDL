@@ -4,19 +4,19 @@ name: build
 
 permissions:
   contents: read
-  
-on: 
+
+on:
   push:
     branches:
       - main
     paths-ignore:
-      - '**/*.json'
-      - '**/*.jsonc'
-      - '**/*.yaml'
-      - '**/*.yml'
-      - '**/*.md'
-      - 'LICENSE'
-      
+      - "**/*.json"
+      - "**/*.jsonc"
+      - "**/*.yaml"
+      - "**/*.yml"
+      - "**/*.md"
+      - "LICENSE"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,17 +24,17 @@ jobs:
       # Edit here with the names of your latex file and directory (can use ".")
       DIR: .
       FILE: cv
-      
+
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v7
-        
+
       - name: Install TeX Live
         uses: zauguin/install-texlive@v4
         timeout-minutes: 30
         with:
           package_file: tl_packages
-          
+
       - name: Compile cv
         id: build
         timeout-minutes: 30
@@ -43,12 +43,12 @@ jobs:
         # XMP metadata. Do not remove or broaden this flag without auditing
         # all packages that depend on it.
         run: latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
-        
+
       - name: Move pdf to dist folder
         run: |
           mkdir -p ${{ env.DIR }}/dist
           mv -v ${{ env.DIR }}/${{ env.FILE }}.pdf ${{ env.DIR }}/dist/
-          
+
       - name: Add site files to artifact (e.g., /dist/, CNAME)
         run: |
           mkdir -p github_artifacts
@@ -59,13 +59,13 @@ jobs:
               cp -v "$f" github_artifacts/
             fi
           done
-          
+
       - name: Upload pdf and site files for Github Pages
         id: deploy-GitHub
         uses: actions/upload-pages-artifact@v5
         with:
           path: ./github_artifacts
-          
+
       - name: Upload pdf and site files for Cloudflare Pages
         uses: actions/upload-artifact@v7
         with:
@@ -76,44 +76,52 @@ jobs:
   deploy-Cloudflare:
     needs: build
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        
+
+      - name: Resolve pnpm version
+        id: pnpm-version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(npm view pnpm version)"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: latest
-          
+          version: ${{ steps['pnpm-version'].outputs.version }}
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
-          
+          node-version: "lts/*"
+          cache: "pnpm"
+
       - name: Install dependencies
         run: pnpm install --force --fix-lockfile --no-frozen-lockfile
-        
+
       - name: Download artifact
         uses: actions/download-artifact@v8
         with:
           name: cloudflare-artifact
           path: ./dist
-          
+
       - name: Generate types
         run: pnpm run generate-types
-        
+
       - name: Build
         run: pnpm run build
-        
+
       - name: Deploy
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           packageManager: pnpm
-          
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -131,7 +139,7 @@ jobs:
     # Deploy to the github-pages environment
     environment:
       name: github-pages
-      
+
     steps:
       - name: Deploy to GitHub Pages
         id: deploy
