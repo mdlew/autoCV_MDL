@@ -458,7 +458,7 @@
     \setlength{\tabcolsep}{0.5em}%
     \renewcommand{\arraystretch}{1}%
 
-    % Measure natural width of right cell (#3 = year/status)
+    % Measure natural width of right cell (#4 = year/status)
     \settowidth{\cvpersonRightWidth}{\strut #4}%
     % Clamp to max 45% of line width to prevent negative left column width
     \ifdim\cvpersonRightWidth>.45\linewidth
@@ -467,33 +467,69 @@
 
     \begin{tabular}[t]{@{}>{\RaggedRight\arraybackslash}p{\dimexpr\linewidth-\cvpersonRightWidth-1em\relax}r@{}}%
       % Row 1: Name/Affiliation — Year/Status
-       #2, \textit{#3}%
-        \IfValueT{#1}{\ \iconlink{\small\faGoogleScholar}{#1}{}}%
-       & #4\\
-      % Row 2: Thesis (if any) — confined to left cell; right cell intentionally blank
+      #2, \textit{#3}%
+      \IfNoValueTF{#1}{%
+        % no Google Scholar URL
+      }{%
+        \cv@ifnotempty{#1}{%
+          \ \iconlink{\small\faGoogleScholar}{#1}{}%
+        }%
+      }%
+      & #4\\
+
+      % Row 2: Thesis — print only if thesis text or thesis URL is nonempty
       \IfNoValueTF{#5}{%
         % no thesis text provided
         \IfNoValueTF{#6}{%
-          % no thesis URL either -> nothing on row 2
+          % no thesis URL provided
         }{%
-          % URL provided without thesis text: show just the icon link on its own line
-          \iconlink{\small\faFileLines}{#6}{} & \\%
-        }%
-      }{%
-        % thesis text provided
-          #5%
-          \IfValueT{#6}{%
+          \cv@ifnotempty{#6}{%
             \IfNoValueTF{#7}{%
-              \ \iconlink{\small\faFileLines}{#6}{}%
+              \iconlink{\small\faFileLines}{#6}{} & \\%
             }{%
-              \ \iconlink{\small\faFileLines}{#6}{#7}%
+              \iconlink{\small\faFileLines}{#6}{#7} & \\%
             }%
           }%
-        & \\%
+        }%
+      }{%
+        \cv@ifemptyelse{#5}{%
+          % thesis text provided but blank
+          \IfNoValueTF{#6}{%
+            % no thesis URL provided
+          }{%
+            \cv@ifnotempty{#6}{%
+              \IfNoValueTF{#7}{%
+                \iconlink{\small\faFileLines}{#6}{} & \\%
+              }{%
+                \iconlink{\small\faFileLines}{#6}{#7} & \\%
+              }%
+            }%
+          }%
+        }{%
+          % thesis text provided and nonempty
+          #5%
+          \IfNoValueTF{#6}{%
+            % no thesis URL provided
+          }{%
+            \cv@ifnotempty{#6}{%
+              \IfNoValueTF{#7}{%
+                \ \iconlink{\small\faFileLines}{#6}{}%
+              }{%
+                \ \iconlink{\small\faFileLines}{#6}{#7}%
+              }%
+            }%
+          }%
+          & \\%
+        }%
       }%
-      % Row 3: Position (if any) — confined to left cell; right cell intentionally blank
-      \IfValueT{#8}{%
-        #8 & \\%
+
+      % Row 3: Position, if any
+      \IfNoValueTF{#8}{%
+        % no position text provided
+      }{%
+        \cv@ifnotempty{#8}{%
+          #8 & \\%
+        }%
       }%
     \end{tabular}%
   \endgroup
