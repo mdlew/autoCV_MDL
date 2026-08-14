@@ -386,10 +386,8 @@
 % intercepts the optional argument of standard list environments (itemize,
 % enumerate, description) and rejects unknown enumitem keys when tagging=on.
 %
-% cvjoblist: compact dash list used inside \cvjob optional content blocks
 \newlist{cvjoblist}{itemize}{1}
-\setlist[cvjoblist]{nosep,after=\strut,leftmargin=1em,itemsep=3pt,label=--}
-%
+\setlist[cvjoblist]{nosep,after=\strut,leftmargin=1em,itemsep=\tablerowskip,label=--}
 % cvmultilist: itemize list used inside \begin{multicols} environments
 \newlist{cvmultilist}{itemize}{1}
 \setlist[cvmultilist]{before=\RaggedRight}
