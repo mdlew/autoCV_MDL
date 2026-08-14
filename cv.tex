@@ -15,24 +15,24 @@
 % article class because we want to fully customize the page and not use a cv template
 \documentclass[11pt]{article}
 
-% \usepackage{filecontents}
-% define metadata for PDF/A
-\begin{filecontents}[force]{\jobname.xmpdata}
-\Title{Matthew D. Lew, Associate Professor, Washington University in St.\ Louis}
-\Author{Matthew D. Lew}
-\Keywords{super-resolution microscopy} 
-\Keywords{single-molecule spectroscopy} 
-\Keywords{computational imaging} \Keywords{nanoscience}
-\Language{en-US}
-\Subject{Matthew D. Lew Curriculum Vitae}
-\URLlink{https://cv.matthewlew.info}
-\end{filecontents}
+% PDF/A metadata — set here so hyperxmp embeds them as XMP in the output PDF.
+% These keys are read by hyperref/hyperxmp after cvstyle loads them.
+\PassOptionsToPackage{
+  pdftitle={Matthew D. Lew, Associate Professor, Washington University in St.\ Louis},
+  pdfauthor={Matthew D. Lew},
+  pdfsubject={Matthew D. Lew Curriculum Vitae},
+  pdfkeywords={super-resolution microscopy, single-molecule spectroscopy, computational imaging, nanoscience},
+  pdflang={en-US},
+}{hyperref}
 
 % Font package kept here (not moved to cvstyle)
 \usepackage[stixtwo]{fontsetup}
 
 % Input the shared style (packages, macros, layout)
 \usepackage{cvstyle}
+
+% Set document URL in XMP metadata (hyperref/hyperxmp must be loaded first via cvstyle)
+\hypersetup{pdfbaseurl={https://cv.matthewlew.info/cv.pdf}}
 
 % suppress numbering for all section levels (kept)
 \setcounter{secnumdepth}{-1}

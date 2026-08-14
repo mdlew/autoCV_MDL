@@ -22,7 +22,7 @@
 %%   \cvpersonRightWidth - Length register for \cvperson layout
 %%
 %% DEPENDENCIES:
-%%   Requires biblatex with 'science' style, fontawesome7, pdfx, xparse
+%%   Requires biblatex with 'science' style, bookmark, colorprofiles, fontawesome7, hyperref, hyperxmp, xparse
 %%   Custom datamodel: article-pmcid.dbx
 %%   Custom biblatex mods: biblatex_science_mods.sty
 %%
@@ -211,26 +211,32 @@
 
 % -------------------------
 % ICONS, PDF/A, AND HYPERLINKS
-% (Load order critical: fontawesome7 → pdfx → bookmark)
+% (Load order critical: fontawesome7 → hyperref → hyperxmp → bookmark)
 % -------------------------
 % WARNING: Package load order matters here!
-%   1. fontawesome7 must load before pdfx to ensure proper icon font embedding
-%   2. pdfx loads hyperref internally; do not load hyperref explicitly
-%   3. bookmark must load after hyperref (which pdfx provides)
-\RequirePackage{fontawesome7}    % Icon fonts (must load before pdfx for proper PDF embedding)
-\RequirePackage[a-2b]{pdfx}      % PDF/A-2b compliance (loads hyperref internally)
-\RequirePackage[open]{bookmark}  % Enhanced PDF bookmarks (requires hyperref, loaded by pdfx)
+%   1. fontawesome7 must load before hyperref to ensure proper icon font embedding
+%   2. hyperref provides PDF hyperlinks and metadata; load explicitly
+%   3. hyperxmp bridges hyperref metadata keys to the XMP stream (PDF/A requires XMP)
+%   4. bookmark must load after hyperref
+\RequirePackage{fontawesome7}    % Icon fonts (must load before hyperref for proper PDF embedding)
+\RequirePackage{hyperref}        % PDF hyperlinks and metadata
+\RequirePackage{hyperxmp}        % XMP metadata embedding for PDF/A compliance
+\RequirePackage{colorprofiles}   % sRGB ICC output intent (required for PDF/A conformance)
+\RequirePackage[open]{bookmark}  % Enhanced PDF bookmarks (requires hyperref)
 
-% Define custom link color and configure hyperref (loaded by pdfx)
+% Define custom link color and configure hyperref
 % Note: Color names in global namespace; consider using cv@linkcolour for future namespace safety
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}  % Dark blue for links
 \hypersetup{
-  draft=false,    % Enable hyperlinks even in draft mode
-  colorlinks,     % Use colored text for links (not boxes)
-  breaklinks,     % Allow links to break across lines
+  draft=false,             % Enable hyperlinks even in draft mode
+  colorlinks,              % Use colored text for links (not boxes)
+  breaklinks,              % Allow links to break across lines
   urlcolor=linkcolour,
-  linkcolor=linkcolour
-}
+  linkcolor=linkcolour,
+  pdfa,                    % Activate PDF/A output mode
+  pdfapart=2,              % PDF/A-2
+  pdfaconformance=B,       % Conformance level B (basic)
+  pdfaoutputintent=sRGB    % sRGB output intent (provided by colorprofiles)
 
 % Vertical spacing between bibliography entries
 \setlength\bibitemsep{\tablerowskip}
@@ -597,8 +603,8 @@
 %%   • If icons still don't appear, check console output for font loading errors
 %%
 %% PACKAGE LOAD ORDER CONFLICTS:
-%%   • pdfx loads hyperref internally; do not \RequirePackage{hyperref} explicitly
-%%   • fontawesome7 must load before pdfx for proper font embedding in PDF/A
+%%   • Do not \RequirePackage{hyperref} explicitly before cvstyle — it loads hyperref internally
+%%   • fontawesome7 must load before hyperref for proper font embedding in PDF/A
 %%   • If using other packages that modify hyperref, load them after cvstyle
 %%
 %% BIBLIOGRAPHY ISSUES:
