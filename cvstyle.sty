@@ -382,15 +382,41 @@
 \setlist[itemize,1]{leftmargin=0pt}
 
 % Named list types for structured CV content
-% Using \newlist avoids conflicts with the LaTeX tagging block package, which
-% intercepts the optional argument of standard list environments (itemize,
-% enumerate, description) and rejects unknown enumitem keys when tagging=on.
+% Using primitive \newenvironment (not enumitem \newlist) avoids conflicts with
+% the LaTeX tagging block package, which intercepts ALL list environments
+% (including those created with \newlist) and rejects unknown enumitem keys
+% such as nosep, after, leftmargin, itemsep, and label when tagging=on.
 %
-\newlist{cvjoblist}{itemize}{1}
-\setlist[cvjoblist]{nosep,after=\strut,leftmargin=1em,itemsep=\tablerowskip,label=--}
+% cvjoblist: dash-bulleted list for job detail sub-entries
+\newenvironment{cvjoblist}{%
+  \begin{list}{--}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\partopsep}{0pt}%
+    \setlength{\parsep}{0pt}%
+    \setlength{\itemsep}{\tablerowskip}%
+    \setlength{\leftmargin}{1em}%
+    \setlength{\labelsep}{0.5em}%
+    \setlength{\labelwidth}{0.5em}%
+  }%
+}{%
+  \strut%
+  \end{list}%
+}
 % cvmultilist: itemize list used inside \begin{multicols} environments
-\newlist{cvmultilist}{itemize}{1}
-\setlist[cvmultilist]{before=\RaggedRight}
+\newenvironment{cvmultilist}{%
+  \RaggedRight%
+  \begin{list}{}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\partopsep}{0pt}%
+    \setlength{\parsep}{0pt}%
+    \setlength{\itemsep}{\tablerowskip}%
+    \setlength{\leftmargin}{0pt}%
+    \setlength{\labelwidth}{0pt}%
+    \setlength{\labelsep}{0pt}%
+  }%
+}{%
+  \end{list}%
+}
 
 % -------------------------
 % PUBLIC API: Teaching entry command
