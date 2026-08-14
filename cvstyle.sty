@@ -190,14 +190,44 @@
 \providecommand{\iconlink}[4][]{%
   \cv@ifemptyelse{#1}{%
     % Optional flag NOT provided: plain text
-    \href{#3}{\raisebox{-0.05\height}{#2}~#4}%
+    \href{#3}{\cvartifact{\raisebox{-0.05\height}{#2}}~#4}%
   }{%
     % Optional flag provided: use \nolinkurl for breakable text
-    \href{#3}{\raisebox{-0.05\height}{#2}~\nolinkurl{#4}}%
+    \href{#3}{\cvartifact{\raisebox{-0.05\height}{#2}}~\nolinkurl{#4}}%
   }%
 }
 % Keep URL font consistent with surrounding text
 \urlstyle{same}
+
+% -------------------------
+% TAGGING HELPERS (no visual effect)
+% -------------------------
+% Wrapper commands are guarded so files still compile on older engines/toolchains.
+\newcommand{\cv@tagdivbegin}{%
+  \ifcsname tagstructbegin\endcsname
+    \tagstructbegin{tag=Div}%
+  \fi
+}
+\newcommand{\cv@tagdivend}{%
+  \ifcsname tagstructend\endcsname
+    \tagstructend
+  \fi
+}
+\newcommand{\cvartifact}[1]{%
+  \ifcsname tagmcbegin\endcsname
+    \tagmcbegin{artifact}#1\tagmcend
+  \else
+    #1%
+  \fi
+}
+\newcommand{\cvsep}{\cvartifact{\textbar}}
+\newenvironment{cvlayouttable}[2]{%
+  \cv@tagdivbegin
+  \begin{tabularx}{#1}{#2}%
+}{%
+  \end{tabularx}%
+  \cv@tagdivend
+}
 
 % -------------------------
 % BIBLIOGRAPHY CONFIGURATION
