@@ -190,10 +190,18 @@
 \providecommand{\iconlink}[4][]{%
   \cv@ifemptyelse{#1}{%
     % Optional flag NOT provided: plain text
-    \href{#3}{\cvartifact{\raisebox{-0.05\height}{#2}}~#4}%
+    \cv@ifemptyelse{#4}{%
+      \href{#3}{\raisebox{-0.05\height}{#2}~}%
+    }{%
+      \href{#3}{\cvartifact{\raisebox{-0.05\height}{#2}}~#4}%
+    }%
   }{%
     % Optional flag provided: use \nolinkurl for breakable text
-    \href{#3}{\cvartifact{\raisebox{-0.05\height}{#2}}~\nolinkurl{#4}}%
+    \cv@ifemptyelse{#4}{%
+      \href{#3}{\raisebox{-0.05\height}{#2}~}%
+    }{%
+      \href{#3}{\cvartifact{\raisebox{-0.05\height}{#2}}~\nolinkurl{#4}}%
+    }%
   }%
 }
 % Keep URL font consistent with surrounding text
