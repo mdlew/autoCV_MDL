@@ -63,8 +63,8 @@ ragged2e
 xurl
 
 # PDF features:
-hyperxmp
-colorprofiles
+pdfx
+xmpincl
 bookmark
 
 # Programming:
