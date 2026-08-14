@@ -232,6 +232,14 @@
     #1%
   \fi
 }
+% -------------------------
+% COMMAND DEFINITION TOOLS
+% -------------------------
+% xparse provides \NewDocumentCommand/\NewDocumentEnvironment for flexible argument handling
+% Minimum version: 2018-04-06 (xparse syntax stabilized)
+% Must be loaded before the first \NewDocumentEnvironment below.
+\RequirePackage{xparse}[2018/04/06]
+
 \newcommand{\cvsep}{\cvartifact{\textbar}}
 % Use \NewDocumentEnvironment with 'b' body-collect to keep \tabularx and
 % \endtabularx together in one expansion. This is required because tabularx's
@@ -280,13 +288,6 @@
 
 % Vertical spacing between bibliography entries
 \setlength\bibitemsep{\tablerowskip}
-
-% -------------------------
-% COMMAND DEFINITION TOOLS
-% -------------------------
-% xparse provides \NewDocumentCommand for flexible argument handling
-% Minimum version: 2018-04-06 (xparse syntax stabilized)
-\RequirePackage{xparse}[2018/04/06]
 
 % -------------------------
 % INTERNAL UTILITY MACROS
