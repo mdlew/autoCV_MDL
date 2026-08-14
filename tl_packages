@@ -54,6 +54,7 @@ titlesec
 parskip
 
 # Tables and lists:
+tabularx
 enumitem
 etaremune
 needspace

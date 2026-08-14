@@ -132,6 +132,10 @@
 % -------------------------
 \RequirePackage{array}     % Extended column types for tabular environments
 \RequirePackage{tabularx}  % Flexible-width tables with X columns
+% Note: always use command form \tabularx...\endtabularx (not \begin/\end) to avoid
+% conflicts between the latex-lab block module (loaded with tagging=on) and
+% tabularx's \TX@get@body token scanner. The \begin{tabularx} form triggers LaTeX
+% hooks that the block module uses; these hooks interfere with \TX@get@body's scan.
 
 % Standard vertical spacing between CV entries (3.75pt provides tight but readable spacing)
 % Note: This is a public configuration parameter that can be adjusted by users
@@ -231,9 +235,9 @@
 \newcommand{\cvsep}{\cvartifact{\textbar}}
 \newenvironment{cvlayouttable}[2]{%
   \cv@tagdivbegin
-  \begin{tabularx}{#1}{#2}%
+  \tabularx{#1}{#2}%
 }{%
-  \end{tabularx}%
+  \endtabularx%
   \cv@tagdivend
 }
 
@@ -337,9 +341,9 @@
 % NOTE: Environment body is currently empty; content goes in parameters
 \newenvironment{activityshort}[2]
 {
-    \begin{tabularx}{\linewidth}{@{}l X r@{}}
+    \tabularx{\linewidth}{@{}l X r@{}}
     \textit{#1} & \hfill & #2
-    \end{tabularx} \par%
+    \endtabularx \par%
 }
 {
 }
@@ -356,10 +360,10 @@
 %   #4: Year or date range
 %
 % USAGE:
-%   \begin{tabularx}{\linewidth}{X r}
+%   \begin{cvlayouttable}{\linewidth}{X r}
 %   \activityrow[https://...]{Conference Talk}{Org Name}{2025}
 %   \activityrow{Other Activity}{}{2024}  % No org, no URL
-%   \end{tabularx}
+%   \end{cvlayouttable}
 \newcommand{\activityrow}[4][]{%
   % Title with optional hyperlink using helper macro
   \cv@ifemptyelse{#1}{%
@@ -435,10 +439,10 @@
 %   #4: Second line of offerings (optional; omit or leave empty for single line)
 %
 % USAGE:
-%   \begin{tabularx}{\linewidth}{X Z}
+%   \begin{cvlayouttable}{\linewidth}{X r}
 %   \teachentry{Advanced Algorithms}{Instructor}{Fall 2024}{Spring 2025}
 %   \teachentry{Data Structures}{TA}{Spring 2024}{}
-%   \end{tabularx}
+%   \end{cvlayouttable}
 %
 % NOTE: Uses 4× \tablerowskip vertical spacing after entry for visual separation
 \newcommand{\teachentry}[4]{%
@@ -509,9 +513,9 @@
 %   - Uses tabularx for title/date alignment
 %   - Optional content appears in full-width minipage
 \NewDocumentCommand{\cvjob}{ m m o }{%
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}%
+  \tabularx{\linewidth}{@{}l X r@{}}%
     \textbf{#1} & \hfill & #2%
-  \end{tabularx}%
+  \endtabularx%
 
   % Add optional content block if provided
   \IfValueT{#3}{%
@@ -646,7 +650,7 @@
 %   - Three-row tabularx layout: Title—Dates / Agency—Amount / Role—(empty)
 %   - Title and agency/grant are hyperlinked if corresponding URLs provided
 \NewDocumentCommand{\cvproject}{ o m m o m m m }{%
-  \begin{tabularx}{\linewidth}{@{}X r@{}}%
+  \tabularx{\linewidth}{@{}X r@{}}%
     % Row 1: Title — Dates
     {\raggedright
       \IfNoValueTF{#1}{\textit{#2}}{\href{#1}{\textit{#2}}}%
@@ -655,7 +659,7 @@
     \IfNoValueTF{#4}{#5}{\href{#4}{#5}} & #6\\
     % Row 3: Role — (empty right cell)
     #7 & \\[\tablerowskip]
-  \end{tabularx}%
+  \endtabularx%
   
   % \par%
 }
