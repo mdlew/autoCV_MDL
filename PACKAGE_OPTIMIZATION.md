@@ -26,7 +26,7 @@ All packages currently declared in `cvstyle.sty` are **actively used** in the pr
 15. **ragged2e** - \RaggedRight in cvstyle.sty and cv_service.tex
 16. **biblatex** - Bibliography system
 17. **fontawesome7** - Icons for contact info and bibliography
-18. **DocumentMetadata** - Native PDF/A metadata management in `cv.tex`
+18. **pdfx** - PDF/A-2b compliance
 19. **bookmark** - Enhanced PDF bookmarks
 20. **xparse** - Modern command definitions
 
@@ -80,7 +80,7 @@ See `tl_packages` for the optimized package list used in CI.
    - Layout: geometry, fancyhdr, lastpage, titlesec, parskip
    - Tables: ltablex, etaremune
    - Text: ragged2e, needspace, multicol
-   - PDF: `\DocumentMetadata` (native PDF management), bookmark
+   - PDF: pdfx, bookmark
    - Programming: xparse, l3packages, etoolbox
 
 #### Expected Results:

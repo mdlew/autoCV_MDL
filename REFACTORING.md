@@ -246,7 +246,7 @@ tlmgr install fontawesome7
 
 # Rebuild with clean intermediate files
 rm -f *.aux *.bbl *.bcf *.blg *.run.xml
-latexmk -pdflua -interaction=nonstopmode -output-directory=. ./cv.tex
+latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" cv.tex
 ```
 
 ### Bibliography Reverse Numbering Wrong

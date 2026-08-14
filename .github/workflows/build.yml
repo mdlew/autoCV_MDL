@@ -38,7 +38,11 @@ jobs:
       - name: Compile cv
         id: build
         timeout-minutes: 30
-        run: latexmk -pdflua -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
+        # --shell-escape is required by the pdfx package (PDF/A-2b compliance),
+        # which invokes external tools to embed ICC color profiles and process
+        # XMP metadata. Do not remove or broaden this flag without auditing
+        # all packages that depend on it.
+        run: latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
 
       - name: Move pdf to dist folder
         run: |

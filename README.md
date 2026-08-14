@@ -49,7 +49,7 @@ Workflow permissions: In **Settings → Actions → General**, set **Workflow pe
 From the repo root:
 
 ```bash
-latexmk -pdflua -interaction=nonstopmode -output-directory=. ./cv.tex
+latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=. ./cv.tex
 ```
 
 Outputs `cv.pdf` in the root.

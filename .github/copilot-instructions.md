@@ -48,7 +48,7 @@ See `REFACTORING.md` for detailed style file documentation and best practices.
 - Security headers and TLS 1.2+ enforcement are required
 
 ### Build Process
-- LaTeX builds use: `latexmk -pdflua -interaction=nonstopmode -output-directory=. ./cv.tex`
+- LaTeX builds use: `latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode`
 - Worker builds use: `pnpm build` (runs `tsc`)
 - CI outputs to `dist/` directory
 
@@ -78,7 +78,7 @@ See `REFACTORING.md` for detailed style file documentation and best practices.
 
 ### Local LaTeX Build
 ```bash
-latexmk -pdflua -interaction=nonstopmode -output-directory=. ./cv.tex
+latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=. ./cv.tex
 ```
 
 ### Local Worker Development
@@ -128,7 +128,7 @@ pnpm dev      # Local preview
 
 - **Workflow Permissions**: Must be set to "Read and write" for Pages deployment
 - **Asset Directory**: Worker serves from `dist/` via ASSETS binding
-- **PDF Metadata**: PDF/A metadata is configured via `\DocumentMetadata` in `cv.tex`
+- **Shell Escape**: Required for LaTeX compilation (`--shell-escape`)
 - **No Build Branch**: Uses Pages artifact upload, not `gh-pages` branch
 
 ## Related Documentation
