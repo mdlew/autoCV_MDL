@@ -3,7 +3,7 @@
 %% DESCRIPTION:
 %%   Provides a complete styling framework for academic CVs with support
 %%   for publications, teaching, service, mentoring, and funded projects.
-%%   Includes bibliography integration, custom sectioning, and PDF/A output.
+%%   Includes bibliography integration, custom sectioning, and tagged PDF output.
 %%
 %% PUBLIC API (stable, documented, safe for user CVs):
 %%   \cvcontact   - Contact header with name, address, and links
@@ -22,7 +22,7 @@
 %%   \cvpersonRightWidth - Length register for \cvperson layout
 %%
 %% DEPENDENCIES:
-%%   Requires biblatex with 'science' style, fontawesome7, pdfx, xparse
+%%   Requires biblatex with 'science' style, fontawesome7, hyperref, xparse
 %%   Custom datamodel: article-pmcid.dbx
 %%   Custom biblatex mods: biblatex_science_mods.sty
 %%
@@ -210,18 +210,17 @@
 \RequirePackage{biblatex_science_mods}
 
 % -------------------------
-% ICONS, PDF/A, AND HYPERLINKS
-% (Load order critical: fontawesome7 → pdfx → bookmark)
+% ICONS AND HYPERLINKS
+% (Load order critical: fontawesome7 → hyperref → bookmark)
 % -------------------------
 % WARNING: Package load order matters here!
-%   1. fontawesome7 must load before pdfx to ensure proper icon font embedding
-%   2. pdfx loads hyperref internally; do not load hyperref explicitly
-%   3. bookmark must load after hyperref (which pdfx provides)
-\RequirePackage{fontawesome7}    % Icon fonts (must load before pdfx for proper PDF embedding)
-\RequirePackage[a-2b]{pdfx}      % PDF/A-2b compliance (loads hyperref internally)
-\RequirePackage[open]{bookmark}  % Enhanced PDF bookmarks (requires hyperref, loaded by pdfx)
+%   1. fontawesome7 must load before hyperref to ensure icon commands are available
+%   2. bookmark must load after hyperref
+\RequirePackage{fontawesome7}    % Icon fonts
+\RequirePackage[unicode]{hyperref}
+\RequirePackage[open]{bookmark}  % Enhanced PDF bookmarks (requires hyperref)
 
-% Define custom link color and configure hyperref (loaded by pdfx)
+% Define custom link color and configure hyperref
 % Note: Color names in global namespace; consider using cv@linkcolour for future namespace safety
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}  % Dark blue for links
 \hypersetup{
@@ -597,8 +596,7 @@
 %%   • If icons still don't appear, check console output for font loading errors
 %%
 %% PACKAGE LOAD ORDER CONFLICTS:
-%%   • pdfx loads hyperref internally; do not \RequirePackage{hyperref} explicitly
-%%   • fontawesome7 must load before pdfx for proper font embedding in PDF/A
+%%   • bookmark must load after hyperref
 %%   • If using other packages that modify hyperref, load them after cvstyle
 %%
 %% BIBLIOGRAPHY ISSUES:

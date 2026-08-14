@@ -2,7 +2,7 @@
 
 % Build/engine info — repo CI uses LuaLaTeX via latexmk (see .github/workflows/build.yml)
 % Required engine: LuaLaTeX (preferred). The GitHub Action runs:
-% latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=. ./cv.tex
+% latexmk -pdflua -interaction=nonstopmode -output-directory=. ./cv.tex
 % The CI installs TeX Live packages listed in tl_packages before building.
 % Notes:
 % - Run commands from repository root (where cv.tex and tl_packages live).
@@ -12,27 +12,34 @@
 %	DOCUMENT DEFINITION
 %----------------------------------------------------------------------------------------
 
+% Modern PDF management: produce one archival + accessible tagged PDF.
+% Keep this before \documentclass.
+\DocumentMetadata{
+  lang=en-US,
+  pdfversion=2.0,
+  pdfstandard={A-4,UA-2},
+  tagging=on
+}
+
 % article class because we want to fully customize the page and not use a cv template
 \documentclass[11pt]{article}
-
-% \usepackage{filecontents}
-% define metadata for PDF/A
-\begin{filecontents}[force]{\jobname.xmpdata}
-\Title{Matthew D. Lew, Associate Professor, Washington University in St.\ Louis}
-\Author{Matthew D. Lew}
-\Keywords{super-resolution microscopy} 
-\Keywords{single-molecule spectroscopy} 
-\Keywords{computational imaging} \Keywords{nanoscience}
-\Language{en-US}
-\Subject{Matthew D. Lew Curriculum Vitae}
-\URLlink{https://cv.matthewlew.info}
-\end{filecontents}
 
 % Font package kept here (not moved to cvstyle)
 \usepackage[stixtwo]{fontsetup}
 
 % Input the shared style (packages, macros, layout)
 \usepackage{cvstyle}
+
+% Document metadata (Info dictionary + XMP fields mapped by the PDF management layer)
+\hypersetup{
+  pdftitle={Matthew D. Lew, Associate Professor, Washington University in St. Louis},
+  pdfauthor={Matthew D. Lew},
+  pdfsubject={Curriculum Vitae},
+  pdfkeywords={super-resolution microscopy, single-molecule spectroscopy, computational imaging, nanoscience, biophysical chemistry, ORCID:0000-0002-5614-3292},
+  pdfcreator={LuaLaTeX with latexmk},
+  pdfproducer={LaTeX},
+  pdfdisplaydoctitle=true
+}
 
 % suppress numbering for all section levels (kept)
 \setcounter{secnumdepth}{-1}
