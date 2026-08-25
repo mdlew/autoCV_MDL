@@ -20,8 +20,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    container:
+      image: texlive/texlive:latest
+
     env:
-      # Edit here with the names of your latex file and directory (can use ".")
       DIR: .
       FILE: cv
 
@@ -29,20 +32,15 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v7
 
-      - name: Install TeX Live
-        uses: zauguin/install-texlive@v4
-        timeout-minutes: 30
-        with:
-          package_file: tl_packages
-
       - name: Compile cv
-        id: build
-        timeout-minutes: 30
-        # --shell-escape is required by the pdfx package (PDF/A-2b compliance),
-        # which invokes external tools to embed ICC color profiles and process
-        # XMP metadata. Do not remove or broaden this flag without auditing
-        # all packages that depend on it.
-        run: latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=${{ env.DIR }} ${{ env.DIR }}/${{ env.FILE }}.tex
+        timeout-minutes: 15
+        run: |
+          latexmk \
+            -pdflua \
+            -interaction=nonstopmode \
+            -halt-on-error \
+            -output-directory="${{ env.DIR }}" \
+            "${{ env.DIR }}/${{ env.FILE }}.tex"
 
       - name: Move pdf to dist folder
         run: |
