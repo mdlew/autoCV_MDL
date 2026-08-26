@@ -1,9 +1,7 @@
 % License: moved to LICENSE (see repository root)
 
 % Build/engine info — repo CI uses LuaLaTeX via latexmk (see .github/workflows/build.yml)
-% Required engine: LuaLaTeX (preferred). The GitHub Action runs:
-% latexmk -pdflua -lualatex="lualatex --shell-escape %O %S" -interaction=nonstopmode -output-directory=. ./cv.tex
-% The CI installs TeX Live packages listed in tl_packages before building.
+% Required engine: LuaLaTeX (preferred). 
 % Notes:
 % - Run commands from repository root (where cv.tex and tl_packages live).
 % - latexmk automates bibliography/toolchain runs; use it to match CI behavior.
@@ -14,9 +12,11 @@
 
 % migrate to modern LaTeX PDF management instead of pdfx
 \DocumentMetadata{ 
-  pdfstandard=A-4, 
-  pdfversion=2.0, 
-  lang=en-US
+  lang=en-US,
+  pdfstandard=ua-2, 
+  pdfstandard=a-4f, 
+  tagging=on,
+  tagging-setup={math/setup=mathml-SE} 
 }
 
 % article class because we want to fully customize the page and not use a cv template
@@ -43,7 +43,7 @@
 \cvcontact{Matthew Duk-Ying Lew}{MSC 1042-207-1101, One Brookings Drive, St.\ Louis, MO 63130 \textbar \ 
 \iconlink{\faEnvelope}{mailto:mdlew@wustl.edu}{mdlew@wustl.edu} \textbar \ 
 \iconlink{\faPhone}{tel:+13149356790}{+1.314.935.6790}}
-{\href{https://lewlab.wustl.edu}{\raisebox{-0.1\height}{\includegraphics[width=1.1em]{labicon.pdf}}lewlab.wustl.edu} \textbar \ 
+{\href{https://lewlab.wustl.edu}{\raisebox{-0.1\height}{\includegraphics[width=1.1em,alt={Lew Lab website}]{labicon.pdf}}lewlab.wustl.edu} \textbar \ 
 \iconlink{\faOrcid}{https://orcid.org/0000-0002-5614-3292}{0000-0002-5614-3292} \textbar \ 
 \iconlink{\faGoogleScholar}{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{Google Scholar} \textbar \ 
 \iconlink{\faCircleUser}{https://profiles.wustl.edu/en/persons/matthew-lew}{WashU Profile} \textbar \ 
@@ -52,59 +52,53 @@
 %----------------------------------------------------------------------------------------
 % EXPERIENCE SECTIONS
 %----------------------------------------------------------------------------------------
-\renewcommand{\arraystretch}{1.1} % Increase spacing between rows of tables
-
 \subsection*{My lab pioneers imaging technologies that reveal the architecture and dynamics of life at the nanoscale.}
-% The Lew Lab integrates advanced optical design, computation, and physical chemistry to create multidimensional optical imaging systems that transcend conventional limits, thereby capturing molecular positions, orientations, and interactions in unprecedented detail. The team collaborates across disciplines to convert fundamental discoveries about nanoscale sensing and imaging into technologies that accelerate breakthroughs in biology, medicine, and materials science. Our innovations redefine how scientists see the invisible.
 The Lew Lab integrates advanced optical design, computation, and biophysical chemistry to create multidimensional optical imaging systems that transcend conventional limits, thereby capturing molecular positions, orientations, chemical environments, and biomolecular interactions in unprecedented detail. The team collaborates across biochemistry, physics, and engineering to translate fundamental discoveries in nanoscale sensing into imaging technologies that accelerate breakthroughs in biology, medicine, and materials science. Our innovations redefine how scientists see the invisible.
+
 \section{Appointments and Experience}
 
 \cvjob{Associate Chair, Preston M.\ Green Department of Electrical and Systems Engineering}{Jan 2026 -- present}[{Washington University in St.\ Louis}]
 
 \cvjob{Associate Professor, Washington University in St.\ Louis}{Jul 2022 -- present}[{%
-\begin{itemize}[nosep,leftmargin=1em,itemsep=3pt,label=--]
+\begin{itemize}[nosep,itemsep=\tablerowskip,leftmargin=1em,label=--]
   \item \href{https://ese.washu.edu}{Preston M.\ Green Department of Electrical and Systems Engineering}
   \item Affiliate of the \href{https://dbbs.wustl.edu/programs/biochemistry-biophysics-structural-biology/}{Biochemistry, Biophysics, and Structural Biology Program}; 
   the \href{https://bme.washu.edu}{Department of Biomedical Engineering}; 
   the \href{https://engineering.washu.edu/academics/programs/imaging-science/index.html}{Imaging Science Program}; 
   and the \href{https://imse.washu.edu}{Institute of Materials Science \& Engineering}
   \item Member of the \href{https://condensates.wustl.edu}{Center for Biomolecular Condensates} and the \href{https://quantumleaps.wustl.edu/}{Center for Quantum Leaps}
-\end{itemize}
+\end{itemize} 
 }]
 
 \cvjob{Associate Chair for Academic Programs, Dept.\ of Electrical and Systems Engineering}{Jul 2022 -- Dec 2025}[{Washington University in St.\ Louis}]
 
 \cvjob{Assistant Professor, Washington University in St.\ Louis}{Jul 2015 -- Jun 2022}[{Preston M.\ Green Department of Electrical and Systems Engineering}]
 
-\cvjob{Postdoctoral Scholar, Stanford University School of Medicine}{Nov 2014 -- Jun 2015}[{Department of Structural Biology \\ Advisor: \href{https://med.stanford.edu/delazerda.html}{Adam de la Zerda}}]
+\cvjob{Postdoctoral Scholar, Stanford University School of Medicine}
+{Nov 2014 -- Jun 2015}
+[{Department of Structural Biology}]
+[Advisor: \href{https://med.stanford.edu/delazerda.html}{Adam de la Zerda}]
 
 \cvjob{Research Intern, Google[x]}{2014}[{Mountain View, CA}]
 
 \cvjob{Engineering Intern, Southwest Research Institute}{2004, 2005}[{San Antonio, TX}]
   
-%Projects
-% \section{Projects}
-
-% \begin{tabularx}{\linewidth}{ @{}l r@{} }
-% \textbf{Some Project} & \hfill \href{https://some-link.com}{Link to Demo} \\[\tablerowskip]
-% \multicolumn{2}{@{}X@{}}{long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width long long line of blah blah that will wrap when the table fills the column width}  \\
-% \end{tabularx}
 
 %----------------------------------------------------------------------------------------
 %	EDUCATION
 %----------------------------------------------------------------------------------------
 \section{Education}
-\begin{tabularx}{\linewidth}{@{}l X@{}}	
-2008 -- 2015 & \textbf{Ph.D.\ in Electrical Engineering} at Stanford University \hfill \normalsize (GPA: 4.0/4.0) \\
-    & Engineering New Capabilities into Optical Microscopes: Toward Measuring the Three-Dimensional Position and Orientation of Single Molecules in Living Cells \ \iconlink{\small\faFileLines}{https://purl.stanford.edu/wm159hp9861}{} \\
-    & Advisor: \href{https://web.stanford.edu/group/moerner/}{W.\ E.\ Moerner} \\[\tablerowskip]
 
-2008 -- 2010 & \textbf{M.S.\ in Electrical Engineering} at Stanford University \hfill \normalsize (GPA: 3.9/4.0) \\[\tablerowskip]
+\cveducation {Ph.D.\ in Electrical Engineering} {Stanford University} {GPA: 4.0/4.0} {2008--2015} [{% 
+Dissertation: Engineering New Capabilities into Optical Microscopes: Toward Measuring the Three-Dimensional Position and Orientation of Single Molecules in Living Cells \iconlink{\small\faFileLines} {https://purl.stanford.edu/wm159hp9861}{}
+}] 
+[{\href{https://web.stanford.edu/group/moerner/} {W.\ E.\ Moerner}}]
 
-2004 -- 2008 & \textbf{\href{https://resolver.caltech.edu/CaltechCampusPubs:20110511-115217108}{B.S.\ with Honor} in Electrical Engineering} at the California Institute of Technology \hfill \normalsize (GPA: 4.0/4.0) \\
-    & Quantitative Differential Phase Imaging and Phase Reconstruction \\
-    & Advisor: \href{https://biophot.caltech.edu/}{Changhuei Yang} \\[\tablerowskip]
-\end{tabularx}
+\cveducation {M.S.\ in Electrical Engineering} {Stanford University} {GPA: 3.9/4.0} {2008--2010} 
+
+\cveducation {B.S.\ with Honor in Electrical Engineering} {California Institute of Technology} {GPA: 4.0/4.0} {2004--2008} [{% 
+Thesis: Quantitative Differential Phase Imaging and Phase Reconstruction}]
+[{\href{https://biophot.caltech.edu/} {Changhuei Yang}}] 
 
 %----------------------------------------------------------------------------------------
 %	AWARDS
@@ -112,12 +106,7 @@ The Lew Lab integrates advanced optical design, computation, and biophysical che
 \Needspace{3\baselineskip} % adjust as needed
 \section{Awards and Recognitions}
 
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X >{\raggedleft\arraybackslash}r@{}}
 \activityrow[https://spie.org/membership/member-recognition/spie-senior-members]{Senior Member, Class of 2026}{SPIE}{2026}
-\end{tabularx} % allow page break
-
-\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X >{\raggedleft\arraybackslash}r@{}}
-
 \activityrow{Editor of Distinction, Author Service Award}{Scientific Reports}{2026}
 \activityrow[https://www.optica.org/about/newsroom/news_releases/2025/optica_announces_2026_fellows_class/]{Fellow, Class of 2026}{Optica}{2025}
 \activityrow[https://lewlab.wustl.edu/files/OFSA-Program-2023.pdf]{Outstanding Faculty Award}{Washington University Graduate Student Senate}{2023}
@@ -127,7 +116,7 @@ The Lew Lab integrates advanced optical design, computation, and biophysical che
 \activityrow[https://lewlab.wustl.edu/files/McKelvey_Honors_Program_2020.pdf]{Outstanding Teaching Award}{Preston M.\ Green Department of Electrical \& Systems Engineering}{2020}
 \activityrow{Full Membership Inductee}{Sigma Xi, The Scientific Research Honor Society}{2020}
 \activityrow[https://www.nsf.gov/awardsearch/show-award?AWD_ID=1653777]{CAREER Award}{National Science Foundation}{2017}
-\activityrow{Hiruma/Wagner Award}{16$^\textit{th}$ Conference of Peace through Mind/Brain Science}{2016}
+\activityrow{Hiruma/Wagner Award}{16\textsuperscript{th} Conference of Peace through Mind/Brain Science}{2016}
 \activityrow[https://www.optica-opn.org/home/gallery/photo_contests/2015/]{Winner of 2015 After Image Photo Contest}{Optics \& Photonics News}{2015}
 \activityrow{Second Place Poster Award}{Gordon Research Conferences: Single-Molecule Approaches to Biology}{2012}
 \activityrow{Travel Award}{Stanford Bio-X}{2010, 2011}
@@ -146,7 +135,6 @@ The Lew Lab integrates advanced optical design, computation, and biophysical che
 \activityrow{National Advanced Placement Scholar}{College Board}{2004}
 \activityrow{National Merit Scholarship}{}{2004}
 
-\end{tabularx}
 
 %----------------------------------------------------------------------------------------
 %	RESEARCH SUPPORT
@@ -159,7 +147,7 @@ The Lew Lab integrates advanced optical design, computation, and biophysical che
 %	PUBLICATIONS
 %----------------------------------------------------------------------------------------
 \section[Publications]{Publications \small \iconlink{\faGoogleScholar}{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{h-index: 33, i10-index: 54} \textbar \ \iconlink{\faArrowUpRightFromSquare}{https://lewlab.wustl.edu/pages/publications.html}{journal covers, citation \& attention metrics}}
-\faImage \ cover article \textbar \ \faStar \ editor’s pick/hot paper \textbar\ *equal contribution \textbar\ $^+$co-corresponding authors
+\faImage \ cover article \textbar \ \faStar \ editor’s pick/hot paper \textbar\ *equal contribution \textbar\ \textsuperscript{+}co-corresponding authors
 \input{cv_pubs_patents}
 
 %----------------------------------------------------------------------------------------

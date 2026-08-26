@@ -57,7 +57,7 @@
 % microtype improves spacing, but URL line breaking is handled by xurl/url.
 % We also keep URL styling consistent with body text for a cleaner CV look.
 \RequirePackage{xurl} % smarter breaks for long URLs
-\RequirePackage{parskip}
+% \RequirePackage{parskip}
 
 % ---- Micro-typography: best-practice defaults for CVs ----
 % - High-quality justification with subtle expansion
@@ -128,15 +128,16 @@
 \AtBeginDocument{\thispagestyle{empty}}
 
 % -------------------------
-% TABLE & COLUMN LAYOUT
+% LAYOUT
 % -------------------------
-\RequirePackage{array}     % Extended column types for tabular environments
-\RequirePackage{tabularx}  % Flexible-width tables with X columns
-
 % Standard vertical spacing between CV entries (3.75pt provides tight but readable spacing)
 % Note: This is a public configuration parameter that can be adjusted by users
 \newlength{\tablerowskip}
 \setlength{\tablerowskip}{3.75pt}
+
+% instead of parskip, set spacing manually
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{\tablerowskip}
 
 % LISTS & ENUMERATIONS
 \RequirePackage{enumitem}   % Enhanced list formatting; ensures compatibility with etaremune
@@ -160,11 +161,14 @@
 \RequirePackage{ragged2e}   % Provides \RaggedRight (better hyphenation than \raggedright)
 
 % Section: Large small-caps with horizontal rule below
-\titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
-\titlespacing{\section}{0pt}{10pt}{10pt}
+\titleformat{\section}{\Large\scshape\RaggedRight}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{\tablerowskip}{\tablerowskip}
 % Subsection: Bold, no rule
-\titleformat{\subsection}{\bfseries\raggedright}{}{0em}{}
-\titlespacing{\subsection}{0pt}{10pt}{\tablerowskip}
+\titleformat{\subsection}{\bfseries\RaggedRight}{}{0em}{}
+\titlespacing{\subsection}{0pt}{\tablerowskip}{0pt}
+
+% Multicol: Remove spacing
+\setlength{\multicolsep}{\tablerowskip}
 
 % -------------------------
 % INTERNAL HELPER: Icon + link typesetting
@@ -209,6 +213,9 @@
 % Local modifications to science style (custom .sty file)
 \RequirePackage{biblatex_science_mods}
 
+% Vertical spacing between bibliography entries
+\setlength\bibitemsep{\tablerowskip}
+
 % -------------------------
 % ICONS AND HYPERLINKS
 % -------------------------
@@ -233,8 +240,6 @@
   linkcolor=linkcolour 
 }
 
-% Vertical spacing between bibliography entries
-\setlength\bibitemsep{\tablerowskip}
 
 % -------------------------
 % COMMAND DEFINITION TOOLS
@@ -289,58 +294,32 @@
 % PUBLIC API: Activity listing commands
 % -------------------------
 
-% \begin{activityshort}{<activity>}{<year>} ... \end{activityshort}
-%
-% Simple environment for short activity descriptions.
-% Creates a three-column row: activity (italic) — (space) — year
-%
-% PARAMETERS:
-%   #1: Activity name (typeset in italics)
-%   #2: Year or date range
-%
-% NOTE: Environment body is currently empty; content goes in parameters
-\newenvironment{activityshort}[2]
-{
-    \begin{tabularx}{\linewidth}{@{}l X r@{}}
-    \textit{#1} & \hfill & #2
-    \end{tabularx} \par%
-}
-{
-}
-
 % \activityrow[<url>]{<title>}{<organization>}{<year>}
-%
-% Generic activity listing as table row (for use within tabularx environment).
-% Title is hyperlinked if URL provided; organization shown in italics with comma.
-%
-% PARAMETERS:
-%   [#1] (optional): URL to hyperlink the title
-%   #2: Activity title
-%   #3: Organization name (may be empty; omits comma if empty)
-%   #4: Year or date range
-%
-% USAGE:
-%   \begin{tabularx}{\linewidth}{X r}
-%   \activityrow[https://...]{Conference Talk}{Org Name}{2025}
-%   \activityrow{Other Activity}{}{2024}  % No org, no URL
-%   \end{tabularx}
-\newcommand{\activityrow}[4][]{%
-  % Title with optional hyperlink using helper macro
-  \cv@ifemptyelse{#1}{%
-    #2%
-  }{%
-    \href{#1}{#2}%
-  }%
-  % Organization (adds comma only if non-empty) using helper macro
-  \cv@ifnotempty{#3}{, \textit{#3}}%
-  \space & #4 \\[\tablerowskip]%
+\newlength{\activityyearwidth} \setlength{\activityyearwidth}{6.5em} \NewDocumentCommand{\activityrow}{ O{} m m m }{% 
+    \par\noindent 
+    \begin{minipage}[t]{\dimexpr\linewidth-\activityyearwidth\relax} 
+        {\RaggedRight \cv@ifemptyelse{#1} {#2} {\href{#1}{#2}}% 
+        \cv@ifnotempty{#3}{, \textit{#3}}% 
+        \par
+        }
+    \end{minipage}% 
+    \begin{minipage}[t]{\activityyearwidth} 
+        \raggedleft #4 
+    \end{minipage} 
+    \par 
 }
 
 % -------------------------
 % LIST FORMATTING DEFAULTS
 % -------------------------
 % Remove default spacing above lists; use consistent \tablerowskip between items
-\setlist{itemsep=\tablerowskip, topsep=0pt, parsep=0pt}
+\setlist{
+  topsep=0pt, %\tablerowskip,
+  itemsep=\tablerowskip, 
+  parsep=0pt,
+  partopsep=0pt
+}
+
 % Remove bullets from first-level itemize (for CV entries that appear as lists)
 \renewcommand{\labelitemi}{}
 \setlist[itemize,1]{leftmargin=0pt}
@@ -350,28 +329,22 @@
 % -------------------------
 
 % \teachentry{<course>}{<role>}{<offerings1>}{<offerings2>}
-%
-% Typesets a teaching entry in two columns within a tabularx environment.
-% Left column shows course name (italic) and role; right column shows
-% offering details (up to two lines, right-aligned).
-%
-% PARAMETERS:
-%   #1: Course name (typeset in italics)
-%   #2: Role (e.g., "Instructor", "Teaching Assistant")
-%   #3: First line of offerings (e.g., "Fall 2024, Spring 2025")
-%   #4: Second line of offerings (optional; omit or leave empty for single line)
-%
-% USAGE:
-%   \begin{tabularx}{\linewidth}{X Z}
-%   \teachentry{Advanced Algorithms}{Instructor}{Fall 2024}{Spring 2025}
-%   \teachentry{Data Structures}{TA}{Spring 2024}{}
-%   \end{tabularx}
-%
-% NOTE: Uses 4× \tablerowskip vertical spacing after entry for visual separation
-\newcommand{\teachentry}[4]{%
-  % Left cell (course + role). Use \hsize for width in X columns.
-  \emph{#1} & #3 \\%
-  #2 & \cv@ifnotempty{#4}{#4} \\[\tablerowskip]%
+\newlength{\teachdatewidth} 
+\setlength{\teachdatewidth}{18em} 
+\NewDocumentCommand{\teachentry}{ m m m }{% 
+    \par 
+    % Course | semesters/enrollment 
+    % Role
+    \begin{minipage}[t]{\dimexpr\linewidth-\teachdatewidth\relax} 
+        {\RaggedRight \emph{#1} 
+        \par
+        Role: #2}
+    \end{minipage}% 
+    \begin{minipage}[t]{\teachdatewidth} 
+        \raggedleft #3 
+    \end{minipage} 
+    \par 
+    \vspace{\tablerowskip} 
 }
 
 % ========================================================================
@@ -384,207 +357,132 @@
 % -------------------------
 % \cvcontact{<Name>}{<address/contact line>}{<links line>}
 % -------------------------
-% Creates the contact header at the top of the CV with name, address, and links.
-%
-% PARAMETERS:
-%   #1: Full name (typeset in \Huge size)
-%   #2: Address and contact info (single line, e.g., email, phone)
-%   #3: Professional links (ORCID, website, Google Scholar, etc.)
-%       Use \iconlink for each link with appropriate FontAwesome icons
-%
-% USAGE:
-%   \cvcontact{Jane Q. Researcher}{
-%     Department of Science, University Name \textbar\ 
-%     \iconlink[*]{\faEnvelope}{mailto:jane@uni.edu}{jane@uni.edu} \textbar\ 
-%     \iconlink{\faPhone}{tel:+15551234567}{+1 (555) 123-4567}
-%   }{
-%     \iconlink{\faOrcid}{https://orcid.org/0000-0001-2345-6789}{0000-0001-2345-6789} \textbar\ 
-%     \iconlink{\faGlobe}{https://janedoe.com}{janedoe.com}
-%   }
 \newcommand{\cvcontact}[3]{%
   \noindent
   \begin{minipage}{\linewidth}
     {\Huge #1\par\vspace{\tablerowskip}}%
-    \RaggedRight #2\par
-    \RaggedRight #3\par
+    {\RaggedRight #2\par
+    #3}
+    \par
   \end{minipage}%
 }
 
 % -------------------------
 % \cvjob{<title>}{<dates>}[<optional content>]
 % -------------------------
-% Typesets a job or appointment entry with title and dates on first line,
-% followed by optional detailed content (responsibilities, achievements, etc.).
-%
-% PARAMETERS:
-%   #1 (required): Job title or appointment text (typeset in bold)
-%   #2 (required): Date range string (e.g., "2020--Present", "Jan 2018--Dec 2020")
-%   [#3] (optional): Additional content block (itemize, description, paragraph, etc.)
-%
-% USAGE:
-%   \cvjob{Assistant Professor}{2020--Present}[
-%     \begin{itemize}
-%       \item Research in computational biology and machine learning
-%       \item Teaching undergraduate and graduate courses
-%       \item Supervising 3 PhD students and 2 postdocs
-%     \end{itemize}
-%   ]
-%
-%   \cvjob{Postdoctoral Researcher}{2017--2020}  % No optional content
-%
-% NOTES:
-%   - Uses tabularx for title/date alignment
-%   - Optional content appears in full-width minipage
-\NewDocumentCommand{\cvjob}{ m m o }{%
-  \begin{tabularx}{\linewidth}{@{}l X r@{}}%
-    \textbf{#1} & \hfill & #2%
-  \end{tabularx}%
+\NewDocumentCommand{\cvjob}{ m m o o }{%
+    \par\smallskip 
+    \noindent\textbf{#1} \hfill #2\par 
+    \IfValueT{#3}{% 
+        {\RaggedRight \vspace{-\parskip}%
+        #3 \par }   
+    }% 
+    \IfValueT{#4}{% 
+        {\RaggedRight \vspace{-\parskip}%
+        #4 \par }
+    }% 
+}
 
-  % Add optional content block if provided
-  \IfValueT{#3}{%
-    \vspace{-\parskip}%  % Remove extra blank line between title row and content
-    \noindent\begin{minipage}[t]{\linewidth}%
-      #3%
-    \end{minipage}%
-  }%
-  
-  % \par\vspace{\dimexpr1.5\tablerowskip\relax}%
+% \cveducation
+\NewDocumentCommand{\cveducation}{m m m m o o}{% 
+    \par\smallskip 
+    \noindent \textbf{#1} at #2% 
+    \IfNoValueF{#3}{\ \normalfont(#3)}% 
+    \hfill #4\par 
+    \IfValueT{#5}{% 
+        {\RaggedRight \vspace{-\parskip} #5 \par}
+    } 
+    \IfValueT{#6}{% 
+        {\RaggedRight \vspace{-\parskip} Advisor: #6 \par}
+    } 
+    % \vspace{\tablerowskip} 
 }
 
 % -------------------------
 % \cvperson[<scholar URL>]{<name>}{<affil>}{<year>}[<thesis>][<thesis URL>][<text next to thesis icon>][<position>]
 % -------------------------
-\NewDocumentCommand{\cvperson}{ o m m m o o o o }{%
-  \begingroup
-    \setlength{\tabcolsep}{0.5em}%
-    \renewcommand{\arraystretch}{1}%
-
-    % Measure natural width of right cell (#4 = year/status)
-    \settowidth{\cvpersonRightWidth}{\strut #4}%
-    % Clamp to max 45% of line width to prevent negative left column width
-    \ifdim\cvpersonRightWidth>.45\linewidth
-      \setlength{\cvpersonRightWidth}{.45\linewidth}%
-    \fi
-
-    \begin{tabular}[t]{@{}>{\RaggedRight\arraybackslash}p{\dimexpr\linewidth-\cvpersonRightWidth-1em\relax}r@{}}%
-      % Row 1: Name/Affiliation — Year/Status
-      #2, \textit{#3}%
-      \IfNoValueTF{#1}{%
-        % no Google Scholar URL
-      }{%
-        \cv@ifnotempty{#1}{%
-          \ \iconlink{\small\faGoogleScholar}{#1}{}%
-        }%
-      }%
-      & #4\\
-
-      % Row 2: Thesis — print only if thesis text or thesis URL is nonempty
-      \IfNoValueTF{#5}{%
-        % no thesis text provided
-        \IfNoValueTF{#6}{%
-          % no thesis URL provided
-        }{%
-          \cv@ifnotempty{#6}{%
-            \IfNoValueTF{#7}{%
-              \iconlink{\small\faFileLines}{#6}{} & \\%
-            }{%
-              \iconlink{\small\faFileLines}{#6}{#7} & \\%
-            }%
-          }%
-        }%
-      }{%
-        \cv@ifemptyelse{#5}{%
-          % thesis text provided but blank
-          \IfNoValueTF{#6}{%
-            % no thesis URL provided
-          }{%
-            \cv@ifnotempty{#6}{%
-              \IfNoValueTF{#7}{%
-                \iconlink{\small\faFileLines}{#6}{} & \\%
-              }{%
-                \iconlink{\small\faFileLines}{#6}{#7} & \\%
-              }%
-            }%
-          }%
-        }{%
-          % thesis text provided and nonempty
-          #5%
-          \IfNoValueTF{#6}{%
-            % no thesis URL provided
-          }{%
-            \cv@ifnotempty{#6}{%
-              \IfNoValueTF{#7}{%
-                \ \iconlink{\small\faFileLines}{#6}{}%
-              }{%
-                \ \iconlink{\small\faFileLines}{#6}{#7}%
-              }%
-            }%
-          }%
-          & \\%
-        }%
-      }%
-
-      % Row 3: Position, if any
-      \IfNoValueTF{#8}{%
-        % no position text provided
-      }{%
-        \cv@ifnotempty{#8}{%
-          #8 & \\%
-        }%
-      }%
-    \end{tabular}%
-  \endgroup
+\newlength{\cvpersonrightwidth} \setlength{\cvpersonrightwidth}{5em}
+\NewDocumentCommand{\cvperson}{ o m m m o o o o }{% 
+    % \par\smallskip 
+    % Name / affiliation and year 
+    % \noindent 
+    \begin{minipage}[t]{\dimexpr\linewidth-\cvpersonrightwidth\relax} 
+        {\RaggedRight #2, \textit{#3}% 
+        \IfNoValueTF{#1}{}{% 
+            \cv@ifnotempty{#1}{% 
+            \ \iconlink{\small\faGoogleScholar}{#1}{}% 
+            }% 
+        }
+        \par }% 
+    \end{minipage}% 
+    \begin{minipage}[t]{\cvpersonrightwidth} 
+        \raggedleft #4 
+    \end{minipage} 
+    \par
+    % Thesis/dissertation 
+    \IfNoValueTF{#5}{% 
+        % No thesis text 
+        }{% 
+        \cv@ifnotempty{#5}{% 
+            {\RaggedRight \vspace{-\parskip} #5% 
+            \IfNoValueTF{#6}{}{% 
+                \cv@ifnotempty{#6}{% 
+                    \IfNoValueTF{#7} 
+                    {\ \iconlink{\small\faFileLines}{#6}{}}% 
+                    {\ \iconlink{\small\faFileLines}{#6}{#7}}% 
+                }% 
+            }
+            \par }% 
+        }% 
+    }% 
+    % Thesis link only (no thesis text) 
+    \IfNoValueTF{#5}{% 
+        \IfNoValueTF{#6}{}{% 
+            \cv@ifnotempty{#6}{% 
+                \IfNoValueTF{#7} 
+                    {\iconlink{\small\faFileLines}{#6}{}}% 
+                    {\iconlink{\small\faFileLines}{#6}{#7}}% 
+                }% 
+            }% 
+    }{}%
+    \par
+    % Position 
+    \IfNoValueTF{#8}{}{% 
+        \cv@ifnotempty{#8}{% 
+            \vspace{-\parskip}
+            #8
+            \par
+        }% 
+    }% 
 }
 
 % -------------------------
 % \cvproject[<proj URL>]{<title>}{<dates>}[<agency URL>]{<agency+grant>}{<amount>}{<role>}
 % -------------------------
-% Typesets a funded research project entry with title, dates, funding agency,
-% grant number, award amount, and investigator role.
-%
-% PARAMETERS:
-%   [#1] (optional): Project website URL (hyperlinks the title)
-%   #2 (required): Project title (typeset in italics)
-%   #3 (required): Date range (e.g., "2022--2025")
-%   [#4] (optional): Agency website URL (hyperlinks agency+grant)
-%   #5 (required): Funding agency and grant number
-%   #6 (required): Award amount (e.g., "$500,000")
-%   #7 (required): Role (e.g., "Principal Investigator", "Co-PI")
-%
-% USAGE:
-%   \cvproject[https://project-site.org]{%
-%     Computational Approaches to Genome Assembly
-%   }{2022--2025}[https://nsf.gov/awardsearch/showAward?AWD_ID=1234567]{%
-%     National Science Foundation, Award \#1234567
-%   }{\$500,000}{%
-%     Principal Investigator
-%   }
-%
-%   % Without optional URLs
-%   \cvproject{%
-%     Novel Methods for Data Analysis
-%   }{2023--2024}{%
-%     Internal University Grant
-%   }{\$25,000}{%
-%     Co-Investigator
-%   }
-%
-% NOTES:
-%   - Three-row tabularx layout: Title—Dates / Agency—Amount / Role—(empty)
-%   - Title and agency/grant are hyperlinked if corresponding URLs provided
-\NewDocumentCommand{\cvproject}{ o m m o m m m }{%
-  \begin{tabularx}{\linewidth}{@{}X r@{}}%
-    % Row 1: Title — Dates
-    {\raggedright
-      \IfNoValueTF{#1}{\textit{#2}}{\href{#1}{\textit{#2}}}%
-    } & #3\\
-    % Row 2: Agency (+ grant) — Amount
-    \IfNoValueTF{#4}{#5}{\href{#4}{#5}} & #6\\
-    % Row 3: Role — (empty right cell)
-    #7 & \\[\tablerowskip]
-  \end{tabularx}%
-  
-  % \par%
+\newlength{\cvprojectrightwidth} \setlength{\cvprojectrightwidth}{14em} \NewDocumentCommand{\cvproject}{ o m m o m m m }{% 
+    % \par\smallskip 
+    % Title | Dates 
+    % \noindent 
+    \begin{minipage}[t]{\dimexpr\linewidth-\cvprojectrightwidth\relax} 
+        {\RaggedRight \IfNoValueTF{#1} {\textit{#2}} {\href{#1}{\textit{#2}}}
+        \par }
+    \end{minipage}% 
+    \begin{minipage}[t]{\cvprojectrightwidth} 
+        \raggedleft #3 
+    \end{minipage} 
+    \par
+    % Agency | Amount 
+    % \vspace{-\parskip}
+    \begin{minipage}[t]{\dimexpr\linewidth-\cvprojectrightwidth\relax} 
+        {\RaggedRight \IfNoValueTF{#4} {#5} {\href{#4}{#5}} \par }
+    \end{minipage}% 
+    \begin{minipage}[t]{\cvprojectrightwidth} 
+        \raggedleft #6 
+    \end{minipage} 
+    \par 
+    % Role 
+    {\RaggedRight \vspace{-\parskip} Role: #7 \par }
+    % \vspace{\tablerowskip} 
 }
 
 
