@@ -39,14 +39,14 @@
 %%   - Use \providecommand for commands that may be defined elsewhere
 %%   - Document all public API commands with structured comment blocks
 
-\NeedsTeXFormat{LaTeX2e}
+\NeedsTeXFormat{LaTeX2e}[2026-06-01]
 \ProvidesPackage{cvstyle}[2026/01/28 v1.2 MDL CV style]
 
 % -------------------------
 % Version and compatibility information
 % -------------------------
-% This package requires recent LaTeX distributions (TeX Live 2020 or newer).
-% Minimum package versions are specified where breaking changes occurred.
+% Requires LaTeX 2026-06-01 or newer and LuaLaTeX. 
+% Developed and tested with TeX Live 2026.
 
 % -------------------------
 % Packages (grouped & ordered by dependency)
@@ -82,7 +82,7 @@
   [ context = {text,display} ]
   { encoding = *, family = tt* }{ } % Disable expansion for tt/monospace
 % Small caps tracking (CV-friendly polish). Adjust 30–50 to taste.
-\DeclareMicrotypeSet*[tracking]{smallcaps}{ encoding = *, shape = sc }
+% \DeclareMicrotypeSet*[tracking]{smallcaps}{ encoding = *, shape = sc }
 \SetTracking{ encoding = *, shape = sc }{40}
 % ---- Paragraph shaping aids that pair well with microtype ----
 % These reduce overfulls without airy spacing; adjust conservatively if needed.
@@ -143,18 +143,14 @@
 \RequirePackage{enumitem}   % Enhanced list formatting; ensures compatibility with etaremune
 \RequirePackage{etaremune}  % Reverse-numbered lists (for publications)
 
-% -------------------------
-% Internal length registers (prefixed with cv@ for namespace protection)
-% -------------------------
-% Width holder for right column in \cvperson (calculated dynamically)
-% This is used to ensure proper column proportions in the two-column layout
-% when the year/status text varies in width.
-\newlength{\cvpersonRightWidth}
-
 
 % -------------------------
 % SECTION FORMATTING & LAYOUT
 % -------------------------
+% titlesec currently warns because the LaTeX tagged-PDF heading layer 
+% replaces the standard sectioning implementation. Explicit titleformat 
+% and titlespacing settings are visually applied. Revalidate H1/H2 
+% structure and decorative-rule artifact treatment after TeX updates. 
 \RequirePackage{titlesec}   % Custom section/subsection formatting
 \RequirePackage{multicol}   % Multi-column layout support
 \RequirePackage{needspace}  % Prevent page breaks between heading and following text
@@ -194,10 +190,10 @@
 \providecommand{\iconlink}[4][]{%
   \cv@ifemptyelse{#1}{%
     % Optional flag NOT provided: plain text
-    \href{#3}{\raisebox{-0.05\height}{#2}~#4}%
+    \href{#3}{\raisebox{-0.05\height}{#2}\cv@ifnotempty{#4}{~#4}}%
   }{%
     % Optional flag provided: use \nolinkurl for breakable text
-    \href{#3}{\raisebox{-0.05\height}{#2}~\nolinkurl{#4}}%
+    \href{#3}{\raisebox{-0.05\height}{#2}\cv@ifnotempty{#4}{~#4}}%
   }%
 }
 % Keep URL font consistent with surrounding text
@@ -244,9 +240,10 @@
 % -------------------------
 % COMMAND DEFINITION TOOLS
 % -------------------------
-% xparse provides \NewDocumentCommand for flexible argument handling
+% xparse provides \NewDocumentCommand for flexible argument handling.
+% LaTeX 2026, \NewDocumentCommand and related interfaces are part of the kernel
 % Minimum version: 2018-04-06 (xparse syntax stabilized)
-\RequirePackage{xparse}[2018/04/06]
+% \RequirePackage{xparse}[2018/04/06]
 
 % -------------------------
 % INTERNAL UTILITY MACROS
@@ -297,15 +294,13 @@
 % \activityrow[<url>]{<title>}{<organization>}{<year>}
 \newlength{\activityyearwidth} \setlength{\activityyearwidth}{6.5em} \NewDocumentCommand{\activityrow}{ O{} m m m }{% 
     \par\noindent 
-    \begin{minipage}[t]{\dimexpr\linewidth-\activityyearwidth\relax} 
-        {\RaggedRight \cv@ifemptyelse{#1} {#2} {\href{#1}{#2}}% 
+    \parbox[t]{\dimexpr\linewidth-\activityyearwidth\relax}{% 
+        \RaggedRight \cv@ifemptyelse{#1} {#2} {\href{#1}{#2}}% 
         \cv@ifnotempty{#3}{, \textit{#3}}% 
-        \par
-        }
-    \end{minipage}% 
-    \begin{minipage}[t]{\activityyearwidth} 
-        \raggedleft #4 
-    \end{minipage} 
+    }% 
+    \parbox[t]{\activityyearwidth}{% 
+        \raggedleft #4% 
+    }% 
     \par 
 }
 
@@ -328,23 +323,20 @@
 % PUBLIC API: Teaching entry command
 % -------------------------
 
-% \teachentry{<course>}{<role>}{<offerings1>}{<offerings2>}
+% \teachentry{<course>}{<role>}{<offerings>}
 \newlength{\teachdatewidth} 
-\setlength{\teachdatewidth}{18em} 
+\setlength{\teachdatewidth}{15em} 
 \NewDocumentCommand{\teachentry}{ m m m }{% 
+    \par\noindent 
+    \parbox[t]{\dimexpr\linewidth-\teachdatewidth\relax}{%
+        \RaggedRight \emph{#1}\par 
+        Role: #2% 
+    }% 
+    \parbox[t]{\teachdatewidth}{% 
+        \raggedleft #3% 
+    }% 
     \par 
-    % Course | semesters/enrollment 
-    % Role
-    \begin{minipage}[t]{\dimexpr\linewidth-\teachdatewidth\relax} 
-        {\RaggedRight \emph{#1} 
-        \par
-        Role: #2}
-    \end{minipage}% 
-    \begin{minipage}[t]{\teachdatewidth} 
-        \raggedleft #3 
-    \end{minipage} 
-    \par 
-    \vspace{\tablerowskip} 
+    \vspace{\tablerowskip}% 
 }
 
 % ========================================================================
@@ -357,18 +349,19 @@
 % -------------------------
 % \cvcontact{<Name>}{<address/contact line>}{<links line>}
 % -------------------------
-\newcommand{\cvcontact}[3]{%
-  \noindent
-  \begin{minipage}{\linewidth}
-    {\Huge #1\par\vspace{\tablerowskip}}%
-    {\RaggedRight #2\par
-    #3}
-    \par
-  \end{minipage}%
+\newcommand{\cvcontact}[3]{% 
+    % \par\noindent 
+    \parbox{\linewidth}{% 
+        {\Huge #1\par}% 
+        \vspace{\tablerowskip}% 
+        {\RaggedRight #2\par #3% 
+        }% 
+    }% 
+    \par 
 }
-
+    
 % -------------------------
-% \cvjob{<title>}{<dates>}[<optional content>]
+% \cvjob{<title>}{<dates>}[<organization>][<detail>]
 % -------------------------
 \NewDocumentCommand{\cvjob}{ m m o o }{%
     \par\smallskip 
@@ -384,7 +377,7 @@
 }
 
 % \cveducation
-\NewDocumentCommand{\cveducation}{m m m m o o}{% 
+\NewDocumentCommand{\cveducation}{m m o m o o}{% 
     \par\smallskip 
     \noindent \textbf{#1} at #2% 
     \IfNoValueF{#3}{\ \normalfont(#3)}% 
@@ -403,36 +396,33 @@
 % -------------------------
 \newlength{\cvpersonrightwidth} \setlength{\cvpersonrightwidth}{5em}
 \NewDocumentCommand{\cvperson}{ o m m m o o o o }{% 
-    % \par\smallskip 
     % Name / affiliation and year 
-    % \noindent 
-    \begin{minipage}[t]{\dimexpr\linewidth-\cvpersonrightwidth\relax} 
-        {\RaggedRight #2, \textit{#3}% 
+    \parbox[t]{\dimexpr\linewidth-\cvpersonrightwidth\relax}{% 
+        \RaggedRight #2, \textit{#3}% 
         \IfNoValueTF{#1}{}{% 
             \cv@ifnotempty{#1}{% 
-            \ \iconlink{\small\faGoogleScholar}{#1}{}% 
+            \ \iconlink{\small\faGoogleScholar}{#1}{Scholar}% 
             }% 
-        }
-        \par }% 
-    \end{minipage}% 
-    \begin{minipage}[t]{\cvpersonrightwidth} 
-        \raggedleft #4 
-    \end{minipage} 
-    \par
+        }% 
+        \strut
+    }% 
+    \parbox[t]{\cvpersonrightwidth}{% 
+        \raggedleft #4% 
+    }% 
+    \par 
     % Thesis/dissertation 
-    \IfNoValueTF{#5}{% 
-        % No thesis text 
-        }{% 
+    \IfNoValueTF{#5}{}{% 
         \cv@ifnotempty{#5}{% 
-            {\RaggedRight \vspace{-\parskip} #5% 
+            {\vspace{-\parskip} \RaggedRight #5% 
             \IfNoValueTF{#6}{}{% 
                 \cv@ifnotempty{#6}{% 
                     \IfNoValueTF{#7} 
                     {\ \iconlink{\small\faFileLines}{#6}{}}% 
                     {\ \iconlink{\small\faFileLines}{#6}{#7}}% 
+                    }% 
                 }% 
-            }
-            \par }% 
+                \par 
+            }% 
         }% 
     }% 
     % Thesis link only (no thesis text) 
@@ -440,18 +430,16 @@
         \IfNoValueTF{#6}{}{% 
             \cv@ifnotempty{#6}{% 
                 \IfNoValueTF{#7} 
-                    {\iconlink{\small\faFileLines}{#6}{}}% 
-                    {\iconlink{\small\faFileLines}{#6}{#7}}% 
-                }% 
+                {\iconlink{\small\faFileLines}{#6}{}}% 
+                {\iconlink{\small\faFileLines}{#6}{#7}}% 
             }% 
-    }{}%
-    \par
+        }% 
+    }{}% 
+    \par 
     % Position 
     \IfNoValueTF{#8}{}{% 
         \cv@ifnotempty{#8}{% 
-            \vspace{-\parskip}
-            #8
-            \par
+            \vspace{-\parskip} #8\par 
         }% 
     }% 
 }
@@ -460,29 +448,33 @@
 % \cvproject[<proj URL>]{<title>}{<dates>}[<agency URL>]{<agency+grant>}{<amount>}{<role>}
 % -------------------------
 \newlength{\cvprojectrightwidth} \setlength{\cvprojectrightwidth}{14em} \NewDocumentCommand{\cvproject}{ o m m o m m m }{% 
-    % \par\smallskip 
+    \par%\smallskip 
     % Title | Dates 
-    % \noindent 
-    \begin{minipage}[t]{\dimexpr\linewidth-\cvprojectrightwidth\relax} 
-        {\RaggedRight \IfNoValueTF{#1} {\textit{#2}} {\href{#1}{\textit{#2}}}
-        \par }
-    \end{minipage}% 
-    \begin{minipage}[t]{\cvprojectrightwidth} 
-        \raggedleft #3 
-    \end{minipage} 
-    \par
+    \parbox[t]{\dimexpr\linewidth-\cvprojectrightwidth\relax}{% 
+        \RaggedRight \IfNoValueTF{#1} 
+            {\textit{#2}} 
+            {\href{#1}{\textit{#2}}}% 
+        \strut
+    }% 
+    \parbox[t]{\cvprojectrightwidth}{% 
+        \raggedleft #3% 
+    }% 
+    \par 
     % Agency | Amount 
-    % \vspace{-\parskip}
-    \begin{minipage}[t]{\dimexpr\linewidth-\cvprojectrightwidth\relax} 
-        {\RaggedRight \IfNoValueTF{#4} {#5} {\href{#4}{#5}} \par }
-    \end{minipage}% 
-    \begin{minipage}[t]{\cvprojectrightwidth} 
-        \raggedleft #6 
-    \end{minipage} 
+    \vspace{-\parskip} 
+    \parbox[t]{\dimexpr\linewidth-\cvprojectrightwidth\relax}{% 
+        \RaggedRight \IfNoValueTF{#4} 
+            {#5} 
+            {\href{#4}{#5}}% 
+        \strut
+    }% 
+    \parbox[t]{\cvprojectrightwidth}{% 
+        \raggedleft #6% 
+    }% 
     \par 
     % Role 
-    {\RaggedRight \vspace{-\parskip} Role: #7 \par }
-    % \vspace{\tablerowskip} 
+    \vspace{-\parskip} 
+    {\RaggedRight Role: #7\par }% 
 }
 
 
