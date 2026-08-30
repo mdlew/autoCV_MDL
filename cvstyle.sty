@@ -98,7 +98,8 @@
 \RequirePackage[letterpaper,scale=0.9]{geometry}
 
 % PAGE LAYOUT: Headers, footers, and page numbers
-\RequirePackage{lastpage}   % For "page X of Y" in footer
+% Use kernel \PreviousTotalPages instead of lastpage package
+% \RequirePackage{lastpage}   % For "page X of Y" in footer
 \RequirePackage{fancyhdr}   % Custom headers and footers
 
 % -------------------------
@@ -111,18 +112,25 @@
 % Lower level: Subsection sets right mark
 \renewcommand{\subsectionmark}[1]{\markright{#1}}
 
-% Set fancy page style as default
-\pagestyle{fancy}
-\renewcommand{\headrulewidth}{0pt}  % No horizontal rule in header
-\fancyhf{}  % Clear all header and footer fields
-\fancyfoot[L]{\footnotesize MDL CV -- \nouppercase{\leftmark}}  % Left: "MDL CV -- Section Name"
-\fancyfoot[R]{\footnotesize \thepage\ of \pageref{LastPage}}     % Right: "page X of Y"
-% Also apply same footer to 'plain' style (used by \maketitle, \chapter, etc.)
-\fancypagestyle{plain}{%
-  \renewcommand{\headrulewidth}{0pt}%
-  \fancyhf{}%
-  \fancyfoot[L]{\footnotesize MDL CV -- \nouppercase{\leftmark}}%
-  \fancyfoot[R]{\footnotesize \thepage\ of \pageref{LastPage}}%
+% Reusable footer components 
+\newcommand{\cvleftfooter}{% 
+\footnotesize MDL CV -- \nouppercase{\leftmark}% 
+} 
+\newcommand{\cvrightfooter}{% 
+\footnotesize Page \thepage\ of \PreviousTotalPages %\pageref*{LastPage}% 
+} 
+% Main page style 
+\pagestyle{fancy} 
+\fancyhf{} 
+\renewcommand{\headrulewidth}{0pt} 
+\fancyfoot[L]{\cvleftfooter} 
+\fancyfoot[R]{\cvrightfooter} 
+% Plain page style 
+\fancypagestyle{plain}{% 
+    \fancyhf{}% 
+    \renewcommand{\headrulewidth}{0pt}% 
+    \fancyfoot[L]{\cvleftfooter}% 
+    \fancyfoot[R]{\cvrightfooter}% 
 }
 % First page should have no header or footer
 \AtBeginDocument{\thispagestyle{empty}}
