@@ -39,8 +39,40 @@ jobs:
             -pdflua \
             -interaction=nonstopmode \
             -halt-on-error \
+            -file-line-error \
             -output-directory="${{ env.DIR }}" \
             "${{ env.DIR }}/${{ env.FILE }}.tex"
+
+      - name: Build CV
+        run: |
+          latexmk \
+            -pdflua \
+            -interaction=nonstopmode \
+            -halt-on-error \
+            -file-line-error \
+            -output-directory="." \
+            "./cv.tex"
+
+      - name: Summarize LaTeX diagnostics
+        if: always()
+        run: |
+          echo "=== LaTeX warnings and bad boxes ==="
+          grep -nE \
+            '(^|: )(LaTeX|Package|Class|Module|pdfTeX|LuaTeX|tagpdf).*Warning|Underfull|Overfull|undefined|Rerun|not in Link or Reference|Missing character' \
+            cv.log || true
+      
+      - name: Upload compilation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: cv-compilation-diagnostics
+          if-no-files-found: ignore
+          path: |
+            cv.log
+            cv.fls
+            cv.blg
+            cv.bcf
+            cv.run.xml
 
       - name: Move pdf to dist folder
         run: |
