@@ -28,12 +28,12 @@
 %   RECOMMENDED:
 %     • fontawesome7 (for \faArrowUpRightFromSquare, \faFileLines, \faImage, \faStar)
 %       Note: fontawesome5 is also compatible but deprecated. Use fontawesome7 for consistency with cvstyle.sty.
-%     • cvstyle.sty (defines \iconlink macro required by this package)
+%     • cvstyle.sty (defines \iconurllink macro required by this package)
 %
 %   LOAD ORDER:
 %     This package is loaded automatically by cvstyle.sty. 
-%     cvstyle.sty first defines \iconlink, loads biblatex, then loads this package.
-%     Typical load order: cvstyle.sty → (defines \iconlink) → biblatex → biblatex_science_mods.sty
+%     cvstyle.sty first defines \iconurllink, loads biblatex, then loads this package.
+%     Typical load order: cvstyle.sty → (defines \iconurllink) → biblatex → biblatex_science_mods.sty
 %     Users normally just load cvstyle.sty; it handles the dependencies automatically.
 %
 %===============================================================================
@@ -63,11 +63,11 @@
 % 1. AUXILIARY MACROS & SETUP
 %===============================================================================
 
-% MACRO: \iconlink[<flag>]{<icon>}{<url>}{<text>}
+% MACRO: \iconurllink[<flag>]{<icon>}{<url>}{<text>}
 %   Helper macro for printing icons with hyperlinks in bibliography entries.
 %
 %   DEFINITION:
-%     The \iconlink command is defined in cvstyle.sty before this package is loaded.
+%     The \iconurllink command is defined in cvstyle.sty before this package is loaded.
 %     This package uses the 4-argument version provided by cvstyle.sty:
 %       • [#1] (optional): If present, enables \nolinkurl formatting for #4
 %       • #2: Icon command (e.g., \faArrowUpRightFromSquare from fontawesome7)
@@ -75,12 +75,12 @@
 %       • #4: Display text after icon (optional; often empty for icon-only links)
 %
 %   USAGE:
-%     This package calls \iconlink with the optional [url] flag to enable proper
+%     This package calls \iconurllink with the optional [url] flag to enable proper
 %     line breaking in URLs. See \addicon helper macro below for usage pattern.
 %
 %   NOTE:
-%     This package is automatically loaded by cvstyle.sty, which defines \iconlink first.
-%     For standalone usage, ensure cvstyle.sty (or a compatible \iconlink definition) is loaded first.
+%     This package is automatically loaded by cvstyle.sty, which defines \iconurllink first.
+%     For standalone usage, ensure cvstyle.sty (or a compatible \iconurllink definition) is loaded first.
 
 
 %===============================================================================
@@ -142,7 +142,7 @@
 %   • Editor's pick badge (stored in userb field)
 %   • Correction note (stored in userc field)
 %
-% All icons use the \iconlink macro and are separated by \hspace{2mm} (2 millimeters)
+% All icons use the \iconurllink macro and are separated by \hspace{2mm} (2 millimeters)
 % for readability.
 %
 % SPACING RATIONALE:
@@ -157,7 +157,7 @@
 %---- Helper macro for conditional icon insertion ----
 % Usage: \addicon{<icon>}{<url>}{<text>}
 %   Adds a left-aligned icon link with \hspace{2mm} separator
-\newcommand*{\addicon}[3]{\hspace{2mm}\iconlink{#1}{#2}{#3}}
+\newcommand*{\addicon}[3]{\hspace{2mm}\iconurllink{#1}{#2}{#3}}
 
 % Modified \finentry: add icons after the standard entry closes
 \renewbibmacro*{finentry}{%
@@ -519,9 +519,9 @@
 %
 % LOAD ORDER CONFLICTS:
 %   • In typical usage, cvstyle.sty loads both biblatex and this package automatically
-%   • cvstyle.sty defines \iconlink (4-argument version) before loading this package
-%   • For standalone usage, ensure \iconlink is defined before loading this package
-%   • Load order handled by cvstyle.sty: (define \iconlink) → biblatex → biblatex_science_mods
+%   • cvstyle.sty defines \iconurllink (4-argument version) before loading this package
+%   • For standalone usage, ensure \iconurllink is defined before loading this package
+%   • Load order handled by cvstyle.sty: (define \iconurllink) → biblatex → biblatex_science_mods
 %
 % CUSTOM FIELDS NOT WORKING (usera, userb, userc):
 %   • These fields store URLs for cover/editor's pick/correction links

@@ -202,6 +202,13 @@
         \raisebox{-0.05\height}{#1}\cv@ifnotempty{#3}{~#3}% 
     }% 
 }
+\NewDocumentCommand{\iconurllink}{m m m}{% 
+    \href{#2}{% 
+        \raisebox{-0.05\height}{#1}\cv@ifnotempty{#3}{~\nolinkurl{#3}% 
+        }% 
+    }% 
+}
+
 % Keep URL font consistent with surrounding text
 \urlstyle{same}
 
