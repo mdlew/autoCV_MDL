@@ -53,7 +53,7 @@
 %===============================================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{biblatex_science_mods}[2025/11/04 v1.0 Modifications to biblatex-science for CV]
+\ProvidesPackage{biblatex_science_mods}[2026/08/29 v1.1 Modifications to biblatex-science for CV]
 
 % Require minimum package versions for stability
 % etoolbox 2.5 (2011) provides \csnumgdef and \AtDataInput
@@ -157,7 +157,7 @@
 %---- Helper macro for conditional icon insertion ----
 % Usage: \addicon{<icon>}{<url>}{<text>}
 %   Adds a left-aligned icon link with \hspace{2mm} separator
-\newcommand*{\addicon}[3]{\hspace{2mm}\iconlink[url]{#1}{#2}{#3}}
+\newcommand*{\addicon}[3]{\hspace{2mm}\iconlink{#1}{#2}{#3}}
 
 % Modified \finentry: add icons after the standard entry closes
 \renewbibmacro*{finentry}{%

@@ -75,15 +75,35 @@
   protrusion=true,
   expansion=true
 ]{microtype}
-% Keep expansion conservative & avoid expansion for teletype (URLs/code)
-% 'sloppy*' avoids over-aggressive expansion in difficult lines.
+
+% ---- Font selection for protrusion ---- 
+% Microtype's default protrusion set, alltext, includes every TU text font, 
+% including Font Awesome. Restrict protrusion to the document's default 
+% roman and sans-serif families instead. 
+% 
+% rm* and sf* are translated to \rmdefault and \sfdefault at the end of 
+% the preamble. Font Awesome and typewriter families therefore do not match. 
+\DeclareMicrotypeSet*[protrusion]{cv-text}{% 
+    encoding = TU, family = {rm*, sf*} 
+}
+
+% ---- Conservative font expansion ---- 
+% Microtype's default expansion set is alltext-nott, which already limits 
+% expansion to the default roman and sans-serif families. Consequently: 
+% - STIX Two Text receives expansion; 
+% - typewriter fonts do not; 
+% - Font Awesome free and brands fonts do not. 
+% 
+% The sloppy* context allows slightly more flexible expansion settings in 
+% difficult paragraphs while retaining the global expansion limits. 
 \microtypecontext{expansion=sloppy*}
-\SetExpansion
-  [ context = {text,display} ]
-  { encoding = *, family = tt* }{ } % Disable expansion for tt/monospace
-% Small caps tracking (CV-friendly polish). Adjust 30–50 to taste.
-% \DeclareMicrotypeSet*[tracking]{smallcaps}{ encoding = *, shape = sc }
-\SetTracking{ encoding = *, shape = sc }{40}
+  
+% ---- Small-caps tracking ---- 
+% The predefined smallcaps tracking set is activated by tracking=true. 
+% Customize its tracking amount without redeclaring the set. 
+\SetTracking{% 
+    encoding = *, shape = sc }{40}
+
 % ---- Paragraph shaping aids that pair well with microtype ----
 % These reduce overfulls without airy spacing; adjust conservatively if needed.
 \emergencystretch=3em
@@ -114,10 +134,10 @@
 
 % Reusable footer components 
 \newcommand{\cvleftfooter}{% 
-\footnotesize MDL CV -- \nouppercase{\leftmark}% 
+    \footnotesize MDL CV -- \nouppercase{\leftmark}% 
 } 
 \newcommand{\cvrightfooter}{% 
-\footnotesize Page \thepage\ of \PreviousTotalPages %\pageref*{LastPage}% 
+    \footnotesize Page \thepage\ of \PreviousTotalPages %\pageref*{LastPage}% 
 } 
 % Main page style 
 \pagestyle{fancy} 
@@ -177,32 +197,10 @@
 % -------------------------
 % INTERNAL HELPER: Icon + link typesetting
 % -------------------------
-% \iconlink[<anything>]{<icon>}{<target URL>}{<label>}
-%
-% Creates a hyperlink with an icon (e.g., FontAwesome) preceding the text.
-% If optional argument is present, typesets label with \nolinkurl to allow
-% line breaks at appropriate points (useful for email addresses, URLs).
-%
-% PARAMETERS:
-%   [#1] (optional): If present, enables \nolinkurl formatting for #4
-%   #2: Icon command (e.g., \small\faGoogleScholar, \faEnvelope)
-%   #3: Target URL for hyperlink
-%   #4: Visible link text (may be empty for icon-only links)
-%
-% ROBUSTNESS:
-%   - Uses \providecommand to allow other packages to define first if needed
-%   - Icon vertical alignment uses \raisebox{-0.05\height} for consistency
-%   - Gracefully handles empty labels (icon-only links)
-%
-% NOTE: This is the canonical definition; biblatex_science_mods.sty uses this command
-\providecommand{\iconlink}[4][]{%
-  \cv@ifemptyelse{#1}{%
-    % Optional flag NOT provided: plain text
-    \href{#3}{\raisebox{-0.05\height}{#2}\cv@ifnotempty{#4}{~#4}}%
-  }{%
-    % Optional flag provided: use \nolinkurl for breakable text
-    \href{#3}{\raisebox{-0.05\height}{#2}\cv@ifnotempty{#4}{~#4}}%
-  }%
+\NewDocumentCommand{\iconlink}{m m m}{% 
+    \href{#2}{% 
+        \raisebox{-0.05\height}{#1}\cv@ifnotempty{#3}{~#3}% 
+    }% 
 }
 % Keep URL font consistent with surrounding text
 \urlstyle{same}
