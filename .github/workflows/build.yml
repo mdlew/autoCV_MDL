@@ -32,7 +32,7 @@ jobs:
       - name: Set up Git repository
         uses: actions/checkout@v7
 
-      - name: Compile cv
+      - name: Compile CV
         timeout-minutes: 15
         run: |
           latexmk \
@@ -42,16 +42,6 @@ jobs:
             -file-line-error \
             -output-directory="${{ env.DIR }}" \
             "${{ env.DIR }}/${{ env.FILE }}.tex"
-
-      - name: Build CV
-        run: |
-          latexmk \
-            -pdflua \
-            -interaction=nonstopmode \
-            -halt-on-error \
-            -file-line-error \
-            -output-directory="." \
-            "./cv.tex"
 
       - name: Summarize LaTeX diagnostics
         if: always()
