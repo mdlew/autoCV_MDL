@@ -40,13 +40,23 @@
 %%   - Document all public API commands with structured comment blocks
 
 \NeedsTeXFormat{LaTeX2e}[2026-06-01]
-\ProvidesPackage{cvstyle}[2026/01/28 v1.2 MDL CV style]
+\ProvidesPackage{cvstyle}[2026/08/30 v1.3 MDL CV style]
 
 % -------------------------
 % Version and compatibility information
 % -------------------------
 % Requires LaTeX 2026-06-01 or newer and LuaLaTeX. 
 % Developed and tested with TeX Live 2026.
+
+% ------------------------- 
+% Compilation diagnostics 
+% ------------------------- 
+% Include package and file versions in the transcript. 
+\listfiles 
+% Provide more macro-expansion context for errors. 
+\errorcontextlines=20 
+% Report characters unavailable in the selected font. 
+\tracinglostchars=2
 
 % -------------------------
 % Packages (grouped & ordered by dependency)
