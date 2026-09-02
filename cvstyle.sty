@@ -185,21 +185,101 @@
 % -------------------------
 % SECTION FORMATTING & LAYOUT
 % -------------------------
-% titlesec currently warns because the LaTeX tagged-PDF heading layer 
-% replaces the standard sectioning implementation. Explicit titleformat 
-% and titlespacing settings are visually applied. Revalidate H1/H2 
-% structure and decorative-rule artifact treatment after TeX updates. 
-\RequirePackage{titlesec}   % Custom section/subsection formatting
+% \RequirePackage{titlesec}   % Custom section/subsection formatting, seems to disrupt latex tagging
 \RequirePackage{multicol}   % Multi-column layout support
 \RequirePackage{needspace}  % Prevent page breaks between heading and following text
 \RequirePackage{ragged2e}   % Provides \RaggedRight (better hyphenation than \raggedright)
 
+% --------------------------------------------------------------- 
+% Compact CV title % 
+% This calls the existing \maketitle unchanged so that any title 
+% tagging supplied by LaTeX remains intact. The negative spaces 
+% compensate only for the standard class's title-block layout. 
+% --------------------------------------------------------------- 
+\newlength{\cvaftertitlecorrection} \setlength{\cvaftertitlecorrection}{-8.3em} \NewDocumentCommand{\cvmaketitle}{}{% 
+    \maketitle 
+    \vspace*{\cvaftertitlecorrection}% 
+}
+
 % Section: Large small-caps with horizontal rule below
-\titleformat{\section}{\Large\scshape\RaggedRight}{}{0em}{}[\titlerule]
-\titlespacing{\section}{0pt}{\tablerowskip}{\tablerowskip}
-% Subsection: Bold, no rule
-\titleformat{\subsection}{\bfseries\RaggedRight}{}{0em}{}
-\titlespacing{\subsection}{0pt}{\tablerowskip}{0pt}
+% \titleformat{\section}{\Large\scshape\RaggedRight}{}{0em}{}[\titlerule]
+% \titlespacing{\section}{0pt}{\tablerowskip}{\tablerowskip}
+% % Subsection: Bold, no rule
+% \titleformat{\subsection}{\bfseries\RaggedRight}{}{0em}{}
+% \titlespacing{\subsection}{0pt}{\tablerowskip}{0pt}
+
+% emulate titlesec formatting changes
+% \EditInstance{heading}{section}{ 
+%     heading-decls = \Large\scshape\RaggedRight, 
+%     before-vspace = \tablerowskip, 
+%     after-vspace = \tablerowskip,
+%     final-code = { 
+%         \par\nobreak 
+%         \tagmcbegin{artifact} 
+%             \hrule height 0.4pt width \linewidth
+%         \tagmcend 
+%     }
+% } 
+% special formatting for sections, cvtagline
+\ExplSyntaxOn 
+\bool_new:N \l__cv_tagline_bool 
+% Set a complete font state in each branch.
+\cs_new_protected:Npn \cv_section_title_decls: 
+{ 
+    \bool_if:NTF \l__cv_tagline_bool 
+    { 
+        % Tagline: normal size, bold, upright 
+        \normalfont \normalsize \bfseries \upshape \RaggedRight    
+    } 
+    { 
+        % Ordinary section: large, medium weight, small caps 
+        \normalfont \Large \mdseries \scshape \RaggedRight\Large\scshape\RaggedRight 
+    } 
+} 
+% Add the decorative rule only to ordinary sections.
+\cs_new_protected:Npn \cv_section_final_code: 
+{ 
+    \bool_if:NF \l__cv_tagline_bool 
+    { 
+        \par
+        \nobreak 
+        \vspace{\tablerowskip}
+        \tagmcbegin{artifact} 
+            \hrule height 0.4pt width \linewidth 
+        \tagmcend 
+        \nobreak 
+        \vspace{\tablerowskip}
+    } 
+} 
+% Use the real section command so that semantic heading tagging, 
+% bookmarks, marks, and section structure remain intact.
+\EditInstance{heading}{section}{ 
+    title-decls = \cv_section_title_decls:, 
+    before-vspace = \tablerowskip, 
+    after-vspace = 0pt, 
+    final-code = { \cv_section_final_code: } 
+}
+
+\NewDocumentCommand{\cvtagline}{m} 
+{ 
+    \group_begin: 
+        \bool_set_true:N \l__cv_tagline_bool 
+        \section*[Mission\ statement]{#1}
+    \group_end: 
+} 
+\ExplSyntaxOff
+
+\EditInstance{heading}{subsection}{ 
+    title-decls = { 
+        \normalfont 
+        \normalsize 
+        \bfseries 
+        \upshape 
+        \RaggedRight 
+    }, 
+    before-vspace = \tablerowskip, 
+    after-vspace = 0pt 
+}
 
 % Multicol: Remove spacing
 \setlength{\multicolsep}{\tablerowskip}
@@ -250,9 +330,9 @@
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}  % Dark blue for links
 % update for PDF 2.0, include metadata
 \hypersetup{ 
-  pdftitle={ Matthew D. Lew Curriculum Vitae }, 
-  pdfauthor={ Matthew D. Lew }, 
-  pdfsubject={ Curriculum Vitae of Matthew D. Lew, Associate Professor, Washington University in St. Louis }, 
+  pdftitle={ Matthew Duk-Ying Lew Curriculum Vitae }, 
+  pdfauthor={ Matthew Duk-Ying Lew }, 
+  pdfsubject={ Curriculum Vitae of Matthew Duk-Ying Lew, Associate Professor, Washington University in St. Louis }, 
   pdfkeywords={ Matthew Lew, curriculum vitae, Washington University in St. Louis, single-molecule orientation microscopy, computational imaging, super-resolution microscopy, biophysics, nanoscience },
   colorlinks=true, 
   urlcolor=linkcolour, 
@@ -369,16 +449,14 @@
 % All are designed for consistent spacing (\tablerowskip) and support
 % optional hyperlinks where appropriate.
 
-% -------------------------
-% \cvcontact{<Name>}{<address/contact line>}{<links line>}
-% -------------------------
-\newcommand{\cvcontact}[3]{% 
-    % \par\noindent 
-    \parbox{\linewidth}{% 
-        {\Huge #1\par}% 
-        \vspace{\tablerowskip}% 
-        {\RaggedRight #2\par #3% 
-        }% 
+% ---------------------------------------------------------------- 
+% \cvcontact{<address/contact line>}{<links line>} % 
+% The document name/title is now handled separately by 
+% \title and \maketitle. 
+% ---------------------------------------------------------------- 
+\newcommand{\cvcontact}[2]{% 
+    \noindent \parbox{\linewidth}{% 
+        \RaggedRight #1\par #2\par 
     }% 
     \par 
 }

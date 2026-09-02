@@ -17,6 +17,16 @@
   pdfstandard=a-4f, 
   tagging=on
 }
+% customize title formatting
+\title{% 
+    \raisebox{2em}[0pt][0pt]{%
+        \makebox[\linewidth][l]{% 
+            \normalfont \Huge Matthew Duk-Ying Lew% 
+        }%
+    }
+}
+\author{} 
+\date{}
 
 % article class because we want to fully customize the page and not use a cv template
 \documentclass[11pt]{article}
@@ -27,9 +37,6 @@
 % Input the shared style (packages, macros, layout)
 \usepackage{cvstyle}
 
-% suppress numbering for all section levels (kept)
-\setcounter{secnumdepth}{-1}
-
 %----------------------------------------------------------------------------------------
 %	BEGIN DOCUMENT
 %----------------------------------------------------------------------------------------
@@ -38,8 +45,9 @@
 %----------------------------------------------------------------------------------------
 %	TITLE / CONTACT
 %----------------------------------------------------------------------------------------
+\cvmaketitle
 
-\cvcontact{Matthew Duk-Ying Lew}{MSC 1042-207-1101, One Brookings Drive, St.\ Louis, MO 63130 \textbar \ 
+\cvcontact{MSC 1042-207-1101, One Brookings Drive, St.\ Louis, MO 63130 \textbar \ 
 \iconurllink{\faEnvelope}{mailto:mdlew@wustl.edu}{mdlew@wustl.edu} \textbar \ 
 \iconurllink{\faPhone}{tel:+13149356790}{+1.314.935.6790}}
 {\href{https://lewlab.wustl.edu}{\raisebox{-0.1\height}{\includegraphics[width=1.1em,alt={Lew Lab website}]{labicon.pdf}}lewlab.wustl.edu} \textbar \ 
@@ -51,10 +59,10 @@
 %----------------------------------------------------------------------------------------
 % EXPERIENCE SECTIONS
 %----------------------------------------------------------------------------------------
-\subsection*{My lab pioneers imaging technologies that reveal the architecture and dynamics of life at the nanoscale.}
+\cvtagline{My lab pioneers imaging technologies that reveal the architecture and dynamics of life at the nanoscale.}
 The Lew Lab integrates advanced optical design, computation, and biophysical chemistry to create multidimensional optical imaging systems that transcend conventional limits, thereby capturing molecular positions, orientations, chemical environments, and biomolecular interactions in unprecedented detail. The team collaborates across biochemistry, physics, and engineering to translate fundamental discoveries in nanoscale sensing into imaging technologies that accelerate breakthroughs in biology, medicine, and materials science. Our innovations redefine how scientists see the invisible.
 
-\section{Appointments and Experience}
+\section*[Appointments and Experience]{Appointments and Experience}
 
 \cvjob{Associate Chair, Preston M.\ Green Department of Electrical and Systems Engineering}{Jan 2026 -- present}[{Washington University in St.\ Louis}]
 
@@ -86,7 +94,7 @@ The Lew Lab integrates advanced optical design, computation, and biophysical che
 %----------------------------------------------------------------------------------------
 %	EDUCATION
 %----------------------------------------------------------------------------------------
-\section{Education}
+\section*[Education]{Education}
 
 \cveducation {Ph.D.\ in Electrical Engineering} {Stanford University} [GPA: 4.0/4.0] {2008--2015} [{% 
 Dissertation: Engineering New Capabilities into Optical Microscopes: Toward Measuring the Three-Dimensional Position and Orientation of Single Molecules in Living Cells \iconlink{\small\faFileLines} {https://purl.stanford.edu/wm159hp9861}{}
@@ -103,7 +111,7 @@ Thesis: Quantitative Differential Phase Imaging and Phase Reconstruction}]
 %	AWARDS
 %----------------------------------------------------------------------------------------
 \Needspace{3\baselineskip} % adjust as needed
-\section{Awards and Recognitions}
+\section*[Awards and Recognitions]{Awards and Recognitions}
 
 \activityrow[https://spie.org/membership/member-recognition/spie-senior-members]{Senior Member, Class of 2026}{SPIE}{2026}
 \activityrow{Editor of Distinction, Author Service Award}{Scientific Reports}{2026}
@@ -139,40 +147,40 @@ Thesis: Quantitative Differential Phase Imaging and Phase Reconstruction}]
 %	RESEARCH SUPPORT
 %----------------------------------------------------------------------------------------
 
-\section{Research Support}
+\section*[Research Support]{Research Support}
 \input{cv_projects}
 
 %----------------------------------------------------------------------------------------
 %	PUBLICATIONS
 %----------------------------------------------------------------------------------------
-\section[Publications]{Publications \small \iconlink{\faGoogleScholar}{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{h-index: 34, i10-index: 54} \textbar \ \iconlink{\faArrowUpRightFromSquare}{https://lewlab.wustl.edu/pages/publications.html}{journal covers, citation \& attention metrics}}
+\section*[Publications]{Publications \small \iconlink{\faGoogleScholar}{https://scholar.google.com/citations?user=8Kk2MugAAAAJ}{h-index: 34, i10-index: 54} \textbar \ \iconlink{\faArrowUpRightFromSquare}{https://lewlab.wustl.edu/pages/publications.html}{journal covers, citation \& attention metrics}}
 \faImage \ cover article \textbar \ \faStar \ editor’s pick/hot paper \textbar\ *equal contribution \textbar\ \textsuperscript{+}co-corresponding authors
 \input{cv_pubs_patents}
 
 %----------------------------------------------------------------------------------------
 %	Oral Presentations
 %----------------------------------------------------------------------------------------
-\section{Professional Talks}
+\section*[Professional Talks]{Professional Talks}
 \input{cv_talks}
 
 %----------------------------------------------------------------------------------------
 %	Mentoring
 %----------------------------------------------------------------------------------------
-\section[Student and Postdoctoral Mentoring]{Student and Postdoctoral Mentoring \small with program, dissertation, and current position if known}
+\section*[Student and Postdoctoral Mentoring]{Student and Postdoctoral Mentoring\ \small with program, dissertation, and current position if known}
 \input{cv_mentoring}
 
 %----------------------------------------------------------------------------------------
 %	Teaching Experience
 %----------------------------------------------------------------------------------------
 \Needspace{5\baselineskip} % adjust as needed
-\section[Teaching Experience]{Teaching Experience \small Undergraduate (UG)/Graduate (GR) with semester (enrollment)}
+\section*[Teaching Experience]{Teaching Experience\ \small Undergraduate (UG)/Graduate (GR) with semester (enrollment)}
 \markboth{Teaching Experience}{}%
 \input{cv_teaching}
 
 %----------------------------------------------------------------------------------------
 %	Other professional activities
 %----------------------------------------------------------------------------------------
-\section{Professional Service}
+\section*[Professional Service]{Professional Service}
 \input{cv_service}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
