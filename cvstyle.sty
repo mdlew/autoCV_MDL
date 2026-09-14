@@ -1,46 +1,125 @@
-%% cvstyle.sty -- Curriculum Vitae Style Package
+%% ============================================================================
+%% cvstyle.sty
+%% Academic curriculum vitae style package
+%% ============================================================================
 %%
-%% DESCRIPTION:
-%%   Provides a complete styling framework for academic CVs with support
-%%   for publications, teaching, service, mentoring, and funded projects.
-%%   Includes bibliography integration, custom sectioning, and PDF/A output.
+%% Package:      cvstyle
+%% Version:      1.4
+%% Release date: 2026-09-14
+%% Maintainer:   Matthew Duk-Ying Lew
+%% Engine:       LuaLaTeX
+%% Format:       LaTeX2e 2026-06-01 or newer
 %%
-%% PUBLIC API (stable, documented, safe for user CVs):
-%%   \cvcontact   - Contact header with name, address, and links
-%%   \cvjob       - Position/appointment entry with optional details
-%%   \cvperson    - Mentee/collaborator entry with thesis/position info
-%%   \cvproject   - Funded project entry with agency, amount, and role
-%%   \teachentry  - Teaching course entry with role and offerings
+%% PURPOSE
+%%   Provides the document styling and reusable commands used to typeset an
+%%   academic curriculum vitae. The package supports appointments, education,
+%%   publications, teaching, service, mentoring, funded projects, contact
+%%   information, bibliography integration, and PDF metadata.
 %%
-%% SEMI-PUBLIC API (documented but may evolve):
-%%   \activityrow - Generic activity listing (title, org, year)
-%%   \iconlink    - Hyperlinked icon with text (for contact info)
+%% DESIGN PRINCIPLES
+%%   - Preserve native LaTeX sectioning commands and semantic heading structure.
+%%   - Remain compatible with LaTeX's tagging-aware sectioning implementation.
+%%   - Keep decorative content, including section rules, marked as artifacts.
+%%   - Separate public document commands from internal implementation details.
+%%   - Use configurable lengths for repeated spacing and column dimensions.
+%%   - Prefer kernel and LaTeX3 interfaces over low-level command redefinitions.
 %%
-%% INTERNAL MACROS (prefixed with cv@, no stability guarantees):
-%%   \cv@ifnotempty     - Helper for empty string testing (executes code if not empty)
-%%   \cv@ifemptyelse - Helper for empty string testing (with both branches)
-%%   \cvpersonRightWidth - Length register for \cvperson layout
+%% PUBLIC INTERFACE
+%%   \cvmaketitle    Typesets the document title with CV-specific spacing.
+%%   \cvtagline      Typesets an unnumbered mission-statement heading.
+%%   \cvcontact      Typesets address and contact information.
+%%   \cvjob          Typesets a position or appointment entry.
+%%   \cveducation    Typesets an education entry.
+%%   \cvperson       Typesets a mentee or collaborator entry.
+%%   \cvproject      Typesets a funded-project entry.
+%%   \teachentry     Typesets a teaching entry.
+%%   \activityrow    Typesets a generic activity entry.
+%%   \iconlink       Typesets a linked icon and optional label.
+%%   \iconurllink    Typesets a linked icon and URL label.
 %%
-%% DEPENDENCIES:
-%%   Requires biblatex with 'science' style, fontawesome7, xparse
-%%   Custom datamodel: article-pmcid.dbx
-%%   Custom biblatex mods: biblatex_science_mods.sty
+%% PUBLIC CONFIGURATION
+%%   \tablerowskip        Standard vertical separation between CV entries.
+%%   \activityyearwidth   Width reserved for years in activity entries.
+%%   \teachdatewidth      Width reserved for teaching dates.
+%%   \cvpersonrightwidth  Width of the right column in person entries.
+%%   \cvprojectrightwidth Width of the right column in project entries.
 %%
-%% VERSION HISTORY:
-%%   v1.2 (2026-01-28): Comprehensive documentation and best practices update
-%%   v1.1 (prior):      Initial structured release
+%% INTERNAL INTERFACE
+%%   Internal commands should use the cv or cv@ namespace and are not part of
+%%   the compatibility contract. They may change without notice.
 %%
-%% CODING CONVENTIONS:
-%%   - Use \NewDocumentCommand for commands with optional arguments
-%%     or complex patterns (provides better error handling via xparse)
-%%   - Use \newcommand for simple commands with only mandatory arguments
-%%   - Use \newenvironment for paired begin/end constructs
-%%   - Prefix internal-only commands/lengths with \cv@ to avoid conflicts
-%%   - Use \providecommand for commands that may be defined elsewhere
-%%   - Document all public API commands with structured comment blocks
+%%   \cv@ifnotempty              Executes code when an argument is nonempty.
+%%   \cv@ifemptyelse             Selects between empty and nonempty branches.
+%%   \cv_section_title_decls:    Selects section-title declarations.
+%%   \cv_section_final_code:     Adds the artifact-tagged section rule.
+%%   \l__cv_tagline_bool         Selects tagline versus ordinary section style.
+%%
+%% SECTIONING AND TAGGING
+%%   The package customizes headings through LaTeX heading and headformat
+%%   instances rather than titlesec. Section and subsection commands therefore
+%%   retain their native structure, bookmarks, marks, and semantic PDF tagging.
+%%
+%%   Subsections use a dedicated non-hanging headformat instance derived from
+%%   the runin headformat template. The outer subsection remains a displayed
+%%   heading; only its internal title layout is non-hanging. This prevents
+%%   unnumbered \subsection* headings from retaining the indentation introduced
+%%   by the hang headformat and its sec/title/hang tagging socket.
+%%
+%% DEPENDENCIES
+%%   xurl, microtype, graphicx, xcolor, geometry, fancyhdr, enumitem,
+%%   etaremune, multicol, needspace, ragged2e, biblatex, fontawesome7,
+%%   hyperref, bookmark, article-pmcid.dbx, and biblatex_science_mods.sty.
+%%
+%% COMPATIBILITY
+%%   Developed for TeX Live 2026 and LuaLaTeX. The package requires the LaTeX
+%%   2026-06-01 format because it uses the tagging-aware heading-template
+%%   interfaces. It is not intended to support older LaTeX formats or pdfLaTeX.
+%%
+%% CHANGE HISTORY
+%%   1.4  2026-09-14
+%%        - Added a dedicated non-hanging subsection headformat.
+%%        - Removed the visual indentation of unnumbered subsection headings.
+%%        - Preserved native displayed-heading behavior and semantic tagging.
+%%        - Revised package documentation and interface classification.
+%%
+%%   1.3  2026-08-30
+%%        - Adopted tagging-aware heading instances for section formatting.
+%%        - Added CV tagline handling and artifact-tagged section rules.
+%%
+%%   1.2  2026-01-28
+%%        - Expanded documentation and standardized coding conventions.
+%%
+%%   1.1  Earlier release
+%%        - Initial structured implementation.
+%%
+%% INSTALLATION
+%%   Place cvstyle.sty and its local bibliography support files where TeX can
+%%   find them, normally beside the main CV source. Load the package in the
+%%   document preamble with \usepackage{cvstyle}.
+%%
+%% DIAGNOSTICS
+%%   For heading-template troubleshooting, inspect active values with:
+%%
+%%     \ShowInstanceValues{heading}{section}
+%%     \ShowInstanceValues{heading}{subsection}
+%%     \ShowInstanceValues{headformat}{cv-subsection-nohang}
+%%
+%% MAINTENANCE NOTES
+%%   - Keep \NeedsTeXFormat and \ProvidesPackage synchronized with this header.
+%%   - Record user-visible behavior changes in CHANGE HISTORY.
+%%   - Do not expose internal commands as supported API without documenting them.
+%%   - Test numbered and unnumbered headings after sectioning changes.
+%%   - Validate bookmarks, document structure, and PDF tagging after changes.
+%%   - Keep package-specific implementation names within the cv namespace.
+%%
+%% LICENSE
+%%   No license is declared in this header. Add an explicit license statement
+%%   before distributing the package outside its current project context.
+%%
+%% ============================================================================
 
 \NeedsTeXFormat{LaTeX2e}[2026-06-01]
-\ProvidesPackage{cvstyle}[2026/08/30 v1.3 MDL CV style]
+\ProvidesPackage{cvstyle}[2026/09/14 v1.4 MDL CV style]
 
 % -------------------------
 % Version and compatibility information
@@ -233,7 +312,7 @@
     } 
     { 
         % Ordinary section: large, medium weight, small caps 
-        \normalfont \Large \mdseries \scshape \RaggedRight\Large\scshape\RaggedRight 
+        \normalfont \Large \mdseries \scshape \RaggedRight
     } 
 } 
 % Add the decorative rule only to ordinary sections.
@@ -269,7 +348,13 @@
 } 
 \ExplSyntaxOff
 
+% A non-hanging internal layout for CV subsection headings. % The outer heading instance remains a displayed heading. 
+\DeclareInstance{headformat}{cv-subsection-nohang}{runin}{ 
+    heading-indent = 0pt, 
+    number-title-sep = 0pt 
+} 
 \EditInstance{heading}{subsection}{ 
+    headformat-instance = cv-subsection-nohang,
     title-decls = { 
         \normalfont 
         \normalsize 
@@ -280,6 +365,8 @@
     before-vspace = \tablerowskip, 
     after-vspace = 0pt 
 }
+
+% \ShowInstanceValues{heading}{subsection} \ShowInstanceValues{headformat}{subsection}
 
 % Multicol: Remove spacing
 \setlength{\multicolsep}{\tablerowskip}
