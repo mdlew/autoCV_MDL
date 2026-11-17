@@ -346,24 +346,25 @@
         \section*[Mission\ statement]{#1}
     \group_end: 
 } 
-\ExplSyntaxOff
 
 % A non-hanging internal layout for CV subsection headings. % The outer heading instance remains a displayed heading. 
-\DeclareInstance{headformat}{cv-subsection-nohang}{runin}{ 
+\DeclareInstance{headformat}{cv-subsection}{hang}{
     heading-indent = 0pt
 }
-\EditInstance{heading}{subsection}{ 
-    headformat-instance = cv-subsection-nohang,
-    title-decls = { 
-        \normalfont 
-        \normalsize 
-        \bfseries 
-        \upshape 
-        \RaggedRight 
-    }, 
-    before-vspace = \tablerowskip, 
-    after-vspace = 0pt 
+
+\EditInstance{heading}{subsection}{
+    headformat-instance = cv-subsection,
+    title-decls = {
+        \normalfont
+        \normalsize
+        \bfseries
+        \upshape
+        \RaggedRight
+    },
+    before-vspace = \tablerowskip,
+    after-vspace = 0pt
 }
+\ExplSyntaxOff
 
 % \ShowInstanceValues{heading}{subsection} \ShowInstanceValues{headformat}{subsection}
 
