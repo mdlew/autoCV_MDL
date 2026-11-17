@@ -292,7 +292,7 @@
 %     heading-decls = \Large\scshape\RaggedRight, 
 %     before-vspace = \tablerowskip, 
 %     after-vspace = \tablerowskip,
-%     final-code = { 
+%     after-code = { 
 %         \par\nobreak 
 %         \tagmcbegin{artifact} 
 %             \hrule height 0.4pt width \linewidth
@@ -552,7 +552,7 @@
 % -------------------------
 \NewDocumentCommand{\cvjob}{ m m o o }{%
     \par\smallskip 
-    \noindent\textbf{#1} \hfill #2\par 
+    \noindent{#1} \hfill #2\par 
     \IfValueT{#3}{% 
         {\RaggedRight \vspace{-\parskip}%
         #3 \par }   
@@ -566,7 +566,7 @@
 % \cveducation
 \NewDocumentCommand{\cveducation}{m m o m o o}{% 
     \par\smallskip 
-    \noindent \textbf{#1} at #2% 
+    \noindent \textbf{#1}, #2% 
     \IfNoValueF{#3}{\ \normalfont(#3)}% 
     \hfill #4\par 
     \IfValueT{#5}{% 
